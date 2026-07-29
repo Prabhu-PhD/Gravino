@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------------------
+   GRAVINO — Design system (light, airy, brand-aligned)
+   Lavender/periwinkle/blush light atmosphere · realistic glass · Fraunces+Manrope
+---------------------------------------------------------------------------- */
+
+@theme {
+  /* Type — wired to next/font variables in layout.tsx */
+  --font-display: var(--font-fraunces), "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Ink (text on light) — warm charcoal, traced from the hero art (web.psd) */
+  --color-ink: #322e2c;
+  --color-muted: #5c5754;
+  --color-faint: #948e8a;
+
+  /* Surfaces */
+  --color-canvas: #f4f1fb;
+  --color-paper: #ffffff;
+  --color-deep: #141031;     /* dark contrast band */
+  --color-deep-2: #1d1942;
+  --color-cream: #efecfa;    /* text on deep */
+
+  /* Brand */
+  --color-lavender: #c9b8f0;
+  --color-periwinkle: #a9b4f5;
+  --color-sky: #bbd4f2;
+  --color-blush: #f2c6dd;
+  --color-violet: #6d5de0;   /* accent / links on light */
+  --color-grape: #8b7bf0;
+
+  /* Hero gradient — traced from web.psd's headline gradient overlay */
+  --color-brand-blue: #0544ff;
+  --color-brand-magenta: #7c2669;
+
+  /* Radius + easing */
+  --radius-glass: 1.5rem;
+  --radius-pill: 999px;
+  --ease-glass: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: light;
+  --mesh:
+    radial-gradient(46rem 34rem at 10% 4%, rgba(140, 165, 245, 0.46), transparent 58%),
+    radial-gradient(44rem 34rem at 92% 10%, rgba(198, 190, 240, 0.4), transparent 60%),
+    radial-gradient(54rem 44rem at 78% 96%, rgba(170, 200, 245, 0.42), transparent 60%),
+    radial-gradient(40rem 38rem at 4% 92%, rgba(190, 178, 240, 0.36), transparent 60%);
+}
+
+* {
+  box-sizing: border-box;
+  border-color: color-mix(in oklab, var(--color-ink) 10%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Fixed atmosphere: soft luminous mesh */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--mesh);
+  pointer-events: none;
+}
+
+/* Fine grain so the gradient never looks flat (dark speckle, multiply) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ---------------------------------------------------------------- Utilities */
+
+/* Light glass surface */
+.glass {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(23, 21, 46, 0.04),
+    0 28px 60px -36px rgba(23, 21, 46, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+
+.glass-soft {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(23, 21, 46, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Glass for the dark contrast band */
+.glass-deep {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* Accent gradient text — traced from web.psd's headline gradient overlay */
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-brand-blue), var(--color-brand-magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-violet);
+}
+
+.rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-ink) 14%, transparent),
+    transparent
+  );
+}
+
+.section {
+  padding-block: clamp(5.5rem, 12vw, 10rem);
+}
+
+.lift {
+  transition:
+    transform 0.5s var(--ease-glass),
+    box-shadow 0.5s var(--ease-glass);
+  will-change: transform;
+}
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 0 1px rgba(23, 21, 46, 0.05),
+    0 40px 80px -40px rgba(109, 93, 224, 0.45);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-grape) 40%, transparent);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-violet);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-canvas); }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--color-grape) 45%, var(--color-canvas));
+  border-radius: 999px;
+  border: 2px solid var(--color-canvas);
+}

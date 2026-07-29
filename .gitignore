@@ -1,0 +1,60 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files
+.env*
+!.env.example
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# vercel
+.vercel
+
+# ---------------------------------------------------------------------------
+# Project-specific. Goal: the repo holds buildable SOURCE only. Everything
+# below lives on disk / shared storage, not in git.
+# ---------------------------------------------------------------------------
+
+# Client & commercial documents — deliberately excluded. This repo gets
+# connected to GitHub + Vercel, and invoices have no business being there.
+Invoice*.pdf
+INV-*.pdf
+Inv-*.pdf
+
+# Large brand/source media (~290MB combined). Git handles big binaries badly
+# and none of it is needed to build the site.
+/All Video Samples/
+/Video Samples/
+*.psd
+*.docx
+
+# Reference stills and working exports — all regenerable from the sources above.
+/extracted/
+Gravino_Web_and_Social_Portfolio_p1.png
+Pricing_Card_Gravino_p1.png
+hero_glass_crop.png
+mks.jpeg
+*.pdf
+
+# Local agent/editor state
+/.claude/

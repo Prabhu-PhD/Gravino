@@ -704,9 +704,12 @@ export function HeroWave() {
     // 300x150 fallback (which is what made everything look tiny/misplaced
     // and starved the glass material's own render buffer).
     <div className="absolute inset-0">
-      {/* Tuning panel — hidden unless the URL carries `?tune`, so it never
-          shows for visitors but is always one query-param away. */}
-      <Leva hidden={!ctl.tuning} collapsed titleBar={{ title: "Hero tuning" }} />
+      {/* Tuning panel. Currently shown to everyone while the hero is being
+          tuned — see SHOW_PANEL_BY_DEFAULT in hero-controls.ts for how to
+          take it down before launch. Open by default so it's usable at a
+          glance; drag the title bar to reposition, or collapse it to see
+          the hero unobstructed. */}
+      <Leva hidden={!ctl.tuning} titleBar={{ title: "Hero tuning" }} />
       <Canvas
         // CameraRig keeps these live; the Canvas prop is only the initial value.
         camera={{ position: [ctl.scene.camX, ctl.scene.camY, ctl.scene.camZ], fov: ctl.scene.fov }}

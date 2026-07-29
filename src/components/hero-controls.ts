@@ -191,10 +191,30 @@ const ENV_PRESETS = {
   },
 } as const;
 
+/**
+ * ============================ REMOVE BEFORE LAUNCH ============================
+ * TEMPORARY: the tuning panel is shown to EVERYONE, so the hero can be tuned
+ * directly on the deployed site without remembering a query param.
+ *
+ * To take it down for the public release, flip this one constant to `false`.
+ * That is the only change required — the panel disappears and leva's bundle
+ * is no longer rendered. (Removing the dependency entirely is a bigger job:
+ * hero-wave.tsx reads every parameter from here, so the values would need
+ * to be inlined as plain constants first.)
+ *
+ * Meanwhile `?tune=0` hides it ad-hoc — handy for checking how the hero
+ * actually looks, or screenshotting it, without redeploying.
+ * =============================================================================
+ */
+const SHOW_PANEL_BY_DEFAULT = true;
+
 export function useHeroControls() {
-  const tuning =
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).has("tune");
+  const tuning = (() => {
+    if (typeof window === "undefined") return false; // never during SSR
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("tune") === "0") return false; // explicit opt-out
+    return SHOW_PANEL_BY_DEFAULT || p.has("tune");
+  })();
 
   /* ------------------------------------------------------------- material */
   const [glass, setGlass] = useControls("Glass", () => ({

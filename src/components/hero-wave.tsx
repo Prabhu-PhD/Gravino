@@ -380,20 +380,13 @@ type Ripple = {
   x: number;
   y: number;
   z: number;
-  /** Pane surface normal at the strike point — rings orient to lie flat on
-   *  the glass rather than facing the camera, so they read as ripples
-   *  spreading ACROSS the surface. */
-  nx: number;
-  ny: number;
-  nz: number;
   start: number;
 };
 const dotGeo = new THREE.SphereGeometry(1, 10, 8);
-/** Unit ring in the XY plane (normal +Z), scaled per frame. Thickness is
- *  proportional to scale, so an expanding ring broadens slightly — which is
- *  how real ripples behave, and cheaper than rebuilding geometry each frame. */
-const RING_UNIT = new THREE.RingGeometry(0.95, 1, 128);
-const UNIT_Z = new THREE.Vector3(0, 0, 1);
+/* Scratch vectors reused every frame — allocating inside useFrame would
+   churn garbage 60x a second per live ripple. */
+const _toCam = new THREE.Vector3();
+const _pos = new THREE.Vector3();
 
 function lerpColor(hexA: string, hexB: string, t: number): [number, number, number] {
   const a = [1, 3, 5].map((i) => parseInt(hexA.slice(i, i + 2), 16) / 255);
@@ -404,8 +397,13 @@ function lerpColor(hexA: string, hexB: string, t: number): [number, number, numb
 /**
  * Concentric expanding rings — the look shared by the Magic UI Ripple and the
  * CSS click-ripple references: outlined circles that grow outward, each one
- * staggered behind the last and fading as it goes. Distinct from the dot
- * variant below, which scatters discrete points around the circumference.
+ * staggered behind the last and fading as it goes.
+ *
+ * Placement matters as much as the shape. These are centred on the SPHERE and
+ * billboarded to face the camera, then pushed away from it so the sphere
+ * occludes their middle — the rings halo the sphere. An earlier version laid
+ * them flat on the glass at the contact point, which read as water spreading
+ * on a surface rather than the reference's halo.
  */
 function RippleRings({
   ripple,
@@ -418,6 +416,7 @@ function RippleRings({
 }) {
   const group = useRef<THREE.Group>(null);
   const clock = useRef(0);
+  const { camera } = useThree();
   const R = sphereRadius();
   const maxRadius = R * m.rippleSpread;
 
@@ -428,16 +427,6 @@ function RippleRings({
     [m.rippleThickness],
   );
 
-  // Lie flat on the glass: rotate the ring's +Z normal onto the surface normal.
-  const quat = useMemo(() => {
-    const q = new THREE.Quaternion();
-    q.setFromUnitVectors(
-      UNIT_Z,
-      new THREE.Vector3(ripple.nx, ripple.ny, ripple.nz).normalize(),
-    );
-    return q;
-  }, [ripple.nx, ripple.ny, ripple.nz]);
-
   useFrame((_, delta) => {
     clock.current += delta;
     const t = clock.current / m.rippleDuration;
@@ -446,6 +435,15 @@ function RippleRings({
       return;
     }
     if (!group.current) return;
+
+    // Face the viewer, and sit behind the sphere along the view axis.
+    _pos.set(ripple.x, ripple.y, ripple.z);
+    _toCam.subVectors(_pos, camera.position).normalize();
+    group.current.position
+      .copy(_pos)
+      .addScaledVector(_toCam, R * m.rippleBehind);
+    group.current.quaternion.copy(camera.quaternion);
+
     group.current.children.forEach((child, i) => {
       const mesh = child as THREE.Mesh;
       const ringT = t - i * m.rippleStagger;
@@ -478,11 +476,8 @@ function RippleRings({
   );
 
   return (
-    <group
-      ref={group}
-      position={[ripple.x, ripple.y, ripple.z]}
-      quaternion={quat}
-    >
+    // position/quaternion are driven per-frame above (billboard + depth push)
+    <group ref={group}>
       {rings.map((i) => (
         <mesh key={i} geometry={geo}>
           <meshBasicMaterial
@@ -508,6 +503,7 @@ function RippleDots({
 }) {
   const group = useRef<THREE.Group>(null);
   const clock = useRef(0);
+  const { camera } = useThree();
   const R = sphereRadius();
   const maxRadius = R * m.rippleSpread;
 
@@ -519,6 +515,15 @@ function RippleDots({
       return;
     }
     if (!group.current) return;
+
+    // Same placement as the ring variant: billboarded, behind the sphere.
+    _pos.set(ripple.x, ripple.y, ripple.z);
+    _toCam.subVectors(_pos, camera.position).normalize();
+    group.current.position
+      .copy(_pos)
+      .addScaledVector(_toCam, R * m.rippleBehind);
+    group.current.quaternion.copy(camera.quaternion);
+
     group.current.children.forEach((child, i) => {
       const ring = Math.floor(i / m.rippleDots);
       const ringT = t - ring * m.rippleStagger;
@@ -535,7 +540,9 @@ function RippleDots({
       // local to the group (already translated to ripple.x/y/z below) — was
       // previously `ripple.x` here by mistake, which shot ripples off into Z
       // by whatever their world X happened to be instead of sitting at 0.
-      mesh.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.4, 0);
+      // true circle now that the group faces the camera (the old 0.4
+      // vertical squash was faking perspective on a non-facing plane)
+      mesh.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
       const alpha = 1 - ringT;
       const scale = R * 0.05 * (1 - ringT * 0.4);
       mesh.scale.setScalar(Math.max(scale, 0.001));
@@ -556,7 +563,8 @@ function RippleDots({
   );
 
   return (
-    <group ref={group} position={[ripple.x, ripple.y, ripple.z]}>
+    // position/quaternion driven per-frame above (billboard + depth push)
+    <group ref={group}>
       {dots.map((i) => (
         <mesh key={i} geometry={dotGeo}>
           <meshBasicMaterial transparent depthWrite={false} toneMapped={false} />
@@ -723,20 +731,18 @@ function Scene({ ctl }: { ctl: Ctl }) {
     const clamped = Math.min(Math.max(x, WORLD_X_MIN), WORLD_X_MAX);
     const base = waveWorldPoint3D(clamped);
     const { side } = waveWorldFrame3D(clamped);
-    // Strike point sits on the pane's top surface, directly under the sphere.
-    // Rings sit there (not at the sphere's centre) so they spread across the
-    // glass; `side` is that surface's normal, used to orient them flat.
-    const surface = paneHalfThickness();
+    // Centre on the SPHERE (same offset RollingSphere uses), not the contact
+    // point — the rings halo the sphere and are pushed behind it at render
+    // time, so anchoring them where it meets the glass put them in the wrong
+    // place entirely.
+    const offset = paneHalfThickness() + sphereRadius();
     setRipples((rs) => [
       ...rs,
       {
         id: rippleId.current++,
-        x: base.x + side.x * surface,
-        y: base.y + side.y * surface,
-        z: base.z + side.z * surface,
-        nx: side.x,
-        ny: side.y,
-        nz: side.z,
+        x: base.x + side.x * offset,
+        y: base.y + side.y * offset,
+        z: base.z + side.z * offset,
         start: 0,
       },
     ]);

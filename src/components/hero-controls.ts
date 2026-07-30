@@ -388,6 +388,11 @@ export function useHeroControls() {
       rippleSpread: { value: 4.5, min: 0.5, max: 14, step: 0.1 },
       rippleThickness: { value: 0.05, min: 0.005, max: 0.4, step: 0.005 },
       rippleOpacity: { value: 0.55, min: 0, max: 1, step: 0.01 },
+      /** How far behind the sphere the rings sit, in sphere radii. The rings
+       *  are centred on the sphere and pushed away from the camera so the
+       *  sphere occludes their middle — that overlap is what makes them read
+       *  as haloing the sphere rather than sitting on the glass. */
+      rippleBehind: { value: 1.15, min: 0, max: 4, step: 0.05 },
       rippleDots: { value: 28, min: 6, max: 96, step: 1 },
       rippleColorA: "#0544ff",
       rippleColorB: "#7c2669",

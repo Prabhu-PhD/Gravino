@@ -375,14 +375,126 @@ function useWaveRibbonGeometry(gm: Ctl["geom"]) {
   ]);
 }
 
-type Ripple = { id: number; x: number; y: number; z: number; start: number };
-const RIPPLE_STAGGER = 0.13;
+type Ripple = {
+  id: number;
+  x: number;
+  y: number;
+  z: number;
+  /** Pane surface normal at the strike point — rings orient to lie flat on
+   *  the glass rather than facing the camera, so they read as ripples
+   *  spreading ACROSS the surface. */
+  nx: number;
+  ny: number;
+  nz: number;
+  start: number;
+};
 const dotGeo = new THREE.SphereGeometry(1, 10, 8);
+/** Unit ring in the XY plane (normal +Z), scaled per frame. Thickness is
+ *  proportional to scale, so an expanding ring broadens slightly — which is
+ *  how real ripples behave, and cheaper than rebuilding geometry each frame. */
+const RING_UNIT = new THREE.RingGeometry(0.95, 1, 128);
+const UNIT_Z = new THREE.Vector3(0, 0, 1);
 
 function lerpColor(hexA: string, hexB: string, t: number): [number, number, number] {
   const a = [1, 3, 5].map((i) => parseInt(hexA.slice(i, i + 2), 16) / 255);
   const b = [1, 3, 5].map((i) => parseInt(hexB.slice(i, i + 2), 16) / 255);
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+}
+
+/**
+ * Concentric expanding rings — the look shared by the Magic UI Ripple and the
+ * CSS click-ripple references: outlined circles that grow outward, each one
+ * staggered behind the last and fading as it goes. Distinct from the dot
+ * variant below, which scatters discrete points around the circumference.
+ */
+function RippleRings({
+  ripple,
+  onDone,
+  m,
+}: {
+  ripple: Ripple;
+  onDone: (id: number) => void;
+  m: Ctl["motion"];
+}) {
+  const group = useRef<THREE.Group>(null);
+  const clock = useRef(0);
+  const R = sphereRadius();
+  const maxRadius = R * m.rippleSpread;
+
+  // Rebuilt only when thickness changes; scaling a shared unit ring keeps
+  // this to one geometry regardless of ring count.
+  const geo = useMemo(
+    () => new THREE.RingGeometry(1 - m.rippleThickness, 1, 128),
+    [m.rippleThickness],
+  );
+
+  // Lie flat on the glass: rotate the ring's +Z normal onto the surface normal.
+  const quat = useMemo(() => {
+    const q = new THREE.Quaternion();
+    q.setFromUnitVectors(
+      UNIT_Z,
+      new THREE.Vector3(ripple.nx, ripple.ny, ripple.nz).normalize(),
+    );
+    return q;
+  }, [ripple.nx, ripple.ny, ripple.nz]);
+
+  useFrame((_, delta) => {
+    clock.current += delta;
+    const t = clock.current / m.rippleDuration;
+    if (t >= 1 + m.rippleStagger * m.rippleRings) {
+      onDone(ripple.id);
+      return;
+    }
+    if (!group.current) return;
+    group.current.children.forEach((child, i) => {
+      const mesh = child as THREE.Mesh;
+      const ringT = t - i * m.rippleStagger;
+      if (ringT <= 0 || ringT >= 1) {
+        mesh.visible = false;
+        return;
+      }
+      mesh.visible = true;
+      // Ease-out expansion: quick off the mark, then settling — a linear
+      // ramp reads mechanical.
+      const ease = 1 - Math.pow(1 - ringT, 3);
+      const radius = R * 0.45 + ease * maxRadius;
+      mesh.scale.setScalar(radius);
+      const mat = mesh.material as THREE.MeshBasicMaterial;
+      // Fast fade-IN then long fade-OUT, so rings emerge rather than pop.
+      const fadeIn = Math.min(ringT / 0.1, 1);
+      mat.opacity = fadeIn * Math.pow(1 - ringT, 1.6) * m.rippleOpacity;
+      const [r, g, b] = lerpColor(
+        m.rippleColorA,
+        m.rippleColorB,
+        Math.min(radius / maxRadius, 1),
+      );
+      mat.color.setRGB(r, g, b);
+    });
+  });
+
+  const rings = useMemo(
+    () => Array.from({ length: m.rippleRings }, (_, i) => i),
+    [m.rippleRings],
+  );
+
+  return (
+    <group
+      ref={group}
+      position={[ripple.x, ripple.y, ripple.z]}
+      quaternion={quat}
+    >
+      {rings.map((i) => (
+        <mesh key={i} geometry={geo}>
+          <meshBasicMaterial
+            transparent
+            depthWrite={false}
+            toneMapped={false}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
 }
 
 function RippleDots({
@@ -402,14 +514,14 @@ function RippleDots({
   useFrame((_, delta) => {
     clock.current += delta;
     const t = clock.current / m.rippleDuration;
-    if (t >= 1 + RIPPLE_STAGGER * m.rippleRings) {
+    if (t >= 1 + m.rippleStagger * m.rippleRings) {
       onDone(ripple.id);
       return;
     }
     if (!group.current) return;
     group.current.children.forEach((child, i) => {
       const ring = Math.floor(i / m.rippleDots);
-      const ringT = t - ring * RIPPLE_STAGGER;
+      const ringT = t - ring * m.rippleStagger;
       const mesh = child as THREE.Mesh;
       if (ringT <= 0 || ringT >= 1) {
         mesh.visible = false;
@@ -611,16 +723,20 @@ function Scene({ ctl }: { ctl: Ctl }) {
     const clamped = Math.min(Math.max(x, WORLD_X_MIN), WORLD_X_MAX);
     const base = waveWorldPoint3D(clamped);
     const { side } = waveWorldFrame3D(clamped);
-    // same contact math as RollingSphere: sphere center sits thin-surface +
-    // radius above the centerline, so the ripple emanates from the sphere.
-    const offset = paneHalfThickness() + sphereRadius();
+    // Strike point sits on the pane's top surface, directly under the sphere.
+    // Rings sit there (not at the sphere's centre) so they spread across the
+    // glass; `side` is that surface's normal, used to orient them flat.
+    const surface = paneHalfThickness();
     setRipples((rs) => [
       ...rs,
       {
         id: rippleId.current++,
-        x: base.x + side.x * offset,
-        y: base.y + side.y * offset,
-        z: base.z + side.z * offset,
+        x: base.x + side.x * surface,
+        y: base.y + side.y * surface,
+        z: base.z + side.z * surface,
+        nx: side.x,
+        ny: side.y,
+        nz: side.z,
         start: 0,
       },
     ]);
@@ -680,7 +796,11 @@ function Scene({ ctl }: { ctl: Ctl }) {
       />
 
       {ripples.map((r) => (
-        <RippleDots key={r.id} ripple={r} onDone={removeRipple} m={motion} />
+        motion.rippleStyle === "dots" ? (
+          <RippleDots key={r.id} ripple={r} onDone={removeRipple} m={motion} />
+        ) : (
+          <RippleRings key={r.id} ripple={r} onDone={removeRipple} m={motion} />
+        )
       ))}
 
       <ContactShadows

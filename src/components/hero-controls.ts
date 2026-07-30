@@ -377,10 +377,18 @@ export function useHeroControls() {
     "Motion",
     {
       followLerp: { value: 0.09, min: 0.01, max: 1, step: 0.01 },
-      rippleDuration: { value: 1.1, min: 0.2, max: 4, step: 0.05 },
-      rippleRings: { value: 3, min: 1, max: 8, step: 1 },
+      // "rings" = continuous outlined circles (the Magic UI / CSS-ripple
+      // look). "dots" = the original radial dot pattern, kept switchable.
+      rippleStyle: { value: "rings", options: ["rings", "dots"] },
+      rippleDuration: { value: 1.6, min: 0.2, max: 4, step: 0.05 },
+      // Magic UI's Ripple defaults to 8 concentric circles — matching that
+      // density is most of why it reads as a ripple rather than a pulse.
+      rippleRings: { value: 8, min: 1, max: 16, step: 1 },
+      rippleStagger: { value: 0.1, min: 0, max: 0.5, step: 0.01 },
+      rippleSpread: { value: 4.5, min: 0.5, max: 14, step: 0.1 },
+      rippleThickness: { value: 0.05, min: 0.005, max: 0.4, step: 0.005 },
+      rippleOpacity: { value: 0.55, min: 0, max: 1, step: 0.01 },
       rippleDots: { value: 28, min: 6, max: 96, step: 1 },
-      rippleSpread: { value: 2.4, min: 0.5, max: 10, step: 0.1 },
       rippleColorA: "#0544ff",
       rippleColorB: "#7c2669",
     },

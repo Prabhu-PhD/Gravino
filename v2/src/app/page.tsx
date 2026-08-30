@@ -1,4 +1,5 @@
 import { SiteNav, SiteFooter } from "@/components/site-chrome";
+import { FlutedEdge } from "@/components/editorial";
 import {
   Hero,
   Problem,
@@ -20,9 +21,11 @@ export default function Home() {
         <Problem />
         <Balance />
         <Model />
+        <FlutedEdge />
         <Coverage />
         <Comparison />
         <Statement />
+        <FlutedEdge flip />
         <Proof />
         <Teardown />
       </main>

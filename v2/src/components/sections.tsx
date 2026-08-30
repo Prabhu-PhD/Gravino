@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroMark } from "./hero-mark";
 import { RibbonFigure } from "./ribbon-figure";
-import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
+import { SHELL, SectionHead, CornerMarks, Pull, FlutedEdge } from "./editorial";
 import { StatementBand } from "./page-shell";
 import {
   HERO,
@@ -66,7 +66,7 @@ export function Hero() {
             </Link>
             <Link
               href={HERO.secondary.href}
-              className="inline-flex items-center rounded-full border border-on-paper/20 px-6 py-3.5 text-sm text-on-paper transition-colors duration-300 hover:border-on-paper/50"
+              className="glass inline-flex items-center rounded-full px-6 py-3.5 text-sm text-on-paper transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
             >
               {HERO.secondary.label}
             </Link>
@@ -105,7 +105,7 @@ export function Hero() {
 
 export function Problem() {
   return (
-    <section className="bg-paper py-24 md:py-32">
+    <section className="ground bg-paper py-24 md:py-32">
       <div className={SHELL}>
         <SectionHead>
           You don&rsquo;t have five problems. You have one, in a dozen{" "}
@@ -140,7 +140,7 @@ export function Problem() {
 
 export function Balance() {
   return (
-    <section className="bg-paper-soft py-24 md:py-32">
+    <section className="ground bg-paper-soft py-24 md:py-32">
       <div className={SHELL}>
         <SectionHead>
           Every high-stakes communication is a{" "}
@@ -245,7 +245,7 @@ export function Coverage() {
 
 export function Model() {
   return (
-    <section className="bg-paper py-24 md:py-32">
+    <section className="ground bg-paper py-24 md:py-32">
       <div className={SHELL}>
         <SectionHead>
           How the work holds up.
@@ -270,7 +270,7 @@ export function Model() {
             {MODEL.map((m) => (
               <div
                 key={m.n}
-                className="grid gap-4 border-t border-paper-line py-8 sm:grid-cols-[5rem_1fr] sm:gap-8"
+                className="glass mb-4 grid gap-4 p-7 sm:grid-cols-[5rem_1fr] sm:gap-8 md:p-8"
               >
                 <p className="font-display text-4xl leading-none text-grad-2">
                   {m.n}
@@ -342,7 +342,7 @@ export function Comparison() {
                       key={i}
                       className={`py-5 pr-8 text-[0.97rem] ${
                         i === last
-                          ? "bg-white/[0.04] text-on-ink"
+                          ? "bg-white/[0.07] text-on-ink shadow-[inset_1px_0_0_rgba(255,255,255,0.14),inset_-1px_0_0_rgba(255,255,255,0.14)]"
                           : "text-on-ink-dim"
                       }`}
                     >
@@ -405,14 +405,14 @@ export function Statement() {
 
 export function Proof() {
   return (
-    <section className="bg-paper py-24 md:py-28">
+    <section className="ground bg-paper py-24 md:py-28">
       <div className={SHELL}>
         <SectionHead>
           Trusted across sectors.
         </SectionHead>
-        <ul className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-paper-line bg-paper-line sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SECTORS.map((s) => (
-            <li key={s} className="bg-paper px-6 py-8">
+            <li key={s} className="glass px-6 py-8">
               <span className="label text-on-paper-dim">{s}</span>
             </li>
           ))}
@@ -455,11 +455,11 @@ export function Teardown() {
           </Link>
         </div>
 
-        <ul className="space-y-5 self-end">
+        <ul className="space-y-4 self-end">
           {TEARDOWN.terms.map((t) => (
             <li
               key={t.slice(0, 20)}
-              className="border-t border-ink-line pt-5 text-sm leading-relaxed text-on-ink-dim"
+              className="glass-ink p-6 text-sm leading-relaxed text-on-ink-dim"
             >
               {t}
             </li>

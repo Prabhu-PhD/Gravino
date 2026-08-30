@@ -269,6 +269,72 @@ table {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Glass
+   ---------------------------------------------------------------------------
+   Glassmorphism is the brand's own language, so it is earned here rather than
+   reached for — but it only WORKS if there is something behind it worth
+   seeing. Translucency over a flat fill is just a lighter flat fill. So the
+   ground comes first: `ground` lays a very low-contrast brand mesh under the
+   light sections, and the glass surfaces then have colour to transmit.
+   ------------------------------------------------------------------------ */
+
+@utility ground {
+  background-image:
+    radial-gradient(
+      58% 48% at 10% 6%,
+      color-mix(in oklab, var(--color-grad-2) 13%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      48% 42% at 90% 20%,
+      color-mix(in oklab, var(--color-grad-4) 13%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      70% 58% at 58% 98%,
+      color-mix(in oklab, var(--color-grad-3) 11%, transparent),
+      transparent 72%
+    );
+}
+
+/* In-flow glass. NO backdrop-filter on purpose: blurring a large scrolling
+   surface forces a continuous GPU repaint and wrecks mobile frame rates. Over
+   the mesh ground a translucent fill plus a lit top edge already reads as
+   glass, because the ground's colour genuinely comes through. */
+@utility glass {
+  border-radius: 1.25rem;
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.74),
+    rgba(255, 255, 255, 0.4)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 22px 44px -30px rgba(38, 28, 76, 0.5);
+}
+
+@utility glass-ink {
+  border-radius: 1.25rem;
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.09),
+    rgba(255, 255, 255, 0.028)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 26px 52px -32px rgba(0, 0, 0, 0.85);
+}
+
+/* Real backdrop blur — reserved for FIXED or STICKY elements only, where the
+   blurred region is small and does not repaint with the scroll. */
+@utility glass-blur {
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+
 /* Card surface — Vistas / Bethouse in the refs. */
 @utility card {
   border-radius: 1.25rem;

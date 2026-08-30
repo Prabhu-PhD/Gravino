@@ -332,12 +332,41 @@ function Satellite({ radius = 1.3 }: { radius?: number }) {
     );
   });
   return (
-    // Flat, unlit black — in the mark this is a solid dot, not a rendered
-    // ball. A lit material picks up the environment and reads as a second
-    // glass sphere, which fights the bubble instead of anchoring it.
+    /* A polished black bead, not a flat disc and not a second glass ball.
+       An earlier version was unlit precisely because a standard material
+       picked up the full environment and read as chrome, competing with the
+       bubble. The fix is not flatness, it is CONTROLLING how much
+       environment it takes: envMapIntensity well under 1 keeps the body
+       genuinely black, while clearcoat adds a single tight specular
+       highlight. That highlight is the whole 3D cue — it is what tells the
+       eye this is a sphere lit from the upper left rather than a hole
+       punched in the page.
+
+       Depth does the rest for free: the orbit carries the bead behind the
+       shell, where transmission samples it from the backbuffer and refracts
+       it, and back in front, where it occludes the shell normally. */
     <mesh ref={ref}>
-      <sphereGeometry args={[0.14, 48, 48]} />
-      <meshBasicMaterial color="#0a0812" toneMapped={false} />
+      <sphereGeometry args={[0.14, 64, 64]} />
+      <meshPhysicalMaterial
+        color="#050409"
+        /* SMOOTH, not rough. This is the counter-intuitive one: a rough
+           black sphere diffusely reflects the entire bright environment and
+           averages out to grey, which is why 0.45 read as chrome. A smooth
+           one reflects a small tight spot and stays black everywhere else —
+           a polished bead rather than a lit ball. */
+        roughness={0.14}
+        metalness={0}
+        /* Clearcoat is deliberately partial. At 1 the coat reflects the
+           environment right around the silhouette and the bead reads as
+           chrome — a second shiny ball competing with the bubble. Around
+           0.55, with the environment held well down, the reflection
+           collapses to one tight highlight on a body that stays black.
+           Sheen was tried here and removed: it lifts the whole surface
+           toward grey, which is the same failure by another route. */
+        clearcoat={0.4}
+        clearcoatRoughness={0.05}
+        envMapIntensity={0.14}
+      />
     </mesh>
   );
 }

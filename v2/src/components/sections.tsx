@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { HeroMark } from "./hero-mark";
+import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
 import {
   HERO,
   PROBLEM,
@@ -12,19 +14,9 @@ import {
   SITE,
 } from "@/lib/site";
 
-/* ---------------------------------------------------------------------------
- * Shared furniture
- * ------------------------------------------------------------------------ */
-
-function Label({ children, dark }: { children: string; dark?: boolean }) {
-  return (
-    <p className={`label ${dark ? "text-on-ink-dim" : "text-on-paper-dim"}`}>
-      {children}
-    </p>
-  );
-}
-
-const SHELL = "mx-auto max-w-[88rem] px-6 md:px-10";
+/* Section count for the running index. The only edit needed when a numbered
+   section is added or removed. */
+const TOTAL = "07";
 
 /* ---------------------------------------------------------------------------
  * Hero
@@ -35,16 +27,27 @@ export function Hero() {
     <section className="bg-wash relative min-h-svh overflow-hidden">
       <div aria-hidden className="grain-layer" />
 
-      <div
-        className={`${SHELL} relative grid min-h-svh items-center gap-8 pt-32 pb-16 lg:grid-cols-[1.18fr_0.82fr] lg:pt-24`}
-      >
-        {/* Copy */}
-        <div className="max-w-3xl">
-          <Label>{HERO.eyebrow}</Label>
+      {/* The grid, made visible. The reference set almost always shows its
+          structure rather than hiding it. */}
+      <div aria-hidden className={`${SHELL} pointer-events-none absolute inset-0`}>
+        <div className="relative h-full">
+          <span className="absolute inset-y-0 left-0 w-px bg-on-paper/10" />
+          <span className="absolute inset-y-0 right-0 w-px bg-on-paper/10" />
+        </div>
+      </div>
 
-          {/* Sized to hold the brochure's three-line break. At 5.6vw the
-              first line overflowed the column and it fell to four. */}
-          <h1 className="display mt-6 max-w-[46rem] text-[clamp(2.4rem,4.7vw,4.2rem)]">
+      <div
+        className={`${SHELL} relative grid min-h-svh items-center gap-8 pt-32 pb-20 lg:grid-cols-[1.18fr_0.82fr] lg:pt-24`}
+      >
+        <div className="max-w-3xl">
+          <div className="flex items-center gap-5">
+            <span className="label text-accent">01</span>
+            <span className="h-px w-10 bg-on-paper/25" />
+            <span className="label text-on-paper-dim">{HERO.eyebrow}</span>
+          </div>
+
+          {/* Sized to hold the brochure's three-line break. */}
+          <h1 className="display mt-9 max-w-[46rem] text-[clamp(2.4rem,4.7vw,4.2rem)]">
             {HERO.headline[0]}
             <br />
             {HERO.headline[1]}{" "}
@@ -73,86 +76,117 @@ export function Hero() {
             </Link>
           </div>
 
-          <dl className="mt-14 flex flex-wrap gap-x-12 gap-y-6">
+          <dl className="mt-14 grid max-w-xl grid-cols-3 gap-4 border-t border-on-paper/15 pt-6">
             {HERO.facts.map((f) => (
               <div key={f.k}>
-                <dt className="font-display text-2xl tracking-tight">{f.v}</dt>
+                <dt className="font-display text-[1.7rem] tracking-tight">
+                  {f.v}
+                </dt>
                 <dd className="label mt-2 text-on-paper-dim">{f.k}</dd>
               </div>
             ))}
           </dl>
         </div>
 
-        {/* The mark. Hidden below lg: at phone widths it would either crowd the
-            copy or shrink to the size where the iridescence stops reading. */}
-        <div className="hidden justify-self-center lg:block">
+        {/* The live mark. Hidden below lg: at phone widths it would either
+            crowd the copy or shrink past the point where iridescence reads. */}
+        <div className="relative hidden justify-self-center lg:block">
           <HeroMark style={{ width: "min(38vw, 30rem)", aspectRatio: "1" }} />
         </div>
       </div>
 
-      <p className="label absolute inset-x-0 bottom-7 mx-auto max-w-[88rem] px-6 text-on-paper-dim md:px-10">
-        {SITE.location} &nbsp;/&nbsp; {SITE.markets}
-      </p>
+      <div
+        className={`${SHELL} absolute inset-x-0 bottom-7 flex items-center justify-between`}
+      >
+        <p className="label text-on-paper-dim">
+          {SITE.location} &nbsp;/&nbsp; {SITE.markets}
+        </p>
+        <p className="label hidden text-on-paper-dim sm:block">
+          {SITE.lockupLine}
+        </p>
+      </div>
     </section>
   );
 }
 
 /* ---------------------------------------------------------------------------
- * The problem
+ * 02 — The problem
  * ------------------------------------------------------------------------ */
 
 export function Problem() {
   return (
-    <section className="bg-paper py-28 md:py-36">
+    <section className="bg-paper py-24 md:py-32">
       <div className={SHELL}>
-        <Label>{PROBLEM.label}</Label>
-        <h2 className="display mt-6 max-w-4xl text-[clamp(2rem,3.9vw,3.4rem)]">
-          {PROBLEM.headline}
-        </h2>
+        <SectionHead index="02" total={TOTAL} label={PROBLEM.label}>
+          You don&rsquo;t have five problems. You have one, in a dozen{" "}
+          <span className="text-gradient">formats.</span>
+        </SectionHead>
 
-        <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-16">
+        <div className="mt-14 grid gap-10 border-t border-paper-line pt-10 md:grid-cols-2 md:gap-16">
           {PROBLEM.body.map((p) => (
-            <p key={p.slice(0, 24)} className="text-[1.02rem] leading-relaxed text-on-paper-dim">
+            <p
+              key={p.slice(0, 24)}
+              className="text-[1.02rem] leading-relaxed text-on-paper-dim"
+            >
               {p}
             </p>
           ))}
         </div>
 
-        <blockquote className="mt-20 max-w-3xl border-l-2 border-accent pl-7">
-          <p className="font-display text-[clamp(1.35rem,2.3vw,1.9rem)] leading-snug tracking-[-0.02em]">
-            {PROBLEM.pull}
-          </p>
-        </blockquote>
+        <div className="mt-20">
+          <Pull>{PROBLEM.pull}</Pull>
+        </div>
       </div>
     </section>
   );
 }
 
 /* ---------------------------------------------------------------------------
- * Why it matters — where the tagline earns its place
+ * 03 — Why it matters, carried by the balance render.
+ *
+ * The brochure's ribbon-and-sphere render literally depicts a sphere held in
+ * balance, so it belongs against this copy and nowhere else on the page.
  * ------------------------------------------------------------------------ */
 
 export function Balance() {
   return (
-    <section className="bg-paper-soft py-28 md:py-36">
-      <div className={`${SHELL} grid gap-14 md:grid-cols-[0.9fr_1.1fr] md:gap-20`}>
-        <div>
-          <Label>{BALANCE.label}</Label>
-          <h2 className="display mt-6 text-[clamp(1.9rem,3.4vw,3rem)]">
-            {BALANCE.headline}
-          </h2>
-        </div>
-        <div>
-          <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
-            {BALANCE.body}
-          </p>
-          <p className="mt-10 font-display text-[clamp(1.5rem,2.7vw,2.2rem)] leading-snug tracking-[-0.025em]">
-            A brilliant business that communicates unclearly is an{" "}
-            <span className="text-gradient">undervalued</span> one.
-          </p>
-          <p className="mt-10 text-[1.02rem] leading-relaxed text-on-paper-dim">
-            {BALANCE.close}
-          </p>
+    <section className="bg-paper-soft py-24 md:py-32">
+      <div className={SHELL}>
+        <SectionHead index="03" total={TOTAL} label={BALANCE.label}>
+          Every high-stakes communication is a{" "}
+          <span className="text-gradient">balancing act.</span>
+        </SectionHead>
+
+        <div className="mt-16 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+          <div>
+            <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
+              {BALANCE.body}
+            </p>
+            <p className="mt-10 font-display text-[clamp(1.5rem,2.7vw,2.2rem)] leading-snug tracking-[-0.025em]">
+              A brilliant business that communicates unclearly is an{" "}
+              <span className="text-gradient">undervalued</span> one.
+            </p>
+            <p className="mt-10 text-[1.02rem] leading-relaxed text-on-paper-dim">
+              {BALANCE.close}
+            </p>
+          </div>
+
+          <figure className="relative">
+            <CornerMarks className="text-on-paper" />
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/brand/glass-ribbon-balance.jpeg"
+                alt="A glass sphere resting in balance on a folded glass ribbon"
+                width={3200}
+                height={1800}
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="w-full object-cover"
+              />
+            </div>
+            <figcaption className="label mt-4 text-on-paper-dim">
+              {SITE.tagline}
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -160,41 +194,45 @@ export function Balance() {
 }
 
 /* ---------------------------------------------------------------------------
- * What we cover
+ * 04 — What we cover, as cards
  * ------------------------------------------------------------------------ */
 
 export function Coverage() {
   return (
-    <section id="cover" className="bg-paper py-28 md:py-36">
+    <section className="bg-paper py-24 md:py-32">
       <div className={SHELL}>
-        <Label>What we cover</Label>
-        <h2 className="display mt-6 max-w-3xl text-[clamp(2rem,3.9vw,3.4rem)]">
+        <SectionHead
+          index="04"
+          total={TOTAL}
+          label="What we cover"
+          lede="Organised around the outcome each produces — so you can see how much of your communications surface one team covers."
+        >
           The full surface, ten disciplines{" "}
           <span className="text-gradient">deep.</span>
-        </h2>
-        <p className="mt-6 max-w-2xl text-[1.02rem] leading-relaxed text-on-paper-dim">
-          Organised around the outcome each produces — so you can see how much
-          of your communications surface one team covers.
-        </p>
+        </SectionHead>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-2xl bg-paper-line sm:grid-cols-2">
+        <div className="mt-16 grid gap-5 sm:grid-cols-2">
           {GROUPS.map((g) => (
-            <div key={g.n} className="bg-paper p-8 md:p-10">
-              <div className="flex items-baseline gap-4">
+            <article key={g.n} className="card relative p-8 md:p-10">
+              <div className="flex items-baseline justify-between gap-4">
                 <span className="label text-accent">{g.n}</span>
-                <h3 className="font-display text-xl font-medium tracking-[-0.02em]">
-                  {g.name}
-                </h3>
+                <span className="label text-on-paper-dim">
+                  {g.disciplines.length} disciplines
+                </span>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-on-paper-dim">
+              <h3 className="mt-6 font-display text-[1.45rem] font-medium leading-snug tracking-[-0.02em]">
+                {g.name}
+              </h3>
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-on-paper-dim">
                 {g.premise}
               </p>
-              <ul className="mt-7 space-y-3">
+              <ul className="mt-8">
                 {g.disciplines.map((d) => (
-                  // kind on its own line: inline after the title it wraps
-                  // mid-phrase and the two halves stop being distinguishable.
-                  <li key={d.n} className="flex gap-4 border-t border-paper-line pt-3">
-                    <span className="label pt-1.5 text-on-paper-dim">{d.n}</span>
+                  <li
+                    key={d.n}
+                    className="flex gap-5 border-t border-paper-line py-4"
+                  >
+                    <span className="label pt-1 text-on-paper-dim">{d.n}</span>
                     <span>
                       <span className="block text-[0.97rem] leading-snug">
                         {d.title}
@@ -206,7 +244,7 @@ export function Coverage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </article>
           ))}
         </div>
 
@@ -225,29 +263,55 @@ export function Coverage() {
 }
 
 /* ---------------------------------------------------------------------------
- * The model
+ * 05 — The model, carried by the stack render.
+ *
+ * Ring, cube, sphere stacked in three — the brochure pairs this exact image
+ * with these exact three points, so the pairing is the brand's own.
  * ------------------------------------------------------------------------ */
 
 export function Model() {
   return (
-    <section className="bg-paper-soft py-28 md:py-36">
+    <section className="bg-paper-soft py-24 md:py-32">
       <div className={SHELL}>
-        <Label>The Gravino model</Label>
-        <h2 className="display mt-6 text-[clamp(2rem,3.9vw,3.4rem)]">
-          How the work holds up.
-        </h2>
-        <div className="mt-16 grid gap-12 md:grid-cols-3 md:gap-10">
-          {MODEL.map((m) => (
-            <div key={m.n}>
-              <p className="font-display text-4xl text-grad-2">{m.n}</p>
-              <h3 className="mt-5 font-display text-xl font-medium tracking-[-0.02em]">
-                {m.title}
-              </h3>
-              <p className="mt-4 text-[0.97rem] leading-relaxed text-on-paper-dim">
-                {m.body}
-              </p>
+        <SectionHead index="05" total={TOTAL} label="The Gravino model">
+          How the work holds <span className="text-gradient">up.</span>
+        </SectionHead>
+
+        <div className="mt-16 grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <figure className="relative order-2 lg:order-1">
+            <CornerMarks className="text-on-paper" />
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/brand/glass-stack.jpeg"
+                alt="A glass ring, cube and sphere stacked in balance"
+                width={3200}
+                height={1800}
+                sizes="(max-width: 1024px) 100vw, 38vw"
+                className="w-full object-cover"
+              />
             </div>
-          ))}
+          </figure>
+
+          <div className="order-1 lg:order-2">
+            {MODEL.map((m) => (
+              <div
+                key={m.n}
+                className="grid gap-4 border-t border-paper-line py-8 sm:grid-cols-[5rem_1fr] sm:gap-8"
+              >
+                <p className="font-display text-4xl leading-none text-grad-2">
+                  {m.n}
+                </p>
+                <div>
+                  <h3 className="font-display text-xl font-medium tracking-[-0.02em]">
+                    {m.title}
+                  </h3>
+                  <p className="mt-3 max-w-xl text-[0.97rem] leading-relaxed text-on-paper-dim">
+                    {m.body}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -255,24 +319,27 @@ export function Model() {
 }
 
 /* ---------------------------------------------------------------------------
- * The comparison — dark band. The one section where contrast does real work.
+ * 06 — The comparison. Dark band; the one place contrast does real work.
  * ------------------------------------------------------------------------ */
 
 export function Comparison() {
-  const lastCol = COMPARISON.columns.length - 1;
+  const last = COMPARISON.columns.length - 1;
   return (
-    <section className="bg-ink py-28 text-on-ink md:py-36">
+    <section className="bg-ink py-24 text-on-ink md:py-32">
       <div className={SHELL}>
-        <Label dark>{COMPARISON.label}</Label>
-        <h2 className="display mt-6 text-[clamp(2rem,3.9vw,3.4rem)]">
-          {COMPARISON.headline}
-        </h2>
-        <p className="mt-6 max-w-2xl text-[1.02rem] leading-relaxed text-on-ink-dim">
-          {COMPARISON.intro}
-        </p>
+        <SectionHead
+          index="06"
+          total={TOTAL}
+          label={COMPARISON.label}
+          dark
+          lede={COMPARISON.intro}
+        >
+          Why this beats the{" "}
+          <span className="text-gradient">alternatives.</span>
+        </SectionHead>
 
-        {/* overflow-x-auto: the table is the one element that cannot reflow
-            below ~640px without becoming unreadable. */}
+        {/* overflow-x-auto: the one element that cannot reflow below ~640px
+            without becoming unreadable. */}
         <div className="mt-14 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
           <table className="w-full min-w-[46rem] border-collapse text-left">
             <thead>
@@ -282,7 +349,7 @@ export function Comparison() {
                   <th
                     key={c}
                     className={`pb-5 font-display text-lg font-medium tracking-[-0.02em] ${
-                      i === lastCol ? "text-accent-on-ink" : "text-on-ink-dim"
+                      i === last ? "text-accent-on-ink" : "text-on-ink-dim"
                     }`}
                   >
                     {c}
@@ -293,14 +360,19 @@ export function Comparison() {
             <tbody>
               {COMPARISON.rows.map((r) => (
                 <tr key={r.k} className="border-t border-ink-line">
-                  <th scope="row" className="label py-5 pr-8 font-normal text-on-ink-dim">
+                  <th
+                    scope="row"
+                    className="label py-5 pr-8 font-normal text-on-ink-dim"
+                  >
                     {r.k}
                   </th>
                   {r.v.map((v, i) => (
                     <td
                       key={i}
                       className={`py-5 pr-8 text-[0.97rem] ${
-                        i === lastCol ? "text-on-ink" : "text-on-ink-dim"
+                        i === last
+                          ? "bg-white/[0.04] text-on-ink"
+                          : "text-on-ink-dim"
                       }`}
                     >
                       {v}
@@ -312,11 +384,11 @@ export function Comparison() {
           </table>
         </div>
 
-        <p className="mt-14 max-w-3xl font-display text-[clamp(1.35rem,2.3vw,1.9rem)] leading-snug tracking-[-0.02em]">
-          {COMPARISON.close}
-        </p>
+        <div className="mt-14">
+          <Pull dark>{COMPARISON.close}</Pull>
+        </div>
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-12 flex flex-wrap gap-3">
           <Link
             href="/for/ceo"
             className="label rounded-full border border-white/25 px-5 py-3 transition-colors hover:border-white/60"
@@ -336,29 +408,75 @@ export function Comparison() {
 }
 
 /* ---------------------------------------------------------------------------
- * Proof
+ * The statement band — full-bleed, the page's one loud moment.
+ *
+ * The swirl render behind big type, with a fluted pane over the right half:
+ * the Southern West International / Clarity motif from the reference set,
+ * which now has real imagery to sit on rather than having to invent a subject
+ * the way v1's hero kept trying to.
+ * ------------------------------------------------------------------------ */
+
+export function Statement() {
+  return (
+    <section className="relative isolate overflow-hidden bg-ink text-on-ink">
+      <Image
+        src="/brand/glass-sphere-swirl.jpeg"
+        alt=""
+        aria-hidden
+        width={3200}
+        height={1800}
+        sizes="100vw"
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)",
+        }}
+      />
+      {/* The fluted pane, over the right half only — glass laid on content,
+          which is how the references use it. */}
+      <div
+        aria-hidden
+        className="flute absolute inset-y-0 right-0 -z-10 w-1/2 opacity-70"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-1/2 -z-10 w-px bg-white/30"
+      />
+
+      <div className={`${SHELL} py-28 md:py-40`}>
+        <p className="label text-white/70">{SITE.lockupLine}</p>
+        <p className="display mt-8 max-w-3xl text-[clamp(2rem,4.3vw,3.7rem)] text-white">
+          Design is not a cost line. It is the{" "}
+          <span className="text-gradient">difference</span> between being
+          understood and being overlooked.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * 07 — Proof
  *
  * Sectors only. The three case studies in the brochure are entirely bracketed
- * placeholders — no client, no outcome — so they are not rendered. Inventing
- * specifics on a page whose whole argument is credibility would be the worst
- * possible trade.
+ * placeholders — no client, no outcome — so they are not rendered.
  * ------------------------------------------------------------------------ */
 
 export function Proof() {
   return (
-    <section className="bg-paper py-24">
+    <section className="bg-paper py-24 md:py-28">
       <div className={SHELL}>
-        <Label>Proof of work</Label>
-        <h2 className="display mt-6 text-[clamp(1.8rem,3.2vw,2.8rem)]">
-          Trusted across sectors.
-        </h2>
-        <ul className="mt-10 flex flex-wrap gap-x-3 gap-y-3">
+        <SectionHead index="07" total={TOTAL} label="Proof of work">
+          Trusted across <span className="text-gradient">sectors.</span>
+        </SectionHead>
+        <ul className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-paper-line bg-paper-line sm:grid-cols-2 lg:grid-cols-4">
           {SECTORS.map((s) => (
-            <li
-              key={s}
-              className="label rounded-full border border-paper-line px-4 py-2.5 text-on-paper-dim"
-            >
-              {s}
+            <li key={s} className="bg-paper px-6 py-8">
+              <span className="label text-on-paper-dim">{s}</span>
             </li>
           ))}
         </ul>
@@ -378,11 +496,14 @@ export function Proof() {
 
 export function Teardown() {
   return (
-    <section className="bg-ink py-28 text-on-ink md:py-36">
+    <section className="bg-ink py-24 text-on-ink md:py-32">
       <div className={`${SHELL} grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:gap-20`}>
         <div>
-          <Label dark>{TEARDOWN.label}</Label>
-          <h2 className="display mt-6 text-[clamp(2.1rem,4.2vw,3.6rem)]">
+          <div className="flex items-center gap-5">
+            <span className="h-px w-10 bg-white/30" />
+            <span className="label text-on-ink-dim">{TEARDOWN.label}</span>
+          </div>
+          <h2 className="display mt-8 text-[clamp(2.1rem,4.2vw,3.6rem)]">
             Start with a look, not a{" "}
             <span className="text-gradient">commitment.</span>
           </h2>

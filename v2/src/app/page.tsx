@@ -6,6 +6,7 @@ import {
   Coverage,
   Model,
   Comparison,
+  Statement,
   Proof,
   Teardown,
 } from "@/components/sections";
@@ -21,6 +22,7 @@ export default function Home() {
         <Coverage />
         <Model />
         <Comparison />
+        <Statement />
         <Proof />
         <Teardown />
       </main>

@@ -174,3 +174,26 @@ body {
   background: currentColor;
   opacity: 0.14;
 }
+
+/* Fluted glass, as a surface laid over an image — the Southern West
+   International / Clarity motif from the reference set. Ribbed shading only:
+   the real slicing needs duplicated content, but over a soft photographic
+   subject the shading alone reads convincingly as a ribbed pane. */
+@utility flute {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0.13) 6px,
+    rgba(255, 255, 255, 0.19) 9px,
+    rgba(255, 255, 255, 0.02) 15px,
+    rgba(0, 0, 0, 0.16) 21px,
+    rgba(0, 0, 0, 0) 22px
+  );
+}
+
+/* Card surface used on the coverage grid — Vistas / Bethouse in the refs. */
+@utility card {
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-paper-line);
+  background: var(--color-paper);
+}

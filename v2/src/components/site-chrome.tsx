@@ -1,27 +1,13 @@
 import Link from "next/link";
+import { Logomark } from "./logomark";
 import { SITE, NAV, SOCIALS } from "@/lib/site";
 
-/* Nav and footer. The wordmark is set as HTML text with a static bubble
-   glyph rather than a live <LogoSphere>: every sphere is its own WebGL
-   context, and one in persistent site chrome would mean a context on every
-   page, for a mark 32px tall where the iridescence collapses to grey anyway.
-   The live mark is a hero element. */
+/* Nav and footer. */
 
-function Wordmark({ dark = false }: { dark?: boolean }) {
+function Wordmark({ dark = false, px = 21 }: { dark?: boolean; px?: number }) {
   return (
-    <Link
-      href="/"
-      className="group inline-flex items-baseline font-display text-xl font-medium tracking-[-0.03em]"
-      aria-label={`${SITE.name} — home`}
-    >
-      <span className={dark ? "text-on-ink" : "text-on-paper"}>Grav</span>
-      <span className="text-gradient">ino</span>
-      <span
-        aria-hidden
-        className={`ml-0.5 inline-block h-1.5 w-1.5 rounded-full align-super ${
-          dark ? "bg-on-ink" : "bg-on-paper"
-        }`}
-      />
+    <Link href="/" aria-label={`${SITE.name} — home`} className="inline-block">
+      <Logomark px={px} dark={dark} />
     </Link>
   );
 }
@@ -59,7 +45,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-wrap items-start justify-between gap-10">
           <div>
-            <Wordmark dark />
+            <Wordmark dark px={26} />
             <p className="label mt-4 text-on-ink-dim">{SITE.lockupLine}</p>
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-on-ink-dim">
               {SITE.tagline}. One senior team for the full surface of how your

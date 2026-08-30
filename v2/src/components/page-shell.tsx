@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { SiteNav, SiteFooter } from "./site-chrome";
 
-export const SHELL = "mx-auto max-w-[88rem] px-6 md:px-10";
+export { SHELL } from "./editorial";
+import { SHELL } from "./editorial";
 
 /** Standard interior-page header: pale wash, eyebrow, headline, lede. */
 export function PageHead({

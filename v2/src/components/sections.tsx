@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HeroMark } from "./hero-mark";
+import { FlutedPane } from "./fluted-pane";
 import { RibbonFigure } from "./ribbon-figure";
 import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
-import { StatementBand } from "./page-shell";
 import {
   HERO,
   PROBLEM,
@@ -100,7 +100,13 @@ export function Hero() {
 }
 
 /* ---------------------------------------------------------------------------
- * 02 — The problem
+ * The problem — and why it matters.
+ *
+ * Was two sections. They made one argument in two halves: you have a single
+ * communications challenge, and communicating it badly costs real value.
+ * Split across two abstract setup sections before the page had said what
+ * Gravino DOES, that argument lost momentum twice over. Merged, the tagline
+ * lands as the payoff of the problem rather than as its own topic.
  * ------------------------------------------------------------------------ */
 
 export function Problem() {
@@ -108,8 +114,7 @@ export function Problem() {
     <section className="ground bg-paper py-24 md:py-32">
       <div className={SHELL}>
         <SectionHead>
-          You don&rsquo;t have five problems. You have one, in a dozen{" "}
-          formats.
+          You don&rsquo;t have five problems. You have one, in a dozen formats.
         </SectionHead>
 
         <div className="mt-14 grid gap-10 border-t border-paper-line pt-10 md:grid-cols-2 md:gap-16">
@@ -126,44 +131,22 @@ export function Problem() {
         <div className="mt-20">
           <Pull>{PROBLEM.pull}</Pull>
         </div>
-      </div>
-    </section>
-  );
-}
 
-/* ---------------------------------------------------------------------------
- * 03 — Why it matters, carried by the balance render.
- *
- * The brochure's ribbon-and-sphere render literally depicts a sphere held in
- * balance, so it belongs against this copy and nowhere else on the page.
- * ------------------------------------------------------------------------ */
-
-export function Balance() {
-  return (
-    <section className="ground bg-paper-soft py-24 md:py-32">
-      <div className={SHELL}>
-        <SectionHead>
-          Every high-stakes communication is a{" "}
-          balancing act.
-        </SectionHead>
-
-        <div className="mt-16 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div className="mt-24 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           <div>
-            <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
+            <h3 className="display text-[clamp(1.6rem,2.8vw,2.4rem)]">
+              {BALANCE.headline}
+            </h3>
+            <p className="mt-7 text-[1.02rem] leading-relaxed text-on-paper-dim">
               {BALANCE.body}
             </p>
-            <p className="mt-10 font-display text-[clamp(1.5rem,2.7vw,2.2rem)] leading-snug tracking-[-0.025em]">
-              A brilliant business that communicates unclearly is an{" "}
-              undervalued one.
+            <p className="mt-8 font-display text-[clamp(1.4rem,2.5vw,2rem)] font-medium leading-snug tracking-[-0.03em]">
+              {BALANCE.pull}
             </p>
-            <p className="mt-10 text-[1.02rem] leading-relaxed text-on-paper-dim">
+            <p className="mt-8 text-[1.02rem] leading-relaxed text-on-paper-dim">
               {BALANCE.close}
             </p>
           </div>
-
-          {/* Live, not the still. Second WebGL context on this page after
-              the hero mark — acceptable for two, but the reason /about keeps
-              the static render rather than a third. */}
           <RibbonFigure caption={SITE.tagline} />
         </div>
       </div>
@@ -379,50 +362,33 @@ export function Comparison() {
 }
 
 /* ---------------------------------------------------------------------------
- * The statement band — full-bleed, the page's one loud moment.
- * Shares StatementBand with every interior page so there is exactly one
- * implementation of the fluted-pane-over-render motif.
- * ------------------------------------------------------------------------ */
-
-export function Statement() {
-  return (
-    /* Flute on the LEFT, because that is where this render's subject is. The
-       glass needs to sit over the sphere and its vortex to have anything to
-       break; over the empty sky on the right it was slicing a smooth gradient
-       and coming back as stripes. The copy moves right, onto the scrim. */
-    <StatementBand src="/brand/glass-sphere-swirl.jpeg" fluteOn="left">
-      Design is not a cost line. It is the difference between being understood
-      and being overlooked.
-    </StatementBand>
-  );
-}
-
-/* ---------------------------------------------------------------------------
- * 07 — Proof
+ * Proof — a strip, not a section.
  *
- * Sectors only. The three case studies in the brochure are entirely bracketed
- * placeholders — no client, no outcome — so they are not rendered.
+ * Four sector names and a line of credentials do not carry a full section
+ * with its own display headline; that was a section-sized frame around a
+ * paragraph-sized fact. It earns one back when real case studies exist.
  * ------------------------------------------------------------------------ */
 
 export function Proof() {
   return (
-    <section className="ground bg-paper py-24 md:py-28">
-      <div className={SHELL}>
-        <SectionHead>
-          Trusted across sectors.
-        </SectionHead>
-        <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTORS.map((s) => (
-            <li key={s} className="glass px-6 py-8">
-              <span className="label text-on-paper-dim">{s}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-10 max-w-2xl text-[1.02rem] leading-relaxed text-on-paper-dim">
-          A senior {SITE.teamSize}-person core team, a systemic process, and{" "}
-          {SITE.experienceYears}+ years of combined experience — on engagements
-          across {SITE.markets}.
-        </p>
+    <section className="ground bg-paper py-16">
+      <div className={`${SHELL} border-t border-paper-line pt-10`}>
+        <div className="flex flex-wrap items-baseline justify-between gap-6">
+          <p className="max-w-xl text-[1.02rem] leading-relaxed text-on-paper-dim">
+            A senior {SITE.teamSize}-person team, {SITE.experienceYears}+ years
+            between them, on engagements across {SITE.markets}.
+          </p>
+          <ul className="flex flex-wrap gap-2">
+            {SECTORS.map((x) => (
+              <li
+                key={x}
+                className="label rounded-full border border-paper-line px-4 py-2.5 text-on-paper-dim"
+              >
+                {x}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -434,38 +400,66 @@ export function Proof() {
 
 export function Teardown() {
   return (
-    <section className="bg-ink py-24 text-on-ink md:py-32">
-      <div className={`${SHELL} grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:gap-20`}>
-        <div>
-          <div className="h-px w-full bg-ink-line" />
-          <h2 className="display mt-10 text-[clamp(2.1rem,4.2vw,3.6rem)]">
-            Start with a look, not a{" "}
-            commitment.
+    /* The closing band inherits the statement band's treatment: the swirl
+       render full-bleed, seen through fluted glass on the side its subject
+       sits on. That section was cut for having no argument of its own — this
+       one has the argument and had no presence, so the two problems cancel.
+       Copy stays on the un-fluted half, where it is readable. */
+    <section className="relative isolate overflow-hidden bg-ink text-on-ink">
+      <Image
+        src="/brand/glass-sphere-swirl.jpeg"
+        alt=""
+        aria-hidden
+        width={3200}
+        height={1800}
+        sizes="100vw"
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(270deg, rgba(10,8,18,0.94) 0%, rgba(10,8,18,0.78) 48%, rgba(10,8,18,0.2) 100%)",
+        }}
+      />
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <FlutedPane src="/brand/glass-sphere-swirl.jpeg" side="left" />
+      </div>
+
+      <div className={`${SHELL} py-24 md:py-32`}>
+        {/* 46%, not 52%. The glass covers the left half of the SECTION, but
+            this column is measured inside the padded shell — so anything wider
+            than ~46% starts left of the glass edge and the first character of
+            every line lands on the bright side. */}
+        <div className="ml-auto md:w-[46%]">
+          <h2 className="display text-[clamp(2rem,4vw,3.4rem)]">
+            Start with a look, not a commitment.
           </h2>
-          <p className="mt-8 max-w-xl text-[1.02rem] leading-relaxed text-on-ink-dim">
+          <p className="mt-7 text-[1.02rem] leading-relaxed text-white/75">
             {TEARDOWN.body}
           </p>
           <Link
             href={TEARDOWN.cta.href}
-            className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
+            className="group mt-9 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
           >
             {TEARDOWN.cta.label}
             <span className="transition-transform duration-300 group-hover:translate-x-1">
               &rarr;
             </span>
           </Link>
-        </div>
 
-        <ul className="space-y-4 self-end">
-          {TEARDOWN.terms.map((t) => (
-            <li
-              key={t.slice(0, 20)}
-              className="glass-ink p-6 text-sm leading-relaxed text-on-ink-dim"
-            >
-              {t}
-            </li>
-          ))}
-        </ul>
+          <ul className="mt-12 space-y-3">
+            {TEARDOWN.terms.map((t) => (
+              <li
+                key={t.slice(0, 20)}
+                className="glass-ink px-5 py-4 text-sm leading-relaxed text-white/70"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

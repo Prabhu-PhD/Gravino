@@ -221,8 +221,32 @@ function Core() {
  * matches the wordmark set beside it in HTML.
  * ------------------------------------------------------------------------ */
 
+/** How wide "ino" should sit, in world units, against a sphere of radius 1.
+ *  Measured off the brand lockup: the glyphs fill roughly three quarters of
+ *  the bubble. Set as a WIDTH rather than a font size so the result does not
+ *  drift when the resolved face changes its metrics. */
+const INO_WIDTH = 1.28;
+/** Radius the lettering is wrapped onto — just inside the shell. */
+const INO_DOME_R = 0.95;
+
+/**
+ * "ino", curved onto the inside of the bubble.
+ *
+ * Genuinely dimensional rather than a flat decal, and without needing
+ * TextGeometry — which would mean shipping a converted typeface.json blob
+ * for a face next/font only gives us as woff2. Instead the quad is a
+ * subdivided plane whose vertices are pushed out onto a sphere, so the
+ * lettering physically curves with the glass, catches the light across that
+ * curve, and swings correctly under the rig's parallax. Planar UVs survive
+ * the displacement, so the texture still maps cleanly — which a spherical
+ * cap's own UVs would not have done.
+ *
+ * The material is LIT, not basic: shading across the dome is what reads as
+ * depth. A little emissive keeps it legible where the curve turns away.
+ */
 function Ino() {
   const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
+  const [side, setSide] = useState(2);
 
   useEffect(() => {
     let cancelled = false;
@@ -233,24 +257,30 @@ function Ino() {
       c.width = c.height = S;
       const ctx = c.getContext("2d")!;
       // Must be a RESOLVED family list. Reading the custom property directly
-      // returns the literal "var(--font-instrument), ..." token, which is an
-      // invalid ctx.font value — canvas then silently keeps 10px sans-serif
-      // and the glyphs come out invisibly small. So bounce it through a real
-      // element and read the computed value.
+      // returns the literal "var(--font-dm), ..." token, which is an invalid
+      // ctx.font value — canvas then silently keeps 10px sans-serif and the
+      // glyphs come out invisibly small. So bounce it through a real element
+      // and read the computed value.
       const probe = document.createElement("span");
       probe.style.cssText =
         "position:absolute;visibility:hidden;font-family:var(--font-display)";
       document.body.appendChild(probe);
       const family = getComputedStyle(probe).fontFamily || "sans-serif";
       probe.remove();
+
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = `500 ${Math.round(S * 0.46)}px ${family}`;
+      ctx.font = `500 ${Math.round(S * 0.5)}px ${family}`;
+      // Measure, then size the QUAD to suit — rather than guessing a font
+      // size and hoping the glyphs land at the right scale.
+      const w = ctx.measureText("ino").width || S * 0.62;
       ctx.fillText("ino", S / 2, S * 0.52);
+
       const t = new THREE.CanvasTexture(c);
       t.anisotropy = 8;
       t.colorSpace = THREE.SRGBColorSpace;
+      setSide((INO_WIDTH * S) / w);
       setTex(t);
     };
     document.fonts.ready.then(draw).catch(draw);
@@ -259,15 +289,38 @@ function Ino() {
     };
   }, []);
 
+  const geometry = useMemo(() => {
+    const g = new THREE.PlaneGeometry(side, side, 40, 40);
+    const pos = g.attributes.position;
+    const R = INO_DOME_R;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      // Push each vertex onto the sphere. Clamped, so corners outside the
+      // radius flatten instead of producing NaN.
+      const z = Math.sqrt(Math.max(0, R * R - x * x - y * y));
+      pos.setZ(i, z - R);
+    }
+    pos.needsUpdate = true;
+    g.computeVertexNormals();
+    return g;
+  }, [side]);
+
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
   if (!tex) return null;
   return (
-    <mesh position={[0, 0, 0.08]}>
-      <planeGeometry args={[1.55, 1.55]} />
-      <meshBasicMaterial
+    <mesh geometry={geometry} position={[0, 0, INO_DOME_R - 0.28]}>
+      <meshStandardMaterial
         map={tex}
         transparent
-        toneMapped={false}
         depthWrite={false}
+        roughness={0.42}
+        metalness={0}
+        envMapIntensity={1.1}
+        emissive="#ffffff"
+        emissiveMap={tex}
+        emissiveIntensity={0.35}
       />
     </mesh>
   );

@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   Gravino v2 — design tokens
+   ---------------------------------------------------------------------------
+   Built from the Design Refs set, not carried over from v1. Three rules the
+   references all obey, encoded here:
+
+   1. ONE saturated gradient is the only colour event. Everything else is
+      neutral. Hence exactly one `--grad-*` ramp and a long neutral scale.
+   2. Two grounds, never blended: near-black for the loud sections, warm
+      off-white for the reading sections. No mid-tones, no pastel mesh.
+   3. Micro-labels in mono carry the structure. They get their own token set
+      so they can't drift into "small body text".
+   ========================================================================= */
+
+@theme {
+  /* --- Grounds ------------------------------------------------------------
+     Ink is warm-shifted (hint of violet) rather than pure #000 so the violet
+     gradient sits IN it instead of on top of it. Paper is warm off-white —
+     the opac / Trupeer end of the reference set, not clinical white. */
+  --color-ink: #0a0812;
+  --color-ink-soft: #14111f;
+  --color-ink-line: #241f36;
+
+  --color-paper: #f7f5f2;
+  --color-paper-soft: #efece7;
+  --color-paper-line: #ddd8d0;
+
+  /* --- Text ---------------------------------------------------------------
+     Named by the ground they sit on, so a component can never accidentally
+     put low-contrast text on the wrong side. */
+  --color-on-ink: #f4f2f8;
+  --color-on-ink-dim: #a49dbb;
+  --color-on-paper: #16141d;
+  --color-on-paper-dim: #6a6577;
+
+  /* --- The one gradient ---------------------------------------------------
+     Gravino's brand hues (indigo → violet → periwinkle → blush) pushed to the
+     saturation the references actually run at. Used for the hero wash, the
+     fluted-glass tint, and nothing else. */
+  --color-grad-0: #1a0f4d;
+  --color-grad-1: #5b2ee5;
+  --color-grad-2: #8f6ff2;
+  --color-grad-3: #c99ae8;
+  --color-grad-4: #f0b6d3;
+
+  /* Single accent for links, focus rings, active states. */
+  --color-accent: #7c4dff;
+  --color-accent-on-ink: #b9a0ff;
+
+  /* --- Type --------------------------------------------------------------- */
+  --font-display: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* --- Motion -------------------------------------------------------------
+     One easing curve everywhere. The references read calm because nothing
+     bounces. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------------ */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-on-paper);
+  font-family: var(--font-body);
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------------------ */
+
+/* The micro-label. Every reference in the set uses one of these to carry
+   structure — slide numbers, corner tags, section markers. Locked to its own
+   utility so it stays consistent and never becomes "just small text". */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Display headline: tight leading + negative tracking, the single loudest
+   element on any screen. Fluid so it holds its 2–3 line shape at every width. */
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.032em;
+}
+
+/* Film grain. Every off-white reference has it; without it large flat areas
+   read as "unfinished web page" rather than "printed sheet". SVG noise as a
+   data URI so there's no image request. */
+@utility grain {
+  position: relative;
+}
+@utility grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Hairline grid marks — the opac / TQA / Rostelecom decoration. */
+@utility rule-x {
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.14;
+}

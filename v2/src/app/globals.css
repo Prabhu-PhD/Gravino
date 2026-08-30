@@ -49,6 +49,14 @@
   --color-accent: #7c4dff;
   --color-accent-on-ink: #b9a0ff;
 
+  /* The hero's pale ground, straight off the brochure: a cool blue-lilac
+     wash that warms toward the lower right. Its own tokens because the
+     bubble is composited onto it and the two have to agree. */
+  --color-wash-0: #e9eefb;
+  --color-wash-1: #eae6f8;
+  --color-wash-2: #f4ecf3;
+  --color-wash-3: #fdf8f4;
+
   /* --- Type --------------------------------------------------------------- */
   --font-display: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -130,6 +138,33 @@ body {
   opacity: 0.4;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* The brochure's headline device: exactly ONE word per headline filled with
+   the brand ramp ("say." / "Balance" / "Model"). More than one and it stops
+   reading as emphasis. */
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-grad-3) 0%,
+    var(--color-grad-2) 34%,
+    #6ea8ee 68%,
+    #3f92f0 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The brochure's pale hero wash. */
+@utility bg-wash {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-wash-0) 0%,
+    var(--color-wash-1) 38%,
+    var(--color-wash-2) 68%,
+    var(--color-wash-3) 100%
+  );
 }
 
 /* Hairline grid marks — the opac / TQA / Rostelecom decoration. */

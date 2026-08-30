@@ -1,9 +1,30 @@
-import { Hero } from "@/components/hero";
+import { SiteNav, SiteFooter } from "@/components/site-chrome";
+import {
+  Hero,
+  Problem,
+  Balance,
+  Coverage,
+  Model,
+  Comparison,
+  Proof,
+  Teardown,
+} from "@/components/sections";
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-    </main>
+    <>
+      <SiteNav />
+      <main>
+        <Hero />
+        <Problem />
+        <Balance />
+        <Coverage />
+        <Model />
+        <Comparison />
+        <Proof />
+        <Teardown />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

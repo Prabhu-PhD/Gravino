@@ -22,9 +22,12 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gravino — Where balance meets value",
+  title: {
+    default: "Gravino — One team for everything your business needs to say",
+    template: "%s — Gravino",
+  },
   description:
-    "A senior design department on tap. Presentations, documentation, print and digital, delivered on a steady monthly cadence.",
+    "One senior team for the full surface of how your business communicates — investor decks, reports, brand, motion and campaigns. Where Balance Meets Value.",
 };
 
 export default function RootLayout({

@@ -4,10 +4,13 @@ export const SITE = {
   name: "Gravino",
   wordmark: "Gravino.",
   domain: "gravino.in",
-  tagline: "Where balance meets value",
+  tagline: "Where Balance Meets Value",
+  /** The line locked up under the logo mark in the brand art. */
+  lockupLine: "Value Has Gravity.",
   email: "hello@gravino.in",
   whatsapp: "+91 00000 00000", // TODO: confirm real number
-  location: "India — serving the US, Europe & the Gulf",
+  location: "Chennai, India",
+  markets: "US · Europe · Gulf · India",
   experienceYears: 75,
   teamSize: 4,
 };

@@ -20,8 +20,6 @@ export default function Services() {
   return (
     <Page>
       <PageHead
-        index="01"
-        eyebrow="What we cover"
         headline="The full surface, ten disciplines"
         accent="deep."
         lede="Organised around the outcome each produces, not the department it would sit in — so you can see how much of your communications surface one team covers."
@@ -33,12 +31,7 @@ export default function Services() {
           className={i % 2 ? "bg-paper-soft" : "bg-paper"}
         >
           <div className={`${SHELL} py-20 md:py-28`}>
-            <SectionHead
-              index={g.n}
-              total={TOTAL}
-              label={`${g.disciplines.length} disciplines`}
-              lede={g.premise}
-            >
+            <SectionHead lede={g.premise}>
               {g.name}
             </SectionHead>
 
@@ -79,10 +72,9 @@ export default function Services() {
       <StatementBand
         src="/brand/glass-stack.jpeg"
         objectPosition="60% center"
-        eyebrow={`${SITE.experienceYears}+ years, combined`}
       >
         Ten disciplines, one team, and a{" "}
-        <span className="text-gradient">single</span> brief to write.
+        single brief to write.
       </StatementBand>
 
       <ClosingCta

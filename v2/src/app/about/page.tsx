@@ -30,8 +30,6 @@ export default function About() {
   return (
     <Page>
       <PageHead
-        index="01"
-        eyebrow="About"
         headline="A senior team, built around one"
         accent="discipline."
         lede={`${SITE.experienceYears}+ years of combined experience in the rooms where communication decides the outcome — seed rounds, boardrooms, IPO roadshows, and the reporting that follows.`}
@@ -39,9 +37,9 @@ export default function About() {
 
       <section className="bg-paper py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="02" total={TOTAL} label={BALANCE.label}>
+          <SectionHead>
             Every high-stakes communication is a{" "}
-            <span className="text-gradient">balancing act.</span>
+            balancing act.
           </SectionHead>
 
           <div className="mt-16 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
@@ -51,9 +49,7 @@ export default function About() {
               </p>
               <p className="mt-10 font-display text-[clamp(1.5rem,2.7vw,2.2rem)] leading-snug tracking-[-0.025em]">
                 {SITE.tagline.split(" ").slice(0, 2).join(" ")}{" "}
-                <span className="text-gradient">
-                  {SITE.tagline.split(" ").slice(2).join(" ")}
-                </span>
+                {SITE.tagline.split(" ").slice(2).join(" ")}
                 .
               </p>
               <p className="mt-10 text-[1.02rem] leading-relaxed text-on-paper-dim">
@@ -71,8 +67,8 @@ export default function About() {
 
       <section className="bg-paper-soft py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="03" total={TOTAL} label="The Gravino model">
-            How the work holds <span className="text-gradient">up.</span>
+          <SectionHead>
+            How the work holds up.
           </SectionHead>
           <div className="mt-14">
             {MODEL.map((m) => (
@@ -100,17 +96,16 @@ export default function About() {
       <StatementBand
         src="/brand/glass-sphere-swirl.jpeg"
         objectPosition="20% center"
-        eyebrow={`${SITE.location} — working across ${SITE.markets}`}
       >
         We understood the business faster, and covered more of it, than anyone
-        else they&rsquo;d <span className="text-gradient">worked with.</span>
+        else they&rsquo;d worked with.
       </StatementBand>
 
       <section className="bg-paper py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="04" total={TOTAL} label="The team">
+          <SectionHead>
             Small on purpose, senior by{" "}
-            <span className="text-gradient">design.</span>
+            design.
           </SectionHead>
 
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

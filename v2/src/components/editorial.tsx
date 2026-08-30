@@ -1,18 +1,20 @@
 /* ===========================================================================
  * Editorial furniture.
  * ---------------------------------------------------------------------------
- * The pieces that made the reference set read as DESIGNED rather than
- * templated, and which a clean grotesk on white does not supply by itself:
- * a running index, hairline rules, corner marks, and micro-labels carrying
- * structure. opac, TQA, Rostelecom and Beyond XP all lean on exactly this.
+ * Deliberately thin. An earlier version of this file gave every section a
+ * running index and a label above its heading; both are category defaults
+ * rather than decisions — the sequence carried no information a reader needed,
+ * and a heading that needs a label above it to announce itself is a heading
+ * that is not doing its job. Removing them is most of why the page stopped
+ * reading as a template.
  *
- * They are small on purpose. The point is a visible underlying grid, not
- * decoration competing with the headline.
+ * What survives is the part that earns its place: a rule that opens a section,
+ * and corner ticks that frame an artefact.
  * ======================================================================== */
 
 export const SHELL = "mx-auto max-w-[88rem] px-6 md:px-10";
 
-/** A corner tick. Four of these frame a section the way opac frames a page. */
+/** A corner tick. Four of these frame an artefact the way a crop mark does. */
 function Tick({ className }: { className: string }) {
   return (
     <svg
@@ -43,40 +45,38 @@ export function CornerMarks({ className = "" }: { className?: string }) {
 }
 
 /**
- * Section head: running index on the left, label and headline on the right,
- * separated by a hairline that runs the full measure. The index is what makes
- * a long page feel like a document rather than a stack of blocks.
+ * Section opening: a hairline the full measure, then the heading at full
+ * strength. No label above it — the heading says what the section is.
  */
 export function SectionHead({
-  index,
-  total,
-  label,
   children,
   dark = false,
   lede,
+  size = "md",
 }: {
-  index: string;
-  total: string;
-  label: string;
   children: React.ReactNode;
   dark?: boolean;
   lede?: string;
+  /** `lg` for the one section that is meant to be the page's peak. */
+  size?: "md" | "lg";
 }) {
   const dim = dark ? "text-on-ink-dim" : "text-on-paper-dim";
   return (
     <div>
-      <div className={`flex items-center gap-6 border-t ${dark ? "border-ink-line" : "border-paper-line"} pt-5`}>
-        <span className={`label ${dim}`}>
-          {index}
-          <span className="opacity-40"> / {total}</span>
-        </span>
-        <span className={`label ${dim}`}>{label}</span>
-      </div>
-      <h2 className="display mt-10 max-w-4xl text-[clamp(1.9rem,3.7vw,3.2rem)]">
+      <div
+        className={`h-px w-full ${dark ? "bg-ink-line" : "bg-paper-line"}`}
+      />
+      <h2
+        className={`display mt-10 max-w-4xl ${
+          size === "lg"
+            ? "text-[clamp(2.6rem,6vw,5.5rem)]"
+            : "text-[clamp(1.9rem,3.7vw,3.2rem)]"
+        }`}
+      >
         {children}
       </h2>
       {lede ? (
-        <p className={`mt-7 max-w-2xl text-[1.02rem] leading-relaxed ${dim}`}>
+        <p className={`mt-7 max-w-[62ch] text-[1.02rem] leading-relaxed ${dim}`}>
           {lede}
         </p>
       ) : null}
@@ -84,7 +84,7 @@ export function SectionHead({
   );
 }
 
-/** Pull quote with the accent rule and framing ticks. */
+/** Pull quote. Hairline rule, not a coloured slab. */
 export function Pull({
   children,
   dark = false,
@@ -96,15 +96,12 @@ export function Pull({
     <figure className="relative max-w-3xl pl-7">
       <span
         aria-hidden
-        className="absolute inset-y-0 left-0 w-0.5"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-grad-2), var(--color-grad-4))",
-        }}
+        className={`absolute inset-y-0 left-0 w-px ${
+          dark ? "bg-on-ink/35" : "bg-on-paper/30"
+        }`}
       />
-      <CornerMarks className={dark ? "text-on-ink" : "text-on-paper"} />
       <blockquote
-        className={`font-display text-[clamp(1.3rem,2.3vw,1.9rem)] leading-snug tracking-[-0.02em] ${
+        className={`font-display text-[clamp(1.35rem,2.4vw,2rem)] font-medium leading-snug tracking-[-0.03em] ${
           dark ? "text-on-ink" : "text-on-paper"
         }`}
       >

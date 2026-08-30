@@ -45,7 +45,6 @@ export const SOCIALS = [
  * ------------------------------------------------------------------------ */
 
 export const HERO = {
-  eyebrow: "Communications partner",
   /** `accent` is set in the brand gradient — the device the brochure uses on
    *  "say.", "Balance" and "Model". One word per headline, never more. */
   headline: ["One team for everything", "your business needs to"],
@@ -53,11 +52,6 @@ export const HERO = {
   body: "Startups and growing companies don't have a deck problem, then a report problem, then a brand problem. They have one communications challenge that shows up in a dozen formats — and no time to brief a different vendor on the business each time.",
   primary: { label: "Send us a deck", href: "/contact" },
   secondary: { label: "See what we cover", href: "/services" },
-  facts: [
-    { v: "75+", k: "Years combined" },
-    { v: "10", k: "Disciplines" },
-    { v: "1", k: "Point of contact" },
-  ],
 } as const;
 
 /* ---------------------------------------------------------------------------

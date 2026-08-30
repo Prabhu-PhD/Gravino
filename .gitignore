@@ -58,3 +58,6 @@ mks.jpeg
 
 # Local agent/editor state
 /.claude/
+
+# impeccable working state
+.impeccable/

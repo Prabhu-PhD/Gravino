@@ -25,15 +25,10 @@ function GridLines() {
 }
 
 export function PageHead({
-  index,
-  eyebrow,
   headline,
   accent,
   lede,
 }: {
-  /** Short page marker, e.g. "02". Renders alongside the eyebrow. */
-  index?: string;
-  eyebrow: string;
   headline: string;
   accent?: string;
   lede?: string;
@@ -43,13 +38,7 @@ export function PageHead({
       <div aria-hidden className="grain-layer" />
       <GridLines />
       <div className={`${SHELL} relative`}>
-        <div className="flex items-center gap-5">
-          {index ? <span className="label text-accent">{index}</span> : null}
-          <span className="h-px w-10 bg-on-paper/25" />
-          <span className="label text-on-paper-dim">{eyebrow}</span>
-        </div>
-
-        <h1 className="display mt-9 max-w-4xl text-[clamp(2.3rem,4.9vw,4.1rem)]">
+        <h1 className="display max-w-4xl text-[clamp(2.3rem,4.9vw,4.1rem)]">
           {headline}
           {accent ? (
             <>
@@ -85,13 +74,11 @@ export function PageHead({
 export function StatementBand({
   src,
   objectPosition = "center",
-  eyebrow,
   children,
   fluteOn = "right",
 }: {
   src: string;
   objectPosition?: string;
-  eyebrow: string;
   children: React.ReactNode;
   fluteOn?: "left" | "right";
 }) {
@@ -131,11 +118,8 @@ export function StatementBand({
       />
 
       <div className={`${SHELL} py-24 md:py-36`}>
-        <p className={`label text-white/70 ${right ? "" : "text-right"}`}>
-          {eyebrow}
-        </p>
         <p
-          className={`display mt-8 max-w-3xl text-[clamp(1.9rem,4vw,3.4rem)] text-white ${
+          className={`display max-w-3xl text-[clamp(1.9rem,4vw,3.4rem)] text-white ${
             right ? "" : "ml-auto text-right"
           }`}
         >
@@ -154,6 +138,8 @@ export function ClosingCta({
   cta = "Send us a deck",
 }: {
   headline: string;
+  /** Kept in the signature so callers need no edit; rendered at full weight
+   *  rather than in the gradient, which each page spends once in its h1. */
   accent?: string;
   body: string;
   cta?: string;
@@ -161,18 +147,10 @@ export function ClosingCta({
   return (
     <section className="bg-ink py-24 text-on-ink md:py-32">
       <div className={SHELL}>
-        <div className="flex items-center gap-5">
-          <span className="h-px w-10 bg-white/30" />
-          <span className="label text-on-ink-dim">No cost, no pitch</span>
-        </div>
-        <h2 className="display mt-8 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)]">
+        <div className="h-px w-full bg-ink-line" />
+        <h2 className="display mt-10 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)]">
           {headline}
-          {accent ? (
-            <>
-              {" "}
-              <span className="text-gradient">{accent}</span>
-            </>
-          ) : null}
+          {accent ? <> {accent}</> : null}
         </h2>
         <p className="mt-7 max-w-xl text-[1.02rem] leading-relaxed text-on-ink-dim">
           {body}

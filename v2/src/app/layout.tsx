@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Inter, IBM_Plex_Mono } from "next/font/google";
-import { CurrencyProvider } from "@/lib/currency";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const display = Instrument_Sans({
+/* One family. DM Sans is the brochure's own body face; its display face,
+   Hagrid, is a commercial licence this project does not hold, and a
+   near-miss substitute for a display face reads worse than committing to the
+   brand face we actually have. Hierarchy comes from weight and scale.
+   Self-hosted by next/font — no third-party request at runtime. */
+const dm = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-instrument",
-  display: "swap",
-});
-const body = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
+  weight: ["400", "500", "700"],
+  variable: "--font-dm",
   display: "swap",
 });
 
@@ -36,13 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
-    >
-      <body>
-        <CurrencyProvider>{children}</CurrencyProvider>
-      </body>
+    <html lang="en" className={dm.variable}>
+      <body>{children}</body>
     </html>
   );
 }

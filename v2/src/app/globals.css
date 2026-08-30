@@ -10,8 +10,11 @@
       neutral. Hence exactly one `--grad-*` ramp and a long neutral scale.
    2. Two grounds, never blended: near-black for the loud sections, warm
       off-white for the reading sections. No mid-tones, no pastel mesh.
-   3. Micro-labels in mono carry the structure. They get their own token set
-      so they can't drift into "small body text".
+   3. ONE typeface. DM Sans is the brochure's own body face; Hagrid, its
+      display face, is a commercial Fontfabric licence we do not hold. A
+      near-miss substitute for a display face is worse than committing to the
+      brand face we actually have, so hierarchy comes from weight, size and
+      tracking rather than from a second family standing in for a first.
    ========================================================================= */
 
 @theme {
@@ -58,9 +61,8 @@
   --color-wash-3: #fdf8f4;
 
   /* --- Type --------------------------------------------------------------- */
-  --font-display: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-display: var(--font-dm), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm), ui-sans-serif, system-ui, sans-serif;
 
   /* --- Motion -------------------------------------------------------------
      One easing curve everywhere. The references read calm because nothing
@@ -84,9 +86,35 @@ body {
   font-feature-settings: "cv11", "ss01";
 }
 
+/* The surfaces we did not draw still carry the design. Left at their
+   defaults these belong to no design system at all. */
 ::selection {
   background: var(--color-accent);
   color: #fff;
+}
+
+:root {
+  accent-color: var(--color-accent);
+  caret-color: var(--color-accent);
+  scrollbar-color: var(--color-paper-line) transparent;
+  scrollbar-width: thin;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+a {
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: from-font;
+}
+
+/* Figures reported next to each other must align on the decimal, not drift. */
+.tnum,
+table {
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -105,14 +133,16 @@ body {
    Utilities
    ------------------------------------------------------------------------ */
 
-/* The micro-label. Every reference in the set uses one of these to carry
-   structure — slide numbers, corner tags, section markers. Locked to its own
-   utility so it stays consistent and never becomes "just small text". */
+/* The micro-label — captions, column heads, and the footer's list headings.
+   NOT an eyebrow: a label never sits above a heading to announce it.
+   Set in the brand face rather than a monospace, which would be a costume
+   for "technical" on a page with no code, data or measurement in it. */
 @utility label {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.6875rem;
+  font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -121,8 +151,11 @@ body {
 @utility display {
   font-family: var(--font-display);
   font-weight: 500;
-  line-height: 0.98;
-  letter-spacing: -0.032em;
+  line-height: 0.96;
+  /* Floor is -0.04em; large display sizes sit at the floor, and the utility
+     tightens further only where a size class overrides it. */
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 /* Film grain. Every off-white reference has it; without it large flat areas
@@ -191,7 +224,42 @@ body {
   );
 }
 
-/* Card surface used on the coverage grid — Vistas / Bethouse in the refs. */
+/* The page's one authored motion moment: the ten disciplines arrive as you
+   scroll into them. Progressive enhancement — the rows are VISIBLE BY
+   DEFAULT and the animation only exists where scroll-driven timelines do, so
+   there is no JS, no layout shift, and nothing hidden from a browser that
+   cannot animate it. Exponential ease-out, one moment, not an entrance
+   bolted onto every section. */
+@utility reveal-rows {
+  @supports (animation-timeline: view()) {
+    & > li > ul > li {
+      animation: rows-in linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 22%;
+    }
+  }
+}
+
+@keyframes rows-in {
+  from {
+    opacity: 0.15;
+    transform: translateY(1.1rem);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rows > li > ul > li {
+    animation: none !important;
+  }
+}
+
+/* Card surface — Vistas / Bethouse in the refs. */
 @utility card {
   border-radius: 1.25rem;
   border: 1px solid var(--color-paper-line);

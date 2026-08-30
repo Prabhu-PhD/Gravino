@@ -45,23 +45,21 @@ export default async function AudiencePage({
   return (
     <Page>
       <PageHead
-        index="01"
-        eyebrow={a.role}
         headline={a.headline}
         lede={a.lede}
       />
 
       <section className="bg-paper py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="02" total={total} label="The position">
+          <SectionHead>
             {isCfo ? (
               <>
-                The third <span className="text-gradient">option.</span>
+                The third option.
               </>
             ) : (
               <>
                 Where it is won and{" "}
-                <span className="text-gradient">lost.</span>
+                lost.
               </>
             )}
           </SectionHead>
@@ -79,15 +77,15 @@ export default async function AudiencePage({
 
       <section className="bg-paper-soft py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="03" total={total} label="What that looks like">
+          <SectionHead>
             {isCfo ? (
               <>
-                What that gives <span className="text-gradient">you.</span>
+                What that gives you.
               </>
             ) : (
               <>
                 Built like an in-house team. Positioned like a{" "}
-                <span className="text-gradient">market leader.</span>
+                market leader.
               </>
             )}
           </SectionHead>
@@ -123,13 +121,10 @@ export default async function AudiencePage({
         <section className="bg-ink py-24 text-on-ink md:py-32">
           <div className={SHELL}>
             <SectionHead
-              index="04"
-              total={total}
-              label="The real cost of each option"
               dark
             >
               Three ways to solve it. One{" "}
-              <span className="text-gradient">that adds up.</span>
+              that adds up.
             </SectionHead>
 
             <div className="mt-14 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
@@ -183,11 +178,10 @@ export default async function AudiencePage({
         <StatementBand
           src="/brand/glass-sphere-swirl.jpeg"
           objectPosition="30% center"
-          eyebrow="Seed rounds through IPO roadshows"
           fluteOn="left"
         >
           A brilliant strategy told badly loses to an average one told{" "}
-          <span className="text-gradient">well.</span>
+          well.
         </StatementBand>
       )}
 

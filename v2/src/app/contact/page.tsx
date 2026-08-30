@@ -29,8 +29,6 @@ export default function Contact() {
   return (
     <Page>
       <PageHead
-        index="01"
-        eyebrow={TEARDOWN.label}
         headline="Start with a look, not a"
         accent="commitment."
         lede={TEARDOWN.body}
@@ -38,9 +36,9 @@ export default function Contact() {
 
       <section className="bg-paper py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="01" total={TOTAL} label="How to reach us">
+          <SectionHead>
             One address, one{" "}
-            <span className="text-gradient">reply.</span>
+            reply.
           </SectionHead>
 
           {/* A mailto rather than a form: the site has no backend yet, and a
@@ -92,9 +90,9 @@ export default function Contact() {
 
       <section className="bg-paper-soft py-24 md:py-32">
         <div className={SHELL}>
-          <SectionHead index="02" total={TOTAL} label="What happens next">
+          <SectionHead>
             Three steps, and nothing starts before you{" "}
-            <span className="text-gradient">agree it.</span>
+            agree it.
           </SectionHead>
 
           <div className="mt-14">
@@ -134,11 +132,10 @@ export default function Contact() {
       <StatementBand
         src="/brand/glass-ribbon-balance.jpeg"
         objectPosition="70% center"
-        eyebrow={SITE.tagline}
         fluteOn="left"
       >
         Send the deck. We&rsquo;ll tell you what we&rsquo;d{" "}
-        <span className="text-gradient">change.</span>
+        change.
       </StatementBand>
     </Page>
   );

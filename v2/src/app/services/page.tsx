@@ -72,6 +72,7 @@ export default function Services() {
       <StatementBand
         src="/brand/glass-stack.jpeg"
         objectPosition="60% center"
+        fluteOn="left"
       >
         Ten disciplines, one team, and a{" "}
         single brief to write.

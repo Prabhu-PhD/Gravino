@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SiteNav, SiteFooter } from "./site-chrome";
 import { SHELL, CornerMarks } from "./editorial";
+import { FlutedPane } from "./fluted-pane";
 import { SITE } from "@/lib/site";
 
 export { SHELL } from "./editorial";
@@ -104,23 +105,23 @@ export function StatementBand({
             : "linear-gradient(270deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)",
         }}
       />
-      <div
-        aria-hidden
-        className={`flute absolute inset-y-0 -z-10 w-1/2 opacity-70 ${
-          right ? "right-0" : "left-0"
-        }`}
-      />
-      <div
-        aria-hidden
-        className={`absolute inset-y-0 -z-10 w-px bg-white/30 ${
-          right ? "right-1/2" : "left-1/2"
-        }`}
-      />
+      {/* Half the band is seen through fluted glass — the image itself is
+          sliced and offset per rib, not overlaid with stripes. */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <FlutedPane
+          src={src}
+          side={fluteOn}
+          objectPosition={objectPosition}
+        />
+      </div>
 
       <div className={`${SHELL} py-24 md:py-36`}>
+        {/* Held to the un-fluted half. The glass side is bright and busy —
+            any copy crossing onto it stops being readable, which is exactly
+            what happened the first time this ran full width. */}
         <p
-          className={`display max-w-3xl text-[clamp(1.9rem,4vw,3.4rem)] text-white ${
-            right ? "" : "ml-auto text-right"
+          className={`display text-[clamp(1.9rem,4vw,3.4rem)] text-white md:max-w-[46%] ${
+            right ? "max-w-3xl" : "ml-auto max-w-3xl text-right"
           }`}
         >
           {children}

@@ -14,15 +14,8 @@ function Wordmark({ dark = false, px = 21 }: { dark?: boolean; px?: number }) {
 
 export function SiteNav() {
   return (
-    /* A floating glass bar rather than a full-width band glued to the top —
-       the reference set's own nav treatment, and the one place on the page
-       where backdrop-filter is legitimate: the blurred region is small and
-       does not repaint with the scroll. Still absolute rather than fixed,
-       because a light glass bar travelling over the dark sections would need
-       to invert itself, and that complexity buys nothing on a page this
-       length. */
     <header className="absolute inset-x-0 top-0 z-30">
-      <div className="glass glass-blur mx-auto mt-4 flex max-w-[86rem] items-center justify-between rounded-full px-5 py-3.5 md:mt-6 md:px-6">
+      <div className="mx-auto flex max-w-[88rem] items-center justify-between px-6 py-6 md:px-10">
         <Wordmark />
         <nav className="hidden items-center gap-8 md:flex">
           {NAV.map((n) => (

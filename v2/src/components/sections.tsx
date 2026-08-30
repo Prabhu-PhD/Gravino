@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroMark } from "./hero-mark";
 import { RibbonFigure } from "./ribbon-figure";
-import { SHELL, SectionHead, CornerMarks, Pull, FlutedEdge } from "./editorial";
+import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
 import { StatementBand } from "./page-shell";
 import {
   HERO,
@@ -386,12 +386,13 @@ export function Comparison() {
 
 export function Statement() {
   return (
-    <StatementBand
-      src="/brand/glass-sphere-swirl.jpeg"
-    >
-      Design is not a cost line. It is the{" "}
-      difference between being
-      understood and being overlooked.
+    /* Flute on the LEFT, because that is where this render's subject is. The
+       glass needs to sit over the sphere and its vortex to have anything to
+       break; over the empty sky on the right it was slicing a smooth gradient
+       and coming back as stripes. The copy moves right, onto the scrim. */
+    <StatementBand src="/brand/glass-sphere-swirl.jpeg" fluteOn="left">
+      Design is not a cost line. It is the difference between being understood
+      and being overlooked.
     </StatementBand>
   );
 }

@@ -84,39 +84,6 @@ export function SectionHead({
   );
 }
 
-/**
- * The seam between the light run and the dark movement, seen through fluted
- * glass. It does a job rather than decorating one: the page turns from paper
- * to ink here, and a hard cut reads as two pages stapled together. Ribs over
- * the gradient make it an edge you look THROUGH.
- */
-export function FlutedEdge({ flip = false }: { flip?: boolean }) {
-  return (
-    <div aria-hidden className="relative h-20 overflow-hidden md:h-28">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: flip
-            ? "linear-gradient(180deg, var(--color-ink) 0%, var(--color-paper) 100%)"
-            : "linear-gradient(180deg, var(--color-paper) 0%, var(--color-ink) 100%)",
-        }}
-      />
-      {/* Masked at both ends. Ribs running edge to edge read as a barcode
-          laid over the seam; fading them in and out makes the band behave
-          like a pane you are looking through. */}
-      <div
-        className="flute absolute inset-0 opacity-60"
-        style={{
-          maskImage:
-            "linear-gradient(180deg, transparent 0%, #000 38%, #000 62%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(180deg, transparent 0%, #000 38%, #000 62%, transparent 100%)",
-        }}
-      />
-    </div>
-  );
-}
-
 /** Pull quote. Hairline rule, not a coloured slab. */
 export function Pull({
   children,

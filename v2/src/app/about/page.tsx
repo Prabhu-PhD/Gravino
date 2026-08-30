@@ -96,6 +96,7 @@ export default function About() {
       <StatementBand
         src="/brand/glass-sphere-swirl.jpeg"
         objectPosition="20% center"
+        fluteOn="left"
       >
         We understood the business faster, and covered more of it, than anyone
         else they&rsquo;d worked with.

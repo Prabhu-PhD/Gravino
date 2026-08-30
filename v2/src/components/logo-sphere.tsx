@@ -46,12 +46,19 @@ import * as THREE from "three";
    glass and the environment is over-driven, while thickness stays near zero
    to keep the refraction (and therefore the "ino") clean. */
 const FILM = {
-  thickness: 0.05,
-  roughness: 0.015,
+  /* Volume thickness stays LOW, and volume tint is therefore off the table.
+     Raising it to 0.28 to pick up attenuationColor lengthened the refraction
+     ray enough to smear the core into a visible funnel under the "ino" —
+     the exact distortion a thin shell was chosen to avoid. Body colour comes
+     from the painted core instead, which is what the brand render does too. */
+  thickness: 0.08,
+  roughness: 0.008,
   ior: 1.46,
   iridescenceIOR: 1.4,
-  /** Film thickness in nm — this range picks the hue sweep. */
-  iridescenceRange: [180, 680] as [number, number],
+  /** Film thickness in nm. This is the hue selector: ~180-680 sits in the
+      washed first-order silvers, 280-900 reaches the saturated second-order
+      blues and magentas the brand render actually shows. */
+  iridescenceRange: [280, 900] as [number, number],
   envIntensity: 3.2,
 };
 
@@ -61,10 +68,24 @@ const FILM = {
  * this is the most consequential piece of tuning in the file.
  * ------------------------------------------------------------------------ */
 
+/* RESOLUTION IS THE SPECULAR SHARPNESS CEILING.
+   three's PMREMGenerator sizes its cubemap from the source: for an
+   equirectangular texture it calls `_setSize(texture.image.width / 4)`. At
+   W=512 that is 128px cube faces, so every reflection is pre-blurred before
+   the material ever samples it — no amount of roughness or envMapIntensity
+   tuning can recover detail that was thrown away at generation time.
+   W=2048 gives 512px faces: 4x the linear detail, which is where crisp
+   specular streaks come from.
+   Stored as half floats — still HDR (values run to ~30 here, far under the
+   65504 ceiling) at half the memory of Float32 for an 8M-element buffer. */
+const ENV_W = 2048;
+const ENV_H = 1024;
+
 function makeEnvTexture() {
-  const W = 512;
-  const H = 256;
-  const data = new Float32Array(W * H * 4);
+  const W = ENV_W;
+  const H = ENV_H;
+  const data = new Uint16Array(W * H * 4);
+  const half = THREE.DataUtils.toHalfFloat;
 
   // Saturated, and deliberately DARK between the highlights. A smooth pale
   // gradient reflects as haze — the shell then reads as a grey ball no matter
@@ -94,16 +115,22 @@ function makeEnvTexture() {
     return stops[stops.length - 1][1];
   };
 
-  /* Softbox windows, not gaussian blobs.
-     A studio glass render gets its character from a few DISTINCT bright
-     shapes with soft edges — that is what produces the long specular streaks
-     down a sphere's flank. Round blobs of the same energy just smear into
-     overall brightness. u, v, half-width, half-height, intensity. */
-  const windows: [number, number, number, number, number][] = [
-    [0.3, 0.14, 0.2, 0.055, 26], // main overhead strip
-    [0.74, 0.3, 0.05, 0.16, 16], // tall side softbox
-    [0.06, 0.44, 0.035, 0.2, 12], // rim light, far side
-    [0.52, 0.72, 0.16, 0.05, 6], // low bounce
+  /* Softbox windows, not gaussian blobs. A studio glass render gets its
+     character from a few DISTINCT bright shapes; round blobs of the same
+     energy just smear into overall brightness.
+     u, v, half-width, half-height, intensity, edge softness.
+     Edge softness is the other half of specular sharpness. The previous 0.06
+     (≈30px at W=512) made every window a gradient, so the shell showed broad
+     glows instead of streaks with a defined shape. These are tight — a real
+     softbox has a hard border — plus two small hard "pin" glints, which are
+     what produce the bright pinpoint sparkle on a mirror-smooth sphere. */
+  const windows: [number, number, number, number, number, number][] = [
+    [0.3, 0.14, 0.2, 0.05, 26, 0.012], // main overhead strip
+    [0.74, 0.3, 0.045, 0.16, 18, 0.012], // tall side softbox
+    [0.06, 0.44, 0.03, 0.2, 13, 0.014], // rim light, far side
+    [0.52, 0.72, 0.16, 0.045, 6, 0.02], // low bounce
+    [0.42, 0.22, 0.012, 0.012, 60, 0.004], // pin glint
+    [0.66, 0.52, 0.009, 0.009, 40, 0.004], // pin glint
   ];
   /** 1 inside the box, easing to 0 across `soft` beyond its edge. */
   const box = (d: number, half: number, soft: number) => {
@@ -119,17 +146,17 @@ function makeEnvTexture() {
       const u = x / (W - 1);
       const [r, g, b] = ramp(v);
       let boost = 0;
-      for (const [lu, lv, hw, hh, li] of windows) {
+      for (const [lu, lv, hw, hh, li, soft] of windows) {
         let du = Math.abs(u - lu);
         du = Math.min(du, 1 - du); // wrap, so the seam is continuous
         const dv = Math.abs(v - lv);
-        boost += li * box(du, hw, 0.06) * box(dv, hh, 0.05);
+        boost += li * box(du, hw, soft) * box(dv, hh, soft);
       }
       const i = (y * W + x) * 4;
-      data[i] = r + boost;
-      data[i + 1] = g + boost * 0.98;
-      data[i + 2] = b + boost * 0.94;
-      data[i + 3] = 1;
+      data[i] = half(r + boost);
+      data[i + 1] = half(g + boost * 0.98);
+      data[i + 2] = half(b + boost * 0.94);
+      data[i + 3] = half(1);
     }
   }
 
@@ -138,7 +165,7 @@ function makeEnvTexture() {
     W,
     H,
     THREE.RGBAFormat,
-    THREE.FloatType,
+    THREE.HalfFloatType,
   );
   tex.mapping = THREE.EquirectangularReflectionMapping;
   tex.colorSpace = THREE.LinearSRGBColorSpace;
@@ -167,7 +194,7 @@ function BrandEnv() {
  * ------------------------------------------------------------------------ */
 
 function makeThicknessMap() {
-  const N = 40;
+  const N = 96;
   const small = document.createElement("canvas");
   small.width = small.height = N;
   const sctx = small.getContext("2d")!;
@@ -179,15 +206,17 @@ function makeThicknessMap() {
   }
   sctx.putImageData(img, 0, 0);
 
-  const S = 512;
+  const S = 1024;
   const c = document.createElement("canvas");
   c.width = c.height = S;
   const ctx = c.getContext("2d")!;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(small, 0, 0, S, S); // broad bands
-  ctx.globalAlpha = 0.45;
-  ctx.drawImage(small, -S * 0.3, S * 0.2, S * 1.8, S * 1.8); // finer swirl
+  ctx.globalAlpha = 0.5;
+  ctx.drawImage(small, -S * 0.3, S * 0.2, S * 1.7, S * 1.7); // mid swirl
+  ctx.globalAlpha = 0.3;
+  ctx.drawImage(small, S * 0.15, -S * 0.1, S * 0.7, S * 0.7); // fine detail
   ctx.globalAlpha = 1;
 
   const t = new THREE.CanvasTexture(c);
@@ -210,20 +239,37 @@ function makeCoreTexture() {
   const ctx = c.getContext("2d")!;
   // Off-centre, matching the render's light arriving from the upper left.
   const g = ctx.createRadialGradient(
-    S * 0.42,
-    S * 0.4,
+    S * 0.44,
+    S * 0.46,
     0,
     S * 0.5,
     S * 0.5,
     S * 0.5,
   );
-  g.addColorStop(0.0, "rgba(196,216,252,0.95)");
-  g.addColorStop(0.40, "rgba(158,146,244,0.82)");
-  g.addColorStop(0.70, "rgba(206,158,230,0.55)");
-  g.addColorStop(0.88, "rgba(242,176,210,0.22)");
-  g.addColorStop(1.0, "rgba(242,176,210,0)");
+  // Blue-dominant, like the render: magenta is a rim event, not the body.
+  g.addColorStop(0.0, "rgba(146,182,250,0.94)"); // periwinkle centre
+  g.addColorStop(0.45, "rgba(126,150,246,0.82)"); // blue
+  g.addColorStop(0.74, "rgba(158,132,232,0.52)"); // violet
+  g.addColorStop(0.9, "rgba(206,140,206,0.20)"); // magenta, only at the edge
+  g.addColorStop(1.0, "rgba(206,140,206,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, S, S);
+
+  // Second colour centre — the blush bloom the render carries at upper right.
+  const g2 = ctx.createRadialGradient(
+    S * 0.68,
+    S * 0.3,
+    0,
+    S * 0.68,
+    S * 0.3,
+    S * 0.36,
+  );
+  g2.addColorStop(0.0, "rgba(255,176,214,0.42)");
+  g2.addColorStop(1.0, "rgba(255,176,214,0)");
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = g2;
+  ctx.fillRect(0, 0, S, S);
+  ctx.globalCompositeOperation = "source-over";
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
@@ -334,7 +380,7 @@ function Shell() {
         iridescenceThicknessRange={FILM.iridescenceRange}
         iridescenceThicknessMap={thicknessMap}
         clearcoat={1}
-        clearcoatRoughness={0.02}
+        clearcoatRoughness={0.008}
         envMapIntensity={FILM.envIntensity}
         specularIntensity={1}
         transparent
@@ -395,13 +441,23 @@ export function LogoSphere({
   style?: React.CSSProperties;
   satellite?: boolean;
 }) {
-  const dpr = useMemo<[number, number]>(() => [1, 2], []);
+  /* Fixed 2x rather than following devicePixelRatio. A mirror-smooth sphere
+     aliases badly: at dpr 1-1.25 the specular streaks land on too few pixels
+     and read as soft even when the reflection itself is sharp. Supersampling
+     is the cheapest remaining sharpness lever, and this is one small sphere —
+     a 420px mark costs 840x840 of fill, which is nothing. */
+  const dpr = 2;
   return (
     <div className={className} style={style}>
       <Canvas
         dpr={dpr}
         camera={{ fov: 32, position: [0, 0, 6] }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          toneMapping: THREE.NeutralToneMapping,
+          toneMappingExposure: 1.05,
+        }}
         style={{ background: "transparent" }}
       >
         <BrandEnv />

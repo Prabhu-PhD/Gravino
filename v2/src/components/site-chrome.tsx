@@ -30,7 +30,7 @@ export function SiteNav() {
         </nav>
         <Link
           href="/contact"
-          className="label rounded-full bg-on-paper px-4 py-2.5 text-paper transition-transform duration-300 hover:-translate-y-0.5"
+          className="label rounded-full bg-on-paper px-4 py-2.5 text-paper transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
         >
           Send us a deck
         </Link>

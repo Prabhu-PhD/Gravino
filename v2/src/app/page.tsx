@@ -3,8 +3,8 @@ import {
   Hero,
   Problem,
   Balance,
-  Coverage,
   Model,
+  Coverage,
   Comparison,
   Statement,
   Proof,
@@ -19,8 +19,8 @@ export default function Home() {
         <Hero />
         <Problem />
         <Balance />
-        <Coverage />
         <Model />
+        <Coverage />
         <Comparison />
         <Statement />
         <Proof />

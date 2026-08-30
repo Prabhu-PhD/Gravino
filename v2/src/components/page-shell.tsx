@@ -157,7 +157,7 @@ export function ClosingCta({
         </p>
         <Link
           href="/contact"
-          className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
+          className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
         >
           {cta}
           <span className="transition-transform duration-300 group-hover:translate-x-1">

@@ -57,7 +57,7 @@ export function Hero() {
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Link
               href={HERO.primary.href}
-              className="group inline-flex items-center gap-2 rounded-full bg-on-paper px-6 py-3.5 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 rounded-full bg-on-paper px-6 py-3.5 text-sm font-medium text-paper transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
             >
               {HERO.primary.label}
               <span className="transition-transform duration-300 group-hover:translate-x-1">
@@ -245,7 +245,7 @@ export function Coverage() {
 
 export function Model() {
   return (
-    <section className="bg-paper-soft py-24 md:py-32">
+    <section className="bg-paper py-24 md:py-32">
       <div className={SHELL}>
         <SectionHead>
           How the work holds up.
@@ -446,7 +446,7 @@ export function Teardown() {
           </p>
           <Link
             href={TEARDOWN.cta.href}
-            className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
+            className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
           >
             {TEARDOWN.cta.label}
             <span className="transition-transform duration-300 group-hover:translate-x-1">

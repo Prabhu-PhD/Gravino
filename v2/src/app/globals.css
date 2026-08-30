@@ -83,7 +83,17 @@ body {
   background: var(--color-paper);
   color: var(--color-on-paper);
   font-family: var(--font-body);
-  font-feature-settings: "cv11", "ss01";
+}
+
+/* Orphan control. `pretty` costs nothing and stops a paragraph ending on a
+   single stranded word — the cheapest typographic tell there is. Display type
+   uses `balance` instead (set on the .display utility), which evens the
+   ragged edge across a small number of lines. */
+p,
+li,
+figcaption,
+dd {
+  text-wrap: pretty;
 }
 
 /* The surfaces we did not draw still carry the design. Left at their

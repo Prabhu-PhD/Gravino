@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { makeEnvTexture } from "@/lib/glass-env";
 
@@ -21,18 +21,23 @@ import { makeEnvTexture } from "@/lib/glass-env";
  * it (which is why the "ino" in the brand art reads undistorted); and it is
  * ONE transmissive object, so there is no object-through-object refraction.
  *
- * THE THREE-LAYER STACK, AND WHY
+ * NO LETTERING HERE, ON PURPOSE
+ *
+ * The bubble carries "ino" in the LOCKUP, next to "Grav" — and nowhere else.
+ * The brochure sets the rule: its hero renders are bare glass objects, and
+ * the bubble only takes lettering on the logo page. Floating alone in a hero,
+ * under a nav that already shows the full wordmark, "ino" is half a word with
+ * no first syllable. The lockup (see logomark.tsx) is where it belongs.
+ *
+ * THE TWO-LAYER STACK, AND WHY
  *
  * A physically-honest bubble is nearly colourless head-on: at IOR 1.33 the
  * Fresnel reflectance is about 2%, so iridescence only really shows at the
  * grazing rim. The brand render is not physically honest — it has a glowing
  * blue-lilac BODY as well as an iridescent rim. So the mark is built as:
  *
- *   1. core   — a billboarded gradient disc. The body colour, and the thing
- *               that makes white "ino" legible at all.
- *   2. ino    — white text between core and shell, so it reads through the
- *               film rather than being pasted on top of the canvas.
- *   3. shell  — the transmissive, iridescent sphere. Rim colour, highlights.
+ *   1. core   — a billboarded gradient disc, carrying the body colour.
+ *   2. shell  — the transmissive, iridescent sphere. Rim colour, highlights.
  *
  * The environment is procedural (a generated equirect gradient, not an HDR
  * file or drei Lightformers): no network fetch, no multi-MB asset, and — the
@@ -221,111 +226,6 @@ function Core() {
  * matches the wordmark set beside it in HTML.
  * ------------------------------------------------------------------------ */
 
-/** How wide "ino" should sit, in world units, against a sphere of radius 1.
- *  Measured off the brand lockup: the glyphs fill roughly three quarters of
- *  the bubble. Set as a WIDTH rather than a font size so the result does not
- *  drift when the resolved face changes its metrics. */
-const INO_WIDTH = 1.28;
-/** Radius the lettering is wrapped onto — just inside the shell. */
-const INO_DOME_R = 0.95;
-
-/**
- * "ino", curved onto the inside of the bubble.
- *
- * Genuinely dimensional rather than a flat decal, and without needing
- * TextGeometry — which would mean shipping a converted typeface.json blob
- * for a face next/font only gives us as woff2. Instead the quad is a
- * subdivided plane whose vertices are pushed out onto a sphere, so the
- * lettering physically curves with the glass, catches the light across that
- * curve, and swings correctly under the rig's parallax. Planar UVs survive
- * the displacement, so the texture still maps cleanly — which a spherical
- * cap's own UVs would not have done.
- *
- * The material is LIT, not basic: shading across the dome is what reads as
- * depth. A little emissive keeps it legible where the curve turns away.
- */
-function Ino() {
-  const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
-  const [side, setSide] = useState(2);
-
-  useEffect(() => {
-    let cancelled = false;
-    const draw = () => {
-      if (cancelled) return;
-      const S = 1024;
-      const c = document.createElement("canvas");
-      c.width = c.height = S;
-      const ctx = c.getContext("2d")!;
-      // Must be a RESOLVED family list. Reading the custom property directly
-      // returns the literal "var(--font-dm), ..." token, which is an invalid
-      // ctx.font value — canvas then silently keeps 10px sans-serif and the
-      // glyphs come out invisibly small. So bounce it through a real element
-      // and read the computed value.
-      const probe = document.createElement("span");
-      probe.style.cssText =
-        "position:absolute;visibility:hidden;font-family:var(--font-display)";
-      document.body.appendChild(probe);
-      const family = getComputedStyle(probe).fontFamily || "sans-serif";
-      probe.remove();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = `500 ${Math.round(S * 0.5)}px ${family}`;
-      // Measure, then size the QUAD to suit — rather than guessing a font
-      // size and hoping the glyphs land at the right scale.
-      const w = ctx.measureText("ino").width || S * 0.62;
-      ctx.fillText("ino", S / 2, S * 0.52);
-
-      const t = new THREE.CanvasTexture(c);
-      t.anisotropy = 8;
-      t.colorSpace = THREE.SRGBColorSpace;
-      setSide((INO_WIDTH * S) / w);
-      setTex(t);
-    };
-    document.fonts.ready.then(draw).catch(draw);
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const geometry = useMemo(() => {
-    const g = new THREE.PlaneGeometry(side, side, 40, 40);
-    const pos = g.attributes.position;
-    const R = INO_DOME_R;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      // Push each vertex onto the sphere. Clamped, so corners outside the
-      // radius flatten instead of producing NaN.
-      const z = Math.sqrt(Math.max(0, R * R - x * x - y * y));
-      pos.setZ(i, z - R);
-    }
-    pos.needsUpdate = true;
-    g.computeVertexNormals();
-    return g;
-  }, [side]);
-
-  useEffect(() => () => geometry.dispose(), [geometry]);
-
-  if (!tex) return null;
-  return (
-    <mesh geometry={geometry} position={[0, 0, INO_DOME_R - 0.28]}>
-      <meshStandardMaterial
-        map={tex}
-        transparent
-        depthWrite={false}
-        roughness={0.42}
-        metalness={0}
-        envMapIntensity={1.1}
-        emissive="#ffffff"
-        emissiveMap={tex}
-        emissiveIntensity={0.35}
-      />
-    </mesh>
-  );
-}
-
 /* ---------------------------------------------------------------------------
  * Layer 3 — the shell.
  * ------------------------------------------------------------------------ */
@@ -473,7 +373,6 @@ export function LogoSphere({
         <BrandEnv />
         <Rig />
         {core && <Core />}
-        <Ino />
         <Shell />
         {satellite && <Satellite />}
       </Canvas>

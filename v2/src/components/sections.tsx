@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HeroMark } from "./hero-mark";
+import { RibbonFigure } from "./ribbon-figure";
 import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
 import { StatementBand } from "./page-shell";
 import {
@@ -172,22 +173,10 @@ export function Balance() {
             </p>
           </div>
 
-          <figure className="relative">
-            <CornerMarks className="text-on-paper" />
-            <div className="overflow-hidden rounded-2xl">
-              <Image
-                src="/brand/glass-ribbon-balance.jpeg"
-                alt="A glass sphere resting in balance on a folded glass ribbon"
-                width={3200}
-                height={1800}
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="w-full object-cover"
-              />
-            </div>
-            <figcaption className="label mt-4 text-on-paper-dim">
-              {SITE.tagline}
-            </figcaption>
-          </figure>
+          {/* Live, not the still. Second WebGL context on this page after
+              the hero mark — acceptable for two, but the reason /about keeps
+              the static render rather than a third. */}
+          <RibbonFigure caption={SITE.tagline} />
         </div>
       </div>
     </section>

@@ -1,56 +1,54 @@
 import Image from "next/image";
-import { LogoSphere } from "@/components/logo-sphere";
+import { LabScenes } from "@/components/lab-scenes";
 
-/* Judging surface for the live mark, next to the brand render it is chasing.
-   Not part of the site.
+/* Judging surface for the live glass scenes, next to the brand renders they
+   are chasing. Not part of the site.
 
-   Deliberately only THREE canvases. Every <LogoSphere> is its own <Canvas>
-   and therefore its own WebGL context, each with its own PMREM of a 2048px
-   environment. An earlier version of this page put seven on screen and the
-   browser stopped responding to scroll. That is worth remembering for the
-   real site too: the mark is a hero element, not something to sprinkle. */
+   Canvas count is kept low on purpose: every scene is its own WebGL context
+   with its own PMREM of a 2048px environment. An earlier version of this page
+   put seven on screen and the browser stopped responding to scroll. */
 
-export const metadata = { title: "Lab — Gravino mark" };
+export const metadata = { title: "Lab — glass" };
 
 export default function Lab() {
   return (
     <main>
-      <section className="bg-paper px-10 py-14">
+      <section className="bg-paper px-10 py-12">
         <p className="label text-on-paper-dim">
           Reference (left) &nbsp;·&nbsp; Live (right)
         </p>
-        <div className="mt-8 flex flex-wrap items-center gap-8">
-          <div className="w-[420px] rounded-xl bg-white p-4">
+      </section>
+
+      <section className="bg-paper px-10 pb-16">
+        <div className="grid items-center gap-8 lg:grid-cols-2">
+          <div className="overflow-hidden rounded-2xl bg-white">
             <Image
-              src="/brand/logo-bubble.png"
-              alt="Gravino logo bubble, as rendered in the brochure"
-              width={600}
-              height={603}
+              src="/brand/glass-ribbon-balance.jpeg"
+              alt="Brand render: a glass sphere balanced on a folded glass ribbon"
+              width={3200}
+              height={1800}
               className="w-full"
               priority
             />
           </div>
-          <LogoSphere style={{ width: 420, height: 420 }} />
+          <LabScenes scene="ribbon" />
         </div>
       </section>
 
-      <section className="bg-ink px-10 py-14 text-on-ink">
-        <p className="label text-on-ink-dim">Live · ink ground</p>
-        <div className="mt-8 flex items-center gap-10">
-          <LogoSphere style={{ width: 300, height: 300 }} />
-          <div className="flex items-center">
-            <span className="font-display text-4xl font-medium tracking-[-0.03em]">
-              Grav
-            </span>
-            <LogoSphere
-              style={{ width: 76, height: 76, marginLeft: -8 }}
-              satellite={false}
+      <section className="bg-paper-soft px-10 py-16">
+        <p className="label text-on-paper-dim">The mark</p>
+        <div className="mt-8 flex flex-wrap items-center gap-10">
+          <div className="w-[300px] rounded-2xl bg-white p-4">
+            <Image
+              src="/brand/logo-bubble.png"
+              alt="Brand render: the Gravino bubble"
+              width={600}
+              height={603}
+              className="w-full"
             />
           </div>
+          <LabScenes scene="mark" />
         </div>
-        <p className="label mt-6 text-on-ink-dim">
-          300 — section &nbsp;·&nbsp; 76 — nav lockup
-        </p>
       </section>
     </main>
   );

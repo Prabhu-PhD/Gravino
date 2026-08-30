@@ -59,7 +59,7 @@ const FILM = {
       washed first-order silvers, 280-900 reaches the saturated second-order
       blues and magentas the brand render actually shows. */
   iridescenceRange: [280, 900] as [number, number],
-  envIntensity: 3.2,
+  envIntensity: 3.6,
 };
 
 /* ---------------------------------------------------------------------------
@@ -81,30 +81,41 @@ const FILM = {
 const ENV_W = 2048;
 const ENV_H = 1024;
 
-function makeEnvTexture() {
+/* The pixel data is cached at module scope, the Texture is not.
+   Generating this is ~8M half-float writes; doing it per <LogoSphere> made a
+   page with several marks stall for seconds before first paint. The DATA is
+   identical for every instance, but a Texture is bound to the renderer that
+   uploaded it — each <Canvas> has its own WebGL context — so each instance
+   still gets its own cheap DataTexture wrapper around the shared buffer. */
+let envData: Uint16Array | null = null;
+
+function makeEnvData() {
+  if (envData) return envData;
   const W = ENV_W;
   const H = ENV_H;
   const data = new Uint16Array(W * H * 4);
   const half = THREE.DataUtils.toHalfFloat;
 
-  // Saturated, and deliberately DARK between the highlights. A smooth pale
-  // gradient reflects as haze — the shell then reads as a grey ball no matter
-  // how far envMapIntensity is pushed. Reflection contrast is what makes
-  // glass look like glass, so the ramp needs somewhere dark to fall to.
-  const stops: [number, [number, number, number]][] = [
-    [0.0, [0.85, 0.93, 1.0]], // sky
-    [0.22, [0.30, 0.14, 0.85]], // deep violet
-    [0.48, [0.10, 0.30, 0.80]], // saturated blue
-    [0.66, [0.55, 0.10, 0.60]], // magenta
-    [0.84, [0.95, 0.55, 0.72]], // blush
-    [1.0, [0.10, 0.10, 0.16]], // dark floor
-  ];
-  const ramp = (v: number): [number, number, number] => {
+  /* COLOUR RANGE IS AN AZIMUTHAL PROBLEM, NOT A VERTICAL ONE.
+     A mirror sphere maps its environment radially: the centre reflects what
+     is behind the viewer, and the silhouette compresses the ENTIRE horizon
+     into a thin ring. So hue variation in v (up/down) mostly averages out
+     across the visible face, while hue variation in u (around the horizon)
+     lands as distinct bands at the rim — which is exactly where a real
+     bubble's rainbow lives.
+     The previous ramp varied only in v, which is why the body read as one
+     smooth blue-violet field however saturated the stops were. */
+
+  /** Generic wrapping-aware stop interpolator. */
+  const lerpStops = (
+    t: number,
+    stops: [number, [number, number, number]][],
+  ): [number, number, number] => {
     for (let i = 1; i < stops.length; i++) {
-      if (v <= stops[i][0]) {
-        const [v0, c0] = stops[i - 1];
-        const [v1, c1] = stops[i];
-        const k = (v - v0) / (v1 - v0);
+      if (t <= stops[i][0]) {
+        const [t0, c0] = stops[i - 1];
+        const [t1, c1] = stops[i];
+        const k = (t - t0) / (t1 - t0);
         return [
           c0[0] + (c1[0] - c0[0]) * k,
           c0[1] + (c1[1] - c0[1]) * k,
@@ -114,6 +125,36 @@ function makeEnvTexture() {
     }
     return stops[stops.length - 1][1];
   };
+
+  /* The hue wheel, wrapped around the horizon. A full spectral circuit —
+     this is what the rim samples, so it is what produces banding. Ends match
+     so the u=0/u=1 seam is invisible. */
+  const azimuth: [number, [number, number, number]][] = [
+    [0.0, [0.25, 0.9, 1.0]], // cyan
+    [0.15, [0.28, 0.55, 1.0]], // sky blue
+    [0.31, [0.45, 0.24, 1.0]], // violet
+    [0.46, [0.92, 0.2, 0.86]], // magenta
+    [0.61, [1.0, 0.55, 0.76]], // blush
+    [0.75, [1.0, 0.82, 0.48]], // warm gold
+    [0.88, [0.55, 0.97, 0.86]], // mint
+    [1.0, [0.25, 0.9, 1.0]], // back to cyan
+  ];
+
+  /* Vertical ramp now carries BRIGHTNESS structure rather than hue: bright
+     sky, mid band, dark floor. Contrast is still what makes glass read as
+     glass, so the floor stays genuinely dark. */
+  const vertical: [number, [number, number, number]][] = [
+    [0.0, [1.0, 1.05, 1.15]], // bright sky
+    [0.3, [0.62, 0.66, 0.8]],
+    [0.55, [0.5, 0.52, 0.62]],
+    [0.8, [0.24, 0.22, 0.3]],
+    [1.0, [0.08, 0.08, 0.13]], // dark floor
+  ];
+
+  /* How much the azimuthal hue asserts itself. Peaks at the horizon, where
+     the rim ring samples from, and falls off toward the poles so the top and
+     bottom stay as clean light/shadow rather than muddying into colour. */
+  const horizonWeight = (v: number) => 0.42 + 0.58 * Math.sin(Math.PI * v) ** 1.3;
 
   /* Softbox windows, not gaussian blobs. A studio glass render gets its
      character from a few DISTINCT bright shapes; round blobs of the same
@@ -144,7 +185,14 @@ function makeEnvTexture() {
     const v = y / (H - 1);
     for (let x = 0; x < W; x++) {
       const u = x / (W - 1);
-      const [r, g, b] = ramp(v);
+      // Hue from azimuth, brightness from elevation, mixed by how close this
+      // row is to the horizon.
+      const [ar, ag, ab] = lerpStops(u, azimuth);
+      const [vr, vg, vb] = lerpStops(v, vertical);
+      const w = horizonWeight(v);
+      const r = vr * (1 - w) + ar * vr * w * 1.75;
+      const g = vg * (1 - w) + ag * vg * w * 1.75;
+      const b = vb * (1 - w) + ab * vb * w * 1.75;
       let boost = 0;
       for (const [lu, lv, hw, hh, li, soft] of windows) {
         let du = Math.abs(u - lu);
@@ -160,10 +208,15 @@ function makeEnvTexture() {
     }
   }
 
+  envData = data;
+  return data;
+}
+
+function makeEnvTexture() {
   const tex = new THREE.DataTexture(
-    data,
-    W,
-    H,
+    makeEnvData(),
+    ENV_W,
+    ENV_H,
     THREE.RGBAFormat,
     THREE.HalfFloatType,
   );
@@ -193,7 +246,10 @@ function BrandEnv() {
  * nothing on screen. Real bubbles swirl because the film is unevenly thick.
  * ------------------------------------------------------------------------ */
 
-function makeThicknessMap() {
+let thicknessCanvas: HTMLCanvasElement | null = null;
+
+function makeThicknessCanvas() {
+  if (thicknessCanvas) return thicknessCanvas;
   const N = 96;
   const small = document.createElement("canvas");
   small.width = small.height = N;
@@ -219,7 +275,12 @@ function makeThicknessMap() {
   ctx.drawImage(small, S * 0.15, -S * 0.1, S * 0.7, S * 0.7); // fine detail
   ctx.globalAlpha = 1;
 
-  const t = new THREE.CanvasTexture(c);
+  thicknessCanvas = c;
+  return c;
+}
+
+function makeThicknessMap() {
+  const t = new THREE.CanvasTexture(makeThicknessCanvas());
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   return t;
 }
@@ -232,45 +293,71 @@ function makeThicknessMap() {
  * has, without the UV awkwardness of gradient-mapping a sphere.
  * ------------------------------------------------------------------------ */
 
-function makeCoreTexture() {
+let coreCanvas: HTMLCanvasElement | null = null;
+
+function makeCoreCanvas() {
+  if (coreCanvas) return coreCanvas;
   const S = 512;
   const c = document.createElement("canvas");
   c.width = c.height = S;
   const ctx = c.getContext("2d")!;
-  // Off-centre, matching the render's light arriving from the upper left.
-  const g = ctx.createRadialGradient(
-    S * 0.44,
-    S * 0.46,
-    0,
-    S * 0.5,
-    S * 0.5,
-    S * 0.5,
-  );
-  // Blue-dominant, like the render: magenta is a rim event, not the body.
-  g.addColorStop(0.0, "rgba(146,182,250,0.94)"); // periwinkle centre
-  g.addColorStop(0.45, "rgba(126,150,246,0.82)"); // blue
-  g.addColorStop(0.74, "rgba(158,132,232,0.52)"); // violet
-  g.addColorStop(0.9, "rgba(206,140,206,0.20)"); // magenta, only at the edge
-  g.addColorStop(1.0, "rgba(206,140,206,0)");
-  ctx.fillStyle = g;
+
+  /* Painted, not derived — and this is where essentially ALL the mark's
+     colour lives. Verified by rendering the shell with the core off: it comes
+     out nearly colourless. At 94% transmission the visible face IS whatever
+     is behind the film, so the environment only ever reaches the thin rim.
+     The brand render works the same way; it is a painted interior with an
+     iridescent edge, not a physical simulation.
+     Four colour centres rather than one radial, because a single gradient
+     can only ever produce one hue axis and the render clearly has several. */
+  const radial = (
+    x: number,
+    y: number,
+    r: number,
+    stops: [number, string][],
+  ) => {
+    const g = ctx.createRadialGradient(S * x, S * y, 0, S * x, S * y, S * r);
+    for (const [t, col] of stops) g.addColorStop(t, col);
+    return g;
+  };
+
+  // Body: periwinkle centre falling through blue and violet to a magenta rim.
+  ctx.fillStyle = radial(0.5, 0.5, 0.5, [
+    [0.0, "rgba(150,188,252,0.95)"],
+    [0.42, "rgba(124,146,244,0.86)"],
+    [0.72, "rgba(150,124,228,0.60)"],
+    [0.9, "rgba(202,134,206,0.26)"],
+    [1.0, "rgba(202,134,206,0)"],
+  ]);
   ctx.fillRect(0, 0, S, S);
 
-  // Second colour centre — the blush bloom the render carries at upper right.
-  const g2 = ctx.createRadialGradient(
-    S * 0.68,
-    S * 0.3,
-    0,
-    S * 0.68,
-    S * 0.3,
-    S * 0.36,
-  );
-  g2.addColorStop(0.0, "rgba(255,176,214,0.42)");
-  g2.addColorStop(1.0, "rgba(255,176,214,0)");
   ctx.globalCompositeOperation = "lighter";
-  ctx.fillStyle = g2;
+  // Blush bloom, upper right.
+  ctx.fillStyle = radial(0.7, 0.28, 0.34, [
+    [0.0, "rgba(255,168,208,0.46)"],
+    [1.0, "rgba(255,168,208,0)"],
+  ]);
+  ctx.fillRect(0, 0, S, S);
+  // Cyan-white crescent, lower left — the render's brightest interior note.
+  ctx.fillStyle = radial(0.31, 0.74, 0.3, [
+    [0.0, "rgba(198,248,255,0.5)"],
+    [1.0, "rgba(198,248,255,0)"],
+  ]);
+  ctx.fillRect(0, 0, S, S);
+  // Cool violet pool, upper left, to keep the top half from going flat.
+  ctx.fillStyle = radial(0.26, 0.3, 0.28, [
+    [0.0, "rgba(140,110,246,0.3)"],
+    [1.0, "rgba(140,110,246,0)"],
+  ]);
   ctx.fillRect(0, 0, S, S);
   ctx.globalCompositeOperation = "source-over";
-  const t = new THREE.CanvasTexture(c);
+
+  coreCanvas = c;
+  return c;
+}
+
+function makeCoreTexture() {
+  const t = new THREE.CanvasTexture(makeCoreCanvas());
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
@@ -436,10 +523,14 @@ export function LogoSphere({
   className = "",
   style,
   satellite = true,
+  core = true,
 }: {
   className?: string;
   style?: React.CSSProperties;
   satellite?: boolean;
+  /** Off isolates the shell — useful for judging how much colour the
+   *  environment alone is contributing. */
+  core?: boolean;
 }) {
   /* Fixed 2x rather than following devicePixelRatio. A mirror-smooth sphere
      aliases badly: at dpr 1-1.25 the specular streaks land on too few pixels
@@ -462,7 +553,7 @@ export function LogoSphere({
       >
         <BrandEnv />
         <Rig />
-        <Core />
+        {core && <Core />}
         <Ino />
         <Shell />
         {satellite && <Satellite />}

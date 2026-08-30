@@ -113,41 +113,44 @@ export function Problem() {
   return (
     <section className="ground bg-paper py-24 md:py-32">
       <div className={SHELL}>
-        <SectionHead>
-          You don&rsquo;t have five problems. You have one, in a dozen formats.
-        </SectionHead>
+        <SectionHead>{PROBLEM.headline}</SectionHead>
 
-        <div className="mt-14 grid gap-10 border-t border-paper-line pt-10 md:grid-cols-2 md:gap-16">
-          {PROBLEM.body.map((p) => (
+        {/* Both lines, stacked rather than set in two columns. The second one
+            says what Gravino LEADS with, which the coverage list never does —
+            dropping it to tidy the section would have cost a real fact. */}
+        <div className="mt-8 max-w-2xl space-y-4">
+          {PROBLEM.body.map((t) => (
             <p
-              key={p.slice(0, 24)}
+              key={t.slice(0, 20)}
               className="text-[1.02rem] leading-relaxed text-on-paper-dim"
             >
-              {p}
+              {t}
             </p>
           ))}
         </div>
 
-        <div className="mt-20">
-          <Pull>{PROBLEM.pull}</Pull>
-        </div>
-
-        <div className="mt-24 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div className="mt-20 grid items-center gap-14 border-t border-paper-line pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           <div>
-            <h3 className="display text-[clamp(1.6rem,2.8vw,2.4rem)]">
+            <h3 className="display text-[clamp(1.5rem,2.6vw,2.2rem)]">
               {BALANCE.headline}
             </h3>
-            <p className="mt-7 text-[1.02rem] leading-relaxed text-on-paper-dim">
+            <p className="mt-6 text-[1.02rem] leading-relaxed text-on-paper-dim">
               {BALANCE.body}
             </p>
-            <p className="mt-8 font-display text-[clamp(1.4rem,2.5vw,2rem)] font-medium leading-snug tracking-[-0.03em]">
-              {BALANCE.pull}
-            </p>
-            <p className="mt-8 text-[1.02rem] leading-relaxed text-on-paper-dim">
+            <p className="mt-7 text-[1.02rem] leading-relaxed text-on-paper-dim">
               {BALANCE.close}
             </p>
           </div>
           <RibbonFigure caption={SITE.tagline} />
+        </div>
+
+        {/* The one quote in the section. With the comparison table gone from
+            this page, this is where Gravino positions against freelancers and
+            in-house hires, so it closes the section rather than interrupting
+            it. Two pull quotes in one section was most of why it read
+            jumbled. */}
+        <div className="mt-24">
+          <Pull>{PROBLEM.pull}</Pull>
         </div>
       </div>
     </section>
@@ -230,131 +233,50 @@ export function Model() {
   return (
     <section className="ground bg-paper py-24 md:py-32">
       <div className={SHELL}>
-        <SectionHead>
-          How the work holds up.
-        </SectionHead>
+        <SectionHead>How the work holds up.</SectionHead>
 
-        <div className="mt-16 grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        {/* The render is a VERTICAL stack of three glass objects — a ring, a
+            cube, a sphere — and there are exactly three points. So the image
+            runs tall and the points sit beside it, one per object, instead of
+            a static picture parked next to a list of cards. The artwork is
+            doing the numbering. */}
+        <div className="mt-16 grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch lg:gap-20">
           <figure className="relative order-2 lg:order-1">
             <CornerMarks className="text-on-paper" />
-            <div className="overflow-hidden rounded-2xl">
+            <div className="h-full overflow-hidden rounded-2xl">
               <Image
                 src="/brand/glass-stack.jpeg"
                 alt="A glass ring, cube and sphere stacked in balance"
                 width={3200}
                 height={1800}
-                sizes="(max-width: 1024px) 100vw, 38vw"
-                className="w-full object-cover"
+                sizes="(max-width: 1024px) 100vw, 32vw"
+                className="h-full min-h-[22rem] w-full object-cover object-center lg:min-h-[34rem]"
               />
             </div>
           </figure>
 
-          <div className="order-1 lg:order-2">
-            {MODEL.map((m) => (
-              <div
+          <ol className="order-1 flex flex-col justify-between lg:order-2">
+            {MODEL.map((m, idx) => (
+              <li
                 key={m.n}
-                className="glass mb-4 grid gap-4 p-7 sm:grid-cols-[5rem_1fr] sm:gap-8 md:p-8"
+                className={`grid grid-cols-[3.5rem_1fr] gap-x-6 py-7 md:grid-cols-[5rem_1fr] md:gap-x-10 ${
+                  idx > 0 ? "border-t border-paper-line" : ""
+                }`}
               >
-                <p className="font-display text-4xl leading-none text-grad-2">
+                <p className="font-display text-[2.6rem] leading-none text-grad-2 md:text-[3.4rem]">
                   {m.n}
                 </p>
                 <div>
-                  <h3 className="font-display text-xl font-medium tracking-[-0.02em]">
+                  <h3 className="font-display text-[1.35rem] font-medium tracking-[-0.02em] md:text-[1.6rem]">
                     {m.title}
                   </h3>
-                  <p className="mt-3 max-w-xl text-[0.97rem] leading-relaxed text-on-paper-dim">
+                  <p className="mt-3 max-w-lg text-[0.97rem] leading-relaxed text-on-paper-dim">
                     {m.body}
                   </p>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------------------------
- * 06 — The comparison. Dark band; the one place contrast does real work.
- * ------------------------------------------------------------------------ */
-
-export function Comparison() {
-  const last = COMPARISON.columns.length - 1;
-  return (
-    <section className="bg-ink py-24 text-on-ink md:py-32">
-      <div className={SHELL}>
-        <SectionHead
-          dark
-          lede={COMPARISON.intro}
-        >
-          Why this beats the{" "}
-          alternatives.
-        </SectionHead>
-
-        {/* overflow-x-auto: the one element that cannot reflow below ~640px
-            without becoming unreadable. */}
-        <div className="mt-14 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
-          <table className="w-full min-w-[46rem] border-collapse text-left">
-            <thead>
-              <tr>
-                <th className="label pb-5 font-normal text-on-ink-dim">&nbsp;</th>
-                {COMPARISON.columns.map((c, i) => (
-                  <th
-                    key={c}
-                    className={`pb-5 font-display text-lg font-medium tracking-[-0.02em] ${
-                      i === last ? "text-accent-on-ink" : "text-on-ink-dim"
-                    }`}
-                  >
-                    {c}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON.rows.map((r) => (
-                <tr key={r.k} className="border-t border-ink-line">
-                  <th
-                    scope="row"
-                    className="label py-5 pr-8 font-normal text-on-ink-dim"
-                  >
-                    {r.k}
-                  </th>
-                  {r.v.map((v, i) => (
-                    <td
-                      key={i}
-                      className={`py-5 pr-8 text-[0.97rem] ${
-                        i === last
-                          ? "bg-white/[0.07] text-on-ink shadow-[inset_1px_0_0_rgba(255,255,255,0.14),inset_-1px_0_0_rgba(255,255,255,0.14)]"
-                          : "text-on-ink-dim"
-                      }`}
-                    >
-                      {v}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="mt-14">
-          <Pull dark>{COMPARISON.close}</Pull>
-        </div>
-
-        <div className="mt-12 flex flex-wrap gap-3">
-          <Link
-            href="/for/ceo"
-            className="label rounded-full border border-white/25 px-5 py-3 transition-colors hover:border-white/60"
-          >
-            If you&rsquo;re the CEO
-          </Link>
-          <Link
-            href="/for/cfo"
-            className="label rounded-full border border-white/25 px-5 py-3 transition-colors hover:border-white/60"
-          >
-            If you&rsquo;re the CFO
-          </Link>
+          </ol>
         </div>
       </div>
     </section>

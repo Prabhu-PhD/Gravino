@@ -60,7 +60,7 @@ export const HERO = {
 
 export const PROBLEM = {
   label: "The problem",
-  headline: "You don't have five problems. You have one, in a dozen formats.",
+  headline: "One problem. A dozen formats.",
   body: [
     "Investor deck to launch film to internal playbook. An embedded partner, not a vendor you re-brief every time.",
     "We lead with the work that decides outcomes: decks, reports, narratives. Brand, digital, motion and campaign sit behind it.",

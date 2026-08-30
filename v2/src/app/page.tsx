@@ -4,7 +4,6 @@ import {
   Problem,
   Model,
   Coverage,
-  Comparison,
   Proof,
   Teardown,
 } from "@/components/sections";
@@ -16,9 +15,9 @@ import {
    type without adding a fact. Its visual treatment survives on the closing
    CTA, which had content but no presence.
 
-   Tonally the page still reads as two movements: a light run, then the dark
-   block carrying the two heaviest arguments, then a light breath and the
-   dark close. */
+   Tonally: a light run, the dark peak at Coverage, a light breath, then the
+   dark close. The freelancer/in-house comparison table now lives only on
+   /for/cfo, where it is the entire argument rather than a detour. */
 export default function Home() {
   return (
     <>
@@ -28,7 +27,6 @@ export default function Home() {
         <Problem />
         <Model />
         <Coverage />
-        <Comparison />
         <Proof />
         <Teardown />
       </main>

@@ -1,5 +1,12 @@
-import { Page, PageHead, ClosingCta, SHELL } from "@/components/page-shell";
-import { GROUPS } from "@/lib/site";
+import {
+  Page,
+  PageHead,
+  ClosingCta,
+  StatementBand,
+  SHELL,
+} from "@/components/page-shell";
+import { SectionHead } from "@/components/editorial";
+import { GROUPS, SITE } from "@/lib/site";
 
 export const metadata = {
   title: "What we cover",
@@ -7,10 +14,13 @@ export const metadata = {
     "Ten disciplines across capital and corporate narrative, brand and identity, growth and digital, and public and physical experience.",
 };
 
+const TOTAL = String(GROUPS.length).padStart(2, "0");
+
 export default function Services() {
   return (
     <Page>
       <PageHead
+        index="01"
         eyebrow="What we cover"
         headline="The full surface, ten disciplines"
         accent="deep."
@@ -23,28 +33,33 @@ export default function Services() {
           className={i % 2 ? "bg-paper-soft" : "bg-paper"}
         >
           <div className={`${SHELL} py-20 md:py-28`}>
-            <div className="flex items-baseline gap-5">
-              <span className="label text-accent">{g.n}</span>
-              <h2 className="display text-[clamp(1.6rem,3vw,2.4rem)]">
-                {g.name}
-              </h2>
-            </div>
-            <p className="mt-4 max-w-2xl text-[1.02rem] leading-relaxed text-on-paper-dim">
-              {g.premise}
-            </p>
+            <SectionHead
+              index={g.n}
+              total={TOTAL}
+              label={`${g.disciplines.length} disciplines`}
+              lede={g.premise}
+            >
+              {g.name}
+            </SectionHead>
 
-            <div className="mt-14 grid gap-x-12 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {g.disciplines.map((d) => (
-                <article key={d.n}>
-                  <p className="label text-on-paper-dim">{d.n}</p>
-                  <h3 className="mt-4 font-display text-[1.35rem] font-medium leading-snug tracking-[-0.02em]">
+                <article key={d.n} className="card flex flex-col p-8">
+                  <div className="flex items-baseline justify-between">
+                    <span className="label text-accent">{d.n}</span>
+                    <span className="label text-on-paper-dim">
+                      {g.n}
+                      <span className="opacity-40"> / {TOTAL}</span>
+                    </span>
+                  </div>
+                  <h3 className="mt-6 font-display text-[1.3rem] font-medium leading-snug tracking-[-0.02em]">
                     {d.title}
                   </h3>
                   <p className="label mt-2 text-accent">{d.kind}</p>
-                  <p className="mt-5 text-[0.97rem] leading-relaxed text-on-paper-dim">
+                  <p className="mt-5 text-[0.95rem] leading-relaxed text-on-paper-dim">
                     {d.blurb}
                   </p>
-                  <ul className="mt-6 flex flex-wrap gap-2">
+                  <ul className="mt-6 flex flex-wrap gap-2 border-t border-paper-line pt-5">
                     {d.items.map((it) => (
                       <li
                         key={it}
@@ -61,8 +76,18 @@ export default function Services() {
         </section>
       ))}
 
+      <StatementBand
+        src="/brand/glass-stack.jpeg"
+        objectPosition="60% center"
+        eyebrow={`${SITE.experienceYears}+ years, combined`}
+      >
+        Ten disciplines, one team, and a{" "}
+        <span className="text-gradient">single</span> brief to write.
+      </StatementBand>
+
       <ClosingCta
-        headline="Not sure which of these you need?"
+        headline="Not sure which of these you"
+        accent="need?"
         body="Send us what you have — a deck, a report, a brand piece. We'll come back with a one-page read on what's working, what isn't, and which of the ten actually applies."
       />
     </Page>

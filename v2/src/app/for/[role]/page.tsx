@@ -1,5 +1,12 @@
 import { notFound } from "next/navigation";
-import { Page, PageHead, ClosingCta, SHELL } from "@/components/page-shell";
+import {
+  Page,
+  PageHead,
+  ClosingCta,
+  StatementBand,
+  SHELL,
+} from "@/components/page-shell";
+import { SectionHead, Pull } from "@/components/editorial";
 import { AUDIENCES, COMPARISON } from "@/lib/site";
 
 type Role = keyof typeof AUDIENCES;
@@ -31,54 +38,101 @@ export default async function AudiencePage({
 
   /* The cost table belongs to the CFO's argument specifically — it is the
      whole case on that page, and a distraction on the CEO's. */
-  const showTable = role === "cfo";
+  const isCfo = role === "cfo";
+  const total = isCfo ? "04" : "03";
+  const last = COMPARISON.columns.length - 1;
 
   return (
     <Page>
-      <PageHead eyebrow={a.role} headline={a.headline} lede={a.lede} />
+      <PageHead
+        index="01"
+        eyebrow={a.role}
+        headline={a.headline}
+        lede={a.lede}
+      />
 
       <section className="bg-paper py-24 md:py-32">
-        <div className={`${SHELL} grid gap-14 md:grid-cols-[1fr_1fr] md:gap-20`}>
-          <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
-            {a.body}
-          </p>
-          <blockquote className="self-start border-l-2 border-accent pl-7">
-            <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] leading-snug tracking-[-0.02em]">
-              {a.pull}
+        <div className={SHELL}>
+          <SectionHead index="02" total={total} label="The position">
+            {isCfo ? (
+              <>
+                The third <span className="text-gradient">option.</span>
+              </>
+            ) : (
+              <>
+                Where it is won and{" "}
+                <span className="text-gradient">lost.</span>
+              </>
+            )}
+          </SectionHead>
+
+          <div className="mt-14 grid gap-14 border-t border-paper-line pt-12 md:grid-cols-[1fr_1fr] md:gap-20">
+            <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
+              {a.body}
             </p>
-          </blockquote>
+            <div className="self-start">
+              <Pull>{a.pull}</Pull>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="bg-paper-soft py-24 md:py-32">
         <div className={SHELL}>
-          <p className="label text-on-paper-dim">What that looks like</p>
-          <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-10">
+          <SectionHead index="03" total={total} label="What that looks like">
+            {isCfo ? (
+              <>
+                What that gives <span className="text-gradient">you.</span>
+              </>
+            ) : (
+              <>
+                Built like an in-house team. Positioned like a{" "}
+                <span className="text-gradient">market leader.</span>
+              </>
+            )}
+          </SectionHead>
+
+          <div className="mt-14">
             {a.points.map((p, i) => (
-              <div key={p.title}>
-                <p className="font-display text-4xl text-grad-2">
+              <div
+                key={p.title}
+                className="grid gap-4 border-t border-paper-line py-9 sm:grid-cols-[5rem_1fr] sm:gap-8"
+              >
+                <p className="font-display text-4xl leading-none text-grad-2">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h2 className="mt-5 font-display text-xl font-medium tracking-[-0.02em]">
-                  {p.title}
-                </h2>
-                <p className="mt-4 text-[0.97rem] leading-relaxed text-on-paper-dim">
-                  {p.body}
-                </p>
+                <div>
+                  <h3 className="font-display text-xl font-medium tracking-[-0.02em]">
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-[0.97rem] leading-relaxed text-on-paper-dim">
+                    {p.body}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
-          <p className="mt-16 max-w-3xl font-display text-[clamp(1.3rem,2.2vw,1.8rem)] leading-snug tracking-[-0.02em]">
+
+          <p className="mt-12 max-w-3xl font-display text-[clamp(1.3rem,2.2vw,1.8rem)] leading-snug tracking-[-0.02em]">
             {a.close}
           </p>
         </div>
       </section>
 
-      {showTable ? (
+      {isCfo ? (
         <section className="bg-ink py-24 text-on-ink md:py-32">
           <div className={SHELL}>
-            <p className="label text-on-ink-dim">The real cost of each option</p>
-            <div className="mt-12 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
+            <SectionHead
+              index="04"
+              total={total}
+              label="The real cost of each option"
+              dark
+            >
+              Three ways to solve it. One{" "}
+              <span className="text-gradient">that adds up.</span>
+            </SectionHead>
+
+            <div className="mt-14 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
               <table className="w-full min-w-[46rem] border-collapse text-left">
                 <thead>
                   <tr>
@@ -89,9 +143,7 @@ export default async function AudiencePage({
                       <th
                         key={c}
                         className={`pb-5 font-display text-lg font-medium tracking-[-0.02em] ${
-                          i === COMPARISON.columns.length - 1
-                            ? "text-accent-on-ink"
-                            : "text-on-ink-dim"
+                          i === last ? "text-accent-on-ink" : "text-on-ink-dim"
                         }`}
                       >
                         {c}
@@ -112,8 +164,8 @@ export default async function AudiencePage({
                         <td
                           key={i}
                           className={`py-5 pr-8 text-[0.97rem] ${
-                            i === COMPARISON.columns.length - 1
-                              ? "text-on-ink"
+                            i === last
+                              ? "bg-white/[0.04] text-on-ink"
                               : "text-on-ink-dim"
                           }`}
                         >
@@ -127,14 +179,23 @@ export default async function AudiencePage({
             </div>
           </div>
         </section>
-      ) : null}
+      ) : (
+        <StatementBand
+          src="/brand/glass-sphere-swirl.jpeg"
+          objectPosition="30% center"
+          eyebrow="Seed rounds through IPO roadshows"
+          fluteOn="left"
+        >
+          A brilliant strategy told badly loses to an average one told{" "}
+          <span className="text-gradient">well.</span>
+        </StatementBand>
+      )}
 
       <ClosingCta
-        headline={
-          role === "cfo" ? "See where it's leaking." : "See it before you commit."
-        }
+        headline={isCfo ? "See where it's" : "See it before you"}
+        accent={isCfo ? "leaking." : "commit."}
         body={a.offer}
-        cta={role === "cfo" ? "Book a call" : "Send us a deck"}
+        cta={isCfo ? "Book a call" : "Send us a deck"}
       />
     </Page>
   );

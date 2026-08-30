@@ -1,16 +1,38 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SiteNav, SiteFooter } from "./site-chrome";
+import { SHELL, CornerMarks } from "./editorial";
+import { SITE } from "@/lib/site";
 
 export { SHELL } from "./editorial";
-import { SHELL } from "./editorial";
 
-/** Standard interior-page header: pale wash, eyebrow, headline, lede. */
+/* ===========================================================================
+ * Interior-page shell, carrying the same editorial system as the home page:
+ * a visible grid, a running index, hairline rules, corner ticks, and one
+ * loud full-bleed moment per page.
+ * ======================================================================== */
+
+/** The hero's visible measure lines, reused so every page sits on one grid. */
+function GridLines() {
+  return (
+    <div aria-hidden className={`${SHELL} pointer-events-none absolute inset-0`}>
+      <div className="relative h-full">
+        <span className="absolute inset-y-0 left-0 w-px bg-on-paper/10" />
+        <span className="absolute inset-y-0 right-0 w-px bg-on-paper/10" />
+      </div>
+    </div>
+  );
+}
+
 export function PageHead({
+  index,
   eyebrow,
   headline,
   accent,
   lede,
 }: {
+  /** Short page marker, e.g. "02". Renders alongside the eyebrow. */
+  index?: string;
   eyebrow: string;
   headline: string;
   accent?: string;
@@ -19,9 +41,15 @@ export function PageHead({
   return (
     <section className="bg-wash relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
       <div aria-hidden className="grain-layer" />
+      <GridLines />
       <div className={`${SHELL} relative`}>
-        <p className="label text-on-paper-dim">{eyebrow}</p>
-        <h1 className="display mt-6 max-w-4xl text-[clamp(2.3rem,5vw,4.2rem)]">
+        <div className="flex items-center gap-5">
+          {index ? <span className="label text-accent">{index}</span> : null}
+          <span className="h-px w-10 bg-on-paper/25" />
+          <span className="label text-on-paper-dim">{eyebrow}</span>
+        </div>
+
+        <h1 className="display mt-9 max-w-4xl text-[clamp(2.3rem,4.9vw,4.1rem)]">
           {headline}
           {accent ? (
             <>
@@ -30,11 +58,89 @@ export function PageHead({
             </>
           ) : null}
         </h1>
+
         {lede ? (
           <p className="mt-8 max-w-2xl text-[1.05rem] leading-relaxed text-on-paper-dim">
             {lede}
           </p>
         ) : null}
+
+        <div className="mt-14 flex items-center justify-between border-t border-on-paper/15 pt-5">
+          <span className="label text-on-paper-dim">{SITE.location}</span>
+          <span className="label hidden text-on-paper-dim sm:block">
+            {SITE.lockupLine}
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The full-bleed loud moment. One per page, always a brand render behind big
+ * type with a fluted pane over one half — the Southern West International /
+ * Clarity motif. `objectPosition` lets the same three renders read as
+ * different images across pages rather than repeating a crop.
+ */
+export function StatementBand({
+  src,
+  objectPosition = "center",
+  eyebrow,
+  children,
+  fluteOn = "right",
+}: {
+  src: string;
+  objectPosition?: string;
+  eyebrow: string;
+  children: React.ReactNode;
+  fluteOn?: "left" | "right";
+}) {
+  const right = fluteOn === "right";
+  return (
+    <section className="relative isolate overflow-hidden bg-ink text-on-ink">
+      <Image
+        src={src}
+        alt=""
+        aria-hidden
+        width={3200}
+        height={1800}
+        sizes="100vw"
+        style={{ objectPosition }}
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          background: right
+            ? "linear-gradient(90deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)"
+            : "linear-gradient(270deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className={`flute absolute inset-y-0 -z-10 w-1/2 opacity-70 ${
+          right ? "right-0" : "left-0"
+        }`}
+      />
+      <div
+        aria-hidden
+        className={`absolute inset-y-0 -z-10 w-px bg-white/30 ${
+          right ? "right-1/2" : "left-1/2"
+        }`}
+      />
+
+      <div className={`${SHELL} py-24 md:py-36`}>
+        <p className={`label text-white/70 ${right ? "" : "text-right"}`}>
+          {eyebrow}
+        </p>
+        <p
+          className={`display mt-8 max-w-3xl text-[clamp(1.9rem,4vw,3.4rem)] text-white ${
+            right ? "" : "ml-auto text-right"
+          }`}
+        >
+          {children}
+        </p>
       </div>
     </section>
   );
@@ -43,19 +149,30 @@ export function PageHead({
 /** The closing conversion band, shared by every interior page. */
 export function ClosingCta({
   headline,
+  accent,
   body,
   cta = "Send us a deck",
 }: {
   headline: string;
+  accent?: string;
   body: string;
   cta?: string;
 }) {
   return (
     <section className="bg-ink py-24 text-on-ink md:py-32">
       <div className={SHELL}>
-        <p className="label text-on-ink-dim">No cost, no pitch</p>
-        <h2 className="display mt-6 max-w-3xl text-[clamp(1.9rem,3.6vw,3rem)]">
+        <div className="flex items-center gap-5">
+          <span className="h-px w-10 bg-white/30" />
+          <span className="label text-on-ink-dim">No cost, no pitch</span>
+        </div>
+        <h2 className="display mt-8 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)]">
           {headline}
+          {accent ? (
+            <>
+              {" "}
+              <span className="text-gradient">{accent}</span>
+            </>
+          ) : null}
         </h2>
         <p className="mt-7 max-w-xl text-[1.02rem] leading-relaxed text-on-ink-dim">
           {body}
@@ -71,6 +188,40 @@ export function ClosingCta({
         </Link>
       </div>
     </section>
+  );
+}
+
+/** A framed figure — corner ticks plus rounded crop, as used on the home page. */
+export function Figure({
+  src,
+  alt,
+  caption,
+  sizes = "(max-width: 1024px) 100vw, 45vw",
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  sizes?: string;
+}) {
+  return (
+    <figure className="relative">
+      <CornerMarks className="text-on-paper" />
+      <div className="overflow-hidden rounded-2xl">
+        <Image
+          src={src}
+          alt={alt}
+          width={3200}
+          height={1800}
+          sizes={sizes}
+          className="w-full object-cover"
+        />
+      </div>
+      {caption ? (
+        <figcaption className="label mt-4 text-on-paper-dim">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
   );
 }
 

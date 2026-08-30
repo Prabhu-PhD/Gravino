@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroMark } from "./hero-mark";
 import { SHELL, SectionHead, CornerMarks, Pull } from "./editorial";
+import { StatementBand } from "./page-shell";
 import {
   HERO,
   PROBLEM,
@@ -409,53 +410,20 @@ export function Comparison() {
 
 /* ---------------------------------------------------------------------------
  * The statement band — full-bleed, the page's one loud moment.
- *
- * The swirl render behind big type, with a fluted pane over the right half:
- * the Southern West International / Clarity motif from the reference set,
- * which now has real imagery to sit on rather than having to invent a subject
- * the way v1's hero kept trying to.
+ * Shares StatementBand with every interior page so there is exactly one
+ * implementation of the fluted-pane-over-render motif.
  * ------------------------------------------------------------------------ */
 
 export function Statement() {
   return (
-    <section className="relative isolate overflow-hidden bg-ink text-on-ink">
-      <Image
-        src="/brand/glass-sphere-swirl.jpeg"
-        alt=""
-        aria-hidden
-        width={3200}
-        height={1800}
-        sizes="100vw"
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)",
-        }}
-      />
-      {/* The fluted pane, over the right half only — glass laid on content,
-          which is how the references use it. */}
-      <div
-        aria-hidden
-        className="flute absolute inset-y-0 right-0 -z-10 w-1/2 opacity-70"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-y-0 right-1/2 -z-10 w-px bg-white/30"
-      />
-
-      <div className={`${SHELL} py-28 md:py-40`}>
-        <p className="label text-white/70">{SITE.lockupLine}</p>
-        <p className="display mt-8 max-w-3xl text-[clamp(2rem,4.3vw,3.7rem)] text-white">
-          Design is not a cost line. It is the{" "}
-          <span className="text-gradient">difference</span> between being
-          understood and being overlooked.
-        </p>
-      </div>
-    </section>
+    <StatementBand
+      src="/brand/glass-sphere-swirl.jpeg"
+      eyebrow={SITE.lockupLine}
+    >
+      Design is not a cost line. It is the{" "}
+      <span className="text-gradient">difference</span> between being
+      understood and being overlooked.
+    </StatementBand>
   );
 }
 

@@ -49,7 +49,7 @@ export const HERO = {
    *  "say.", "Balance" and "Model". One word per headline, never more. */
   headline: ["One team for everything", "your business needs to"],
   accent: "say.",
-  body: "Startups and growing companies don't have a deck problem, then a report problem, then a brand problem. They have one communications challenge that shows up in a dozen formats — and no time to brief a different vendor on the business each time.",
+  body: "One senior team across every format — learning your business once, then handling everything it has to say.",
   primary: { label: "Send us a deck", href: "/contact" },
   secondary: { label: "See what we cover", href: "/services" },
 } as const;
@@ -62,8 +62,8 @@ export const PROBLEM = {
   label: "The problem",
   headline: "You don't have five problems. You have one, in a dozen formats.",
   body: [
-    "Gravino absorbs the whole of it. We cover the full surface of how your business communicates — from the investor deck to the launch film to the internal playbook — as an embedded partner that learns your business once, then handles all of it.",
-    "We lead with high-stakes business communication — the decks, reports and narratives that decide outcomes — and bring the full range of brand, digital, motion and campaign work behind it. One senior team, fluent across every format, so nothing is lost in translation between five suppliers.",
+    "Investor deck to launch film to internal playbook. An embedded partner, not a vendor you re-brief every time.",
+    "We lead with the work that decides outcomes: decks, reports, narratives. Brand, digital, motion and campaign sit behind it.",
   ],
   pull: "Most studios design your logo. Most freelancers build one deck. We become the communications capability your company doesn't have the headcount to hire.",
 } as const;
@@ -71,10 +71,10 @@ export const PROBLEM = {
 export const BALANCE = {
   label: "Why it matters",
   headline: "Every high-stakes communication is a balancing act.",
-  body: "Enough detail to be credible, enough clarity to be understood; ambition that inspires, grounded in proof that convinces. Tip too far either way and you either bore the room or lose its trust.",
+  body: "Enough detail to be credible. Enough clarity to be understood. Tip either way and you bore the room, or lose it.",
   pull: "A brilliant business that communicates unclearly is an undervalued one.",
   close:
-    "That balance is the discipline — and it's the one we've built the firm around. It's also why clients tell us the same thing: that we understood their business faster, and covered more of what they needed, than anyone else they'd worked with.",
+    "The discipline we built the firm around. Clients say the same thing: we understood the business faster, and covered more of it, than anyone before us.",
 } as const;
 
 /* ---------------------------------------------------------------------------
@@ -109,7 +109,7 @@ export const GROUPS: Group[] = [
         title: "Win the room",
         kind: "High-stakes corporate communications",
         blurb:
-          "The investor deck, the board narrative, the keynote — the documents where a “no” costs the most. Built to survive the hardest question in the room, not just to open well.",
+          "The deck, the board narrative, the keynote — where a “no” costs most. Built to survive the hardest question in the room, not just to open well.",
         items: ["Pitch & investor decks", "Boardroom presentations", "Keynote design"],
       },
       {
@@ -117,7 +117,7 @@ export const GROUPS: Group[] = [
         title: "Report with authority",
         kind: "ESG & impact reporting",
         blurb:
-          "Annual reports, ESG disclosures and governance summaries that turn a regulatory obligation into a credibility asset — dense data made readable, milestones made memorable.",
+          "Annual reports, ESG disclosures, governance summaries. Obligation turned into a credibility asset: dense data made readable.",
         items: ["Sustainability reports", "Governance", "Stakeholder reports"],
       },
       {
@@ -125,7 +125,7 @@ export const GROUPS: Group[] = [
         title: "Own the conversation",
         kind: "Editorial design & thought leadership",
         blurb:
-          "Whitepapers, briefs and case studies that package your expertise into something a busy executive actually finishes — and remembers you for.",
+          "Whitepapers, briefs and case studies a busy executive actually finishes — and remembers you for.",
         items: ["Whitepapers", "Newsletters", "Case studies"],
       },
     ],
@@ -140,7 +140,7 @@ export const GROUPS: Group[] = [
         title: "Build an asset, not a logo",
         kind: "Strategic brand architecture",
         blurb:
-          "Positioning, identity systems and rebrands designed to compound in value — so the brand reads as the category leader before a word is spoken.",
+          "Positioning, identity systems and rebrands built to compound — so the brand reads as category leader before a word is spoken.",
         items: ["Positioning", "Visual identity systems", "Rebranding"],
       },
       {
@@ -148,7 +148,7 @@ export const GROUPS: Group[] = [
         title: "Stop the brand leaking",
         kind: "Enterprise presentation infrastructure",
         blurb:
-          "Master templates, brand-compliance tooling and asset libraries that keep every team on-brand without a designer policing every file. Consistency becomes the default.",
+          "Templates, compliance tooling and asset libraries that keep every team on-brand without a designer policing files.",
         items: ["Templates", "Brand-compliance tooling", "Asset libraries"],
       },
     ],
@@ -156,15 +156,14 @@ export const GROUPS: Group[] = [
   {
     n: "03",
     name: "Growth & digital marketing",
-    premise:
-      "The work that carries your story to market — often the highest-visibility asset you own.",
+    premise: "The work that carries your story to market.",
     disciplines: [
       {
         n: "06",
         title: "Move the story",
         kind: "Motion design & corporate video",
         blurb:
-          "Launch films, explainers, campaign motion and animated sequences that give a static narrative momentum across every channel. When the market needs to feel something, this is where it happens.",
+          "Launch films, explainers, campaign motion. When the market needs to feel something, this is where it happens.",
         items: ["Launch films", "Explainers", "Campaign motion"],
       },
       {
@@ -172,7 +171,7 @@ export const GROUPS: Group[] = [
         title: "Turn attention into pipeline",
         kind: "Integrated digital marketing",
         blurb:
-          "Go-to-market suites, ad creative and sales collateral engineered for conversion, not just impressions — the full launch toolkit on one coherent identity.",
+          "Go-to-market suites, ad creative and sales collateral built for conversion, not impressions. One coherent identity throughout.",
         items: ["GTM collateral", "Ad creative", "Service menus"],
       },
       {
@@ -180,7 +179,7 @@ export const GROUPS: Group[] = [
         title: "Make complexity obvious",
         kind: "Information design & data visualisation",
         blurb:
-          "Research and analytics translated into visuals a decision-maker grasps in seconds. The insight was always there; we make it impossible to miss.",
+          "Research and analytics a decision-maker grasps in seconds. The insight was always there — we make it impossible to miss.",
         items: ["Research synthesis", "Data storytelling", "Infographics"],
       },
     ],
@@ -195,7 +194,7 @@ export const GROUPS: Group[] = [
         title: "Reach the public",
         kind: "Awareness & social impact campaigns",
         blurb:
-          "High-visibility campaigns for institutions and public initiatives, built to educate and move large audiences.",
+          "High-visibility work for institutions and public initiatives, built to move large audiences.",
         items: ["PSA strategy", "Community outreach", "Campaign playbooks"],
       },
       {
@@ -203,7 +202,7 @@ export const GROUPS: Group[] = [
         title: "Command the space",
         kind: "Spatial, event & experiential design",
         blurb:
-          "Booths, environmental branding and print that make the brand feel as considered in the room as it does on screen.",
+          "Booths, environmental branding and print — as considered in the room as on screen.",
         items: ["Booths", "Environmental branding", "Print & packaging"],
       },
     ],
@@ -218,17 +217,17 @@ export const MODEL = [
   {
     n: "01",
     title: "Strategic precision",
-    body: "Every choice is backed by data, logic and market positioning. We start from what the business needs to prove, then design to prove it.",
+    body: "Start from what the business has to prove. Then design to prove it.",
   },
   {
     n: "02",
     title: "C-suite fluency",
-    body: `Built for high-stakes rooms — seed rounds through IPO roadshows, boardrooms, and the reporting that follows. We've spent ${SITE.experienceYears}+ years, combined, in exactly these rooms.`,
+    body: `Seed rounds, boardrooms, IPO roadshows, and the reporting that follows. ${SITE.experienceYears}+ years in exactly those rooms.`,
   },
   {
     n: "03",
     title: "One team, full range",
-    body: "From a five-slide teaser to a launch film to a data-heavy annual report — one embedded team covers it, at a senior standard, without you managing a roster of freelancers.",
+    body: "Five-slide teaser to launch film to annual report. One team, one standard, no roster to manage.",
   },
 ] as const;
 
@@ -241,7 +240,7 @@ export const COMPARISON = {
   label: "Why an embedded partner",
   headline: "Why this beats the alternatives.",
   intro:
-    "Most companies solve recurring communications one of three ways. Only one gives you senior craft, full coverage and predictable cost at once.",
+    "Three ways to solve this. One gives you senior craft, full coverage and predictable cost at once.",
   columns: ["Freelancers", "In-house hire", "Gravino"],
   rows: [
     { k: "Seniority", v: ["Varies job to job", "One person's ceiling", "Senior team, every project"] },
@@ -276,7 +275,7 @@ export const SECTORS = [
 export const TEARDOWN = {
   label: "No cost, no pitch",
   headline: "Start with a look, not a commitment.",
-  body: "Send us your current investor deck, report or brand piece. We'll send back a one-page teardown — what's working, what's costing you, and what we'd change. It's the fastest way to see how we think.",
+  body: "Send a deck. We'll send back one page: what's working, what's costing you, what we'd change.",
   cta: { label: "Send us a deck", href: "/contact" },
   terms: [
     "Scope fixed before work begins, with a clear quote after a short conversation.",
@@ -294,50 +293,50 @@ export const AUDIENCES = {
     slug: "ceo",
     role: "For the chief executive",
     headline: "Your story is your most valuable asset. We make sure it wins.",
-    lede: "You get seconds. Seconds to secure the round, align the board, hold the room, convince the market you're the one to bet on. In those seconds, how your business communicates is the business — and a brilliant strategy told badly loses to an average one told well.",
-    body: "Most companies underinvest here exactly when the stakes are highest — walking into the most important meetings of the year with a deck built overnight and a brand that quietly signals “smaller than we are.” The best narratives balance ambition with proof: bold enough to inspire, grounded enough to trust. We build that balance, so you walk in with the advantage instead of hoping to earn it.",
+    lede: "Seconds to secure the round, hold the room, convince the market you're worth the bet. In those seconds, how you communicate is the business.",
+    body: "Most underinvest exactly when the stakes are highest — the year's biggest meeting, a deck built overnight, a brand that signals “smaller than we are.” We build the balance instead: bold enough to inspire, grounded enough to trust.",
     pull: "A brilliant business with an unclear narrative is an undervalued one.",
     points: [
       {
         title: "Win the room",
-        body: "Investor decks and board narratives engineered to survive the hardest question — not just to open well. From seed rounds to IPO roadshows, we build the story that holds up under real scrutiny.",
+        body: "Investor decks and board narratives built to survive the hardest question, not just to open well. Seed round through IPO roadshow.",
       },
       {
         title: "Command the market",
-        body: "Positioning, identity and the launch films that make you read as the category leader before you've said a word. Perception is a lever — we make it work in your favour, across every format your market sees.",
+        body: "Positioning, identity and launch films that read as category leader before you've said a word. Perception is a lever.",
       },
       {
         title: "Move at your speed",
-        body: "An embedded design partner with senior capability on tap — no hiring runway, no lag between the idea and the asset, no five vendors to brief. When the moment is now, you're ready now.",
+        body: "Senior capability on tap. No hiring runway, no lag between the idea and the asset, no five vendors to brief.",
       },
     ],
     close: "Built like an in-house team. Positioned like a market leader.",
     offer:
-      "Send us your current investor or board deck. We'll return a one-page teardown of what's helping and what's holding it back — no cost, no pitch.",
+      "Send your investor or board deck. We'll return one page on what's helping and what's holding it back.",
   },
   cfo: {
     slug: "cfo",
     role: "For the chief financial officer",
     headline: "Senior design capability. Without the headcount line.",
-    lede: "Design is now a recurring business need — the decks, reports and brand assets never stop. But solving it the obvious way is expensive: a senior in-house team is a permanent cost line for demand that arrives in waves, and the freelancer alternative trades that for inconsistent quality, coordination overhead, and a brand that fragments across a dozen hands.",
-    body: "Gravino is the third option — the balance between the two. One embedded team covers the full surface of your business communications, so you get the capability of an in-house function without the fixed cost, the recruitment risk, or the idle capacity between projects.",
+    lede: "The decks, reports and brand assets never stop. An in-house team is a permanent cost for demand that arrives in waves; freelancers trade that for a brand fragmented across a dozen hands.",
+    body: "Gravino is the third option. One embedded team, covering every format — the capability of an in-house function without the fixed cost, the recruitment risk, or the idle capacity.",
     pull: "The hidden cost of design isn't the invoice — it's the hours spent coordinating it.",
     points: [
       {
         title: "One partner, not ten vendors",
-        body: "A single accountable team replaces scattered freelancers — one point of contact, one standard, dramatically less management overhead. And because that team already covers every format you need, you're not re-onboarding a supplier every time the requirement changes.",
+        body: "One accountable team, one point of contact, one standard. No re-onboarding a supplier every time the requirement changes.",
       },
       {
         title: "Spend that scales with need",
-        body: "Project-based when the work is defined, retainer when it's continuous. You commission capacity when you need it and never carry it when you don't — turning an unpredictable cost into a planned one.",
+        body: "Project-based when scope is defined, retainer when it's continuous. Commission capacity when you need it; never carry it when you don't.",
       },
       {
         title: "Protect the brand you paid for",
-        body: "Every off-brand slide is value quietly leaking out of an asset you invested in. Our systems and templates keep every team on-brand by default — so brand equity compounds instead of eroding.",
+        body: "Every off-brand slide leaks value from an asset you paid for. Templates keep every team on-brand by default, so equity compounds.",
       },
     ],
     close: "Transparent by default — clear scope, quotes after a short conversation, no surprise line items.",
     offer:
-      "Send us a recent set of company decks or brand material. We'll return a one-page read on where design spend is being lost and where it's working — no cost, no obligation.",
+      "Send a recent set of company decks. We'll return one page on where design spend is leaking and where it's working.",
   },
 } as const;

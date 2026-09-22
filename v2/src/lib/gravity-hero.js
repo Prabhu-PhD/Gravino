@@ -270,7 +270,19 @@ export function initGravityHero() {
     emissiveIntensity: 0.10,
     roughness: 0.12,
     metalness: 0.0,
-    transmission: 0.92,
+    /* Arun had transmission: 0.92 here, which is correct on r128 and wrong on
+       r184. Measured, not guessed: hiding this shell at runtime made the
+       inner core render exactly like his reference, so the shader was never
+       the problem — the shell was covering it.
+       The mechanism is that r184 builds a transmission render target from the
+       OPAQUE scene only, and the core below uses a transparent ShaderMaterial.
+       So the glass sampled the empty background instead of the core and
+       painted its own dark #030c1c over it. Lowering opacity made it worse,
+       not better, which is what ruled out simple alpha.
+       At 0 the shell stops transmitting and simply sits over the core as
+       glossy glass, so the clearcoat highlight and rim survive while the
+       iridescent Fresnel underneath comes through. */
+    transmission: 0,
     ior: 1.50,
     thickness: 1.6,
     bumpMap: noiseTexture,

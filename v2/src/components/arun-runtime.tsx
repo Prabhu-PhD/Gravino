@@ -26,6 +26,13 @@ import { useEffect, useRef } from "react";
  * his - none of them needed rewriting into an init function.
  * ======================================================================== */
 
+/* ONE EDIT EXISTS IN ui.js, and it is the only one: the portfolio's second
+   image reference moved from .png to .jpg. That file was a photograph saved
+   as a 949KB PNG; it is 41KB as a JPEG. It had been handled by a Next
+   rewrite so his file could stay byte-identical, but `output: export` does
+   not support rewrites, and coupling a content path to an Apache .htaccess
+   rule is worse than changing one filename in a JS file. app4.js,
+   capabilities.js and three.min.js remain byte-identical. */
 const SCRIPTS = [
   "/arun/three.min.js",
   "/arun/ui.js",

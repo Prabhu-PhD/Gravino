@@ -1,0 +1,99 @@
+# =============================================================================
+# Gravino — Apache configuration for Broodle shared cPanel hosting.
+# -----------------------------------------------------------------------------
+# Lives in public/, so `next build` copies it into out/ and it ends up beside
+# index.html in public_html. Nothing here is Next-specific: the export is
+# plain files, and this is ordinary Apache housekeeping.
+#
+# The build sets trailingSlash: true, so every route is a real directory with
+# an index.html inside it. That means NO rewrite rules are needed to resolve
+# URLs — Apache finds /about/index.html on its own. Do not add a front
+# controller here; there is no application to route to.
+# =============================================================================
+
+# --- Canonical host and scheme ----------------------------------------------
+# Force HTTPS and a single hostname, so the site has one address rather than
+# four (http/https x apex/www). Enable AutoSSL in cPanel BEFORE turning this
+# on, or the redirect will point at a certificate that does not exist yet.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # http -> https
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # www -> apex. Flip this block if you would rather run on www.
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# --- 404 ---------------------------------------------------------------------
+# The export writes Next's not-found page here.
+ErrorDocument 404 /404.html
+
+# --- Compression -------------------------------------------------------------
+# three.min.js is 603KB uncompressed and about 150KB gzipped, so this is the
+# single biggest win available on this host. Images and fonts are already
+# compressed and are left alone.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Caching -----------------------------------------------------------------
+# Everything under /_next/static is content-hashed by the build, so it can be
+# cached forever and is safe to do so. Our own files in /arun, /assets and
+# /site are NOT hashed — if one is replaced, a long cache would strand
+# visitors on the old copy, so they get a week with revalidation. HTML is
+# never cached, or a deploy would not be visible.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                        "access plus 1 week"
+  ExpiresByType text/html               "access plus 0 seconds"
+  ExpiresByType application/javascript  "access plus 1 week"
+  ExpiresByType text/css                "access plus 1 week"
+  ExpiresByType image/jpeg              "access plus 1 month"
+  ExpiresByType image/png               "access plus 1 month"
+  ExpiresByType image/webp              "access plus 1 month"
+  ExpiresByType image/svg+xml           "access plus 1 month"
+  ExpiresByType font/woff2              "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "^.*$">
+    Header unset ETag
+  </FilesMatch>
+</IfModule>
+FileETag None
+
+# Hashed build output: immutable, cache for a year.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/_next/static/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+</IfModule>
+
+# --- Correct types -----------------------------------------------------------
+# Shared hosts are inconsistent about these, and a wrong type on the font or
+# the WebGL bundle is a silent failure.
+AddType application/javascript .js .mjs
+AddType font/woff2 .woff2
+AddType image/svg+xml .svg
+AddType application/manifest+json .webmanifest
+
+# --- Housekeeping ------------------------------------------------------------
+# No directory listings anywhere.
+Options -Indexes
+
+# Block dotfiles (this file included) from being fetched over HTTP.
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>

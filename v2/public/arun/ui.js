@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         id: 1,
         title: 'Nexus AI',
         desc: 'Autonomous generative synthesis and predictive decision infrastructure empowering executive boards with real-time operational telemetry.',
-        image: 'assets/portfolio-2.png'
+        image: 'assets/portfolio-2.jpg'
       },
       {
         id: 2,

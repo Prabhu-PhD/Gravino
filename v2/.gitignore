@@ -2,3 +2,6 @@ node_modules
 .next
 next-env.d.ts
 *.tsbuildinfo
+
+# Static export output — rebuilt by `npm run build`, not source.
+/out/

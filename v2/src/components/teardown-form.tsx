@@ -1,6 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import {
+  FORM_ENDPOINT,
+  buildPayload,
+  isSuccess,
+  errorFrom,
+} from "@/lib/form-transport";
 
 /* ===========================================================================
  * The teardown form. ONE implementation, rendered in two places: inside the
@@ -71,23 +77,26 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const payload = Object.fromEntries(new FormData(form).entries());
+    const fields = Object.fromEntries(new FormData(form).entries());
     setState("sending");
     setError("");
     try {
-      const res = await fetch("/send.php", {
+      /* Endpoint and envelope both come from form-transport.ts, so moving
+         between our own PHP and Web3Forms is one environment variable and
+         no change here. */
+      const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(buildPayload(fields)),
       });
-      const body = await res.json().catch(() => ({ ok: false, error: "" }));
+      const body = await res.json().catch(() => null);
       /* The fallback carries the address. An earlier version threw a bare
          "That did not send." here, which then became err.message and hid the
          helpful default below, so a failed send told the visitor nothing
          they could act on. */
-      if (!res.ok || !body.ok) {
+      if (!res.ok || !isSuccess(body)) {
         throw new Error(
-          body.error ||
+          errorFrom(body) ||
             "That did not send. Please email create@gravino.in directly.",
         );
       }

@@ -21,6 +21,11 @@ npm ci
 npm run build
 ```
 
+**Stop the dev server first if one is running.** Dev and build write to
+separate directories now (`.next` and `.next-build`), but a build against a
+live dev server still leaves already-compiled routes returning 500 until that
+server is restarted. Measured, not assumed.
+
 This writes `v2/out/`. Everything inside it — including the hidden
 `.htaccess` — is what gets uploaded. Nothing else from the repo goes on the
 server.
@@ -67,9 +72,11 @@ A `CNAME` of `www` → `gravino.in` works equally well if you prefer.
 
 Two warnings worth reading twice:
 
-- **Do not touch the MX records unless you intend to move email too.** If
-  mail for `gravino.in` is currently handled anywhere else, repointing MX at
-  this host silently stops delivery.
+- **DO NOT TOUCH THE MX RECORDS.** This is no longer a general caution:
+  `create@gravino.in` is a GoDaddy mailbox on Titan, so the MX records for
+  the domain point at Titan. Changing them, or letting cPanel "take over"
+  mail for the domain, stops your email dead. When you add the domain in
+  cPanel, set it to use **remote mail exchanger**, not local.
 - Lower the TTL to 300 a day *before* the cutover if you want to be able to
   roll back quickly. Once the change is live, TTL only helps you next time.
 
@@ -79,18 +86,41 @@ Propagation is usually minutes, occasionally hours. Check with:
 nslookup gravino.in
 ```
 
-## Email: `create@gravino.in`
+## The form endpoint
 
-This address is now the destination for every teardown submission on the
-site, and **it does not exist yet**. Broodle's cPanel includes mail, so:
+The teardown form posts to whatever `src/lib/form-transport.ts` selects. That
+file has the full reasoning; the short version is that the mailbox being on
+Titan rather than on this cPanel account rules out the simplest option.
 
-cPanel → **Email Accounts** → Create → `create@gravino.in`.
+**PHP `mail()` (`public/send.php`) is the current default and the weakest
+choice.** Because MX points at Titan, the mail is not delivered locally: it
+has to relay out from a shared-hosting IP that has no SPF authorisation for
+your domain. That is how form mail ends up in spam or bounced. It may work.
+Test it before you rely on it.
 
-Then send it a real test message from outside and confirm it arrives. If the
-mailbox is not live, the form fails silently and no visitor will tell you.
+Two better options, pick one:
 
-If you would rather keep mail with an existing provider, create the mailbox
-there instead and leave the MX records alone.
+**A. Web3Forms.** Create a free account, take the access key, and set it at
+build time:
+
+```bash
+NEXT_PUBLIC_WEB3FORMS_KEY=your-key-here npm run build
+```
+
+Nothing else changes. No credentials on the server. Two consequences: every
+submission passes through a third party, so **the privacy policy has to be
+rewritten** (it currently promises nothing leaves Gravino), and the free tier
+stops at 250 submissions a month.
+
+**B. Authenticated SMTP to Titan.** Keep `send.php` but send through
+`smtp.titan.email:465` using the mailbox's own credentials. This is the most
+correct option: Titan is the authorised sender for the domain, so SPF and
+DKIM align and deliverability matches normal mail from that account, and
+nothing goes through a third party. The cost is that the mailbox password has
+to sit on shared hosting. Ask and this can be written.
+
+Whichever you choose, **submit the form once for real after upload.** Neither
+path has been executed yet.
 
 ## Verify after going live
 
@@ -108,9 +138,11 @@ purpose).
 In a browser, confirm:
 
 - the home page reaches the planet and the hero releases on scroll
-- `/about/`, `/services/`, `/contact/`, `/for/ceo/`, `/for/cfo/` all load dark
-- the footer links reach those pages
-- the teardown form opens your mail client addressed to `create@gravino.in`
+- `/about/`, `/services/`, `/contact/`, `/privacy/` and `/terms/` all load dark
+- the footer links reach those pages, and the legal links work
+- **the teardown form actually sends**, and the mail arrives at
+  `create@gravino.in`. This is the single most important check: it is the one
+  path that has never been executed anywhere
 - `http://gravino.in` and `https://www.gravino.in` both land on
   `https://gravino.in`
 

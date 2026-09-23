@@ -5,3 +5,6 @@ next-env.d.ts
 
 # Static export output — rebuilt by `npm run build`, not source.
 /out/
+
+# Production build dir, kept separate from the dev server (see next.config.mjs).
+/.next-build/

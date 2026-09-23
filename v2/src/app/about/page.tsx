@@ -1,28 +1,31 @@
-import {
-  Page,
-  PageHead,
-  ClosingCta,
-  StatementBand,
-  Figure,
-  SHELL,
-} from "@/components/page-shell";
-import { SectionHead } from "@/components/editorial";
-import { MODEL, SECTORS, SITE, BALANCE } from "@/lib/site";
+import { Page, PageHead, Section, Head, CtaBand } from "@/components/page-shell";
+import { MODEL, COMPARISON, SECTORS, SITE } from "@/lib/site";
 
 export const metadata = {
   title: "About",
-  description: `A senior ${SITE.teamSize}-person core team with ${SITE.experienceYears}+ years of combined experience, working across ${SITE.markets}.`,
+  description: `A senior ${SITE.teamSize}-person team with ${SITE.experienceYears}+ years between them, covering ten communications disciplines under one point of contact.`,
 };
 
-const TOTAL = "04";
+/* Rebuilt. The previous version opened with an abstract "balancing act"
+   section and a brand render, then restated the tagline in large type. It
+   looked like an About page without arguing anything.
 
-/* TODO(confirm): the four team members — names, roles, bios, photos. The
-   brochure only says "a senior 〔4-person〕 core team", so this section is the
-   shape of the facts we actually have rather than invented biographies. */
+   What a buyer actually wants here, in order: what this company is, why it
+   exists in this shape, how it works, and what proof there is. So the
+   comparison table leads the argument. It was the strongest thing in the
+   collateral and it was previously buried on /for/cfo, which has now been
+   removed, so this also stops that content being lost.
+
+   NOTHING HERE IS INVENTED. No named biographies, no client logos, no
+   funding-stage claims. The brochure says "a senior four-person core team"
+   and nothing more about who they are, so that is what this says. When real
+   names, photos and case studies arrive they belong in the section marked
+   below. */
+
 const FACTS = [
-  [`${SITE.teamSize}`, "Senior practitioners at the core"],
-  [`${SITE.experienceYears}+`, "Years of combined experience"],
-  ["10", "Disciplines covered in-house"],
+  [String(SITE.teamSize), "Senior practitioners at the core"],
+  [`${SITE.experienceYears}+`, "Years between them"],
+  ["10", "Disciplines covered in house"],
   ["1", "Point of contact, whatever the format"],
 ] as const;
 
@@ -30,114 +33,124 @@ export default function About() {
   return (
     <Page>
       <PageHead
-        eyebrow="Embedded Communications Partner"
-        headline="A senior team, built around one"
-        accent="discipline."
-        lede={`${SITE.experienceYears}+ years of combined experience in the rooms where communication decides the outcome — seed rounds, boardrooms, IPO roadshows, and the reporting that follows.`}
+        eyebrow="About Gravino"
+        headline="Most companies have two bad options. We are the"
+        accent="third."
+        lede="Freelancers give you craft in one format at a time. An in-house hire gives you one person's range, paid for whether the work is there or not. Gravino is a senior team you embed instead."
       />
 
-      <section className="bg-paper py-24 md:py-32">
-        <div className={SHELL}>
-          <SectionHead>
-            Every high-stakes communication is a{" "}
-            balancing act.
-          </SectionHead>
+      <Section orbs>
+        <Head lede={COMPARISON.intro}>Three ways to solve it.</Head>
 
-          <div className="mt-16 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
-            <div>
-              <p className="text-[1.02rem] leading-relaxed text-on-paper-dim">
-                {BALANCE.body}
-              </p>
-              <p className="mt-10 font-display text-[clamp(1.5rem,2.7vw,2.2rem)] leading-snug tracking-[-0.025em]">
-                {SITE.tagline.split(" ").slice(0, 2).join(" ")}{" "}
-                {SITE.tagline.split(" ").slice(2).join(" ")}
-                .
-              </p>
-              <p className="mt-10 text-[1.02rem] leading-relaxed text-on-paper-dim">
-                {BALANCE.close}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full min-w-[640px] border-collapse text-left">
+            <thead>
+              <tr>
+                <th className="w-[22%] pb-4" />
+                {COMPARISON.columns.map((c, i) => (
+                  <th
+                    key={c}
+                    className={`pb-4 text-sm font-medium ${
+                      i === 2 ? "text-white" : "text-slate-400"
+                    }`}
+                  >
+                    {c}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.rows.map((r) => (
+                <tr key={r.k} className="border-t border-white/10">
+                  <th className="py-5 pr-6 align-top text-xs font-mono uppercase tracking-[0.14em] font-normal text-slate-500">
+                    {r.k}
+                  </th>
+                  {r.v.map((v, i) => (
+                    <td
+                      key={v + i}
+                      className={`py-5 pr-6 align-top text-sm font-light leading-relaxed ${
+                        i === 2 ? "text-white" : "text-slate-400"
+                      }`}
+                    >
+                      {v}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section tone="raised">
+        <Head accent="works." lede="Three things hold across every engagement, whatever the format.">
+          How the work
+        </Head>
+
+        <div className="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-3">
+          {MODEL.map((m) => (
+            <div key={m.n} className="border-t border-white/12 pt-5">
+              <span className="text-sm font-mono text-[#a78bfa]">{m.n}</span>
+              <h3 className="mt-3 text-lg font-medium text-white">{m.title}</h3>
+              <p className="mt-2.5 text-[0.95rem] font-light leading-relaxed text-slate-400">
+                {m.body}
               </p>
             </div>
-            <Figure
-              src="/brand/glass-ribbon-balance.jpeg"
-              alt="A glass sphere resting in balance on a folded glass ribbon"
-              caption={SITE.lockupLine}
-            />
-          </div>
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="bg-paper-soft py-24 md:py-32">
-        <div className={SHELL}>
-          <SectionHead>
-            How the work holds up.
-          </SectionHead>
-          <div className="mt-14">
-            {MODEL.map((m) => (
-              <div
-                key={m.n}
-                className="grid gap-4 border-t border-paper-line py-9 sm:grid-cols-[5rem_1fr] sm:gap-8"
-              >
-                <p className="font-display text-4xl leading-none text-grad-2">
-                  {m.n}
-                </p>
-                <div>
-                  <h3 className="font-display text-xl font-medium tracking-[-0.02em]">
-                    {m.title}
-                  </h3>
-                  <p className="mt-3 max-w-2xl text-[0.97rem] leading-relaxed text-on-paper-dim">
-                    {m.body}
-                  </p>
+      <Section>
+        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
+          <div>
+            <Head accent="small." lede="Senior people doing the work themselves, rather than a large team where the people who sold it are not the people who make it.">
+              The team is deliberately
+            </Head>
+            {/* TODO(confirm): names, roles, photos and short bios for the four.
+                The brochure gives the count and nothing else, so this stays a
+                statement of the model until the client supplies them. */}
+            <p className="mt-6 text-[0.95rem] font-light leading-relaxed text-slate-400">
+              {SITE.experienceYears}+ years between {SITE.teamSize} people, in
+              the rooms where communication decides the outcome: funding
+              conversations, boardrooms, and the reporting that follows. Based
+              in {SITE.location}, working across {SITE.markets}.
+            </p>
+
+            <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-7">
+              {FACTS.map(([n, label]) => (
+                <div key={label}>
+                  <dt className="text-3xl font-light text-white">{n}</dt>
+                  <dd className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                    {label}
+                  </dd>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <StatementBand
-        src="/brand/glass-sphere-swirl.jpeg"
-        objectPosition="20% center"
-        fluteOn="left"
-      >
-        We understood the business faster, and covered more of it, than anyone
-        else they&rsquo;d worked with.
-      </StatementBand>
-
-      <section className="bg-paper py-24 md:py-32">
-        <div className={SHELL}>
-          <SectionHead>
-            Small on purpose, senior by{" "}
-            design.
-          </SectionHead>
-
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FACTS.map(([v, k]) => (
-              <div key={k} className="card p-7">
-                <p className="font-display text-4xl tracking-tight">{v}</p>
-                <p className="mt-4 border-t border-paper-line pt-4 text-sm leading-relaxed text-on-paper-dim">
-                  {k}
-                </p>
-              </div>
-            ))}
+              ))}
+            </dl>
           </div>
 
-          <div className="mt-16">
-            <p className="label text-on-paper-dim">Sectors</p>
-            <ul className="mt-6 grid gap-px overflow-hidden rounded-2xl border border-paper-line bg-paper-line sm:grid-cols-2 lg:grid-cols-4">
+          <div className="lg:pt-2">
+            <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-slate-500">
+              Sectors we work in
+            </h3>
+            <ul className="mt-5 divide-y divide-white/10 border-y border-white/10">
               {SECTORS.map((s) => (
-                <li key={s} className="bg-paper px-6 py-8">
-                  <span className="label text-on-paper-dim">{s}</span>
+                <li key={s} className="py-4 text-base font-light text-slate-300">
+                  {s}
                 </li>
               ))}
             </ul>
+            <p className="mt-6 text-sm font-light leading-relaxed text-slate-500">
+              The work is the same shape in each: something important has to be
+              explained to people who decide with it.
+            </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <ClosingCta
-        headline="The fastest way to see how we"
-        accent="think."
-        body="Send us your current deck, report or brand piece. We'll return a one-page teardown — what's working, what's costing you, and what we'd change."
+      <CtaBand
+        headline="See how we would handle"
+        accent="yours."
+        body="Send one thing you already have. We come back with a single page on what is working, what it is costing you, and what we would change. No cost, no pitch."
       />
     </Page>
   );

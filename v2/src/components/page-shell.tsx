@@ -1,234 +1,205 @@
-import Link from "next/link";
-import Image from "next/image";
 import { CosmicNav, CosmicFooter } from "./cosmic-chrome";
-import { SHELL, CornerMarks } from "./editorial";
-import { FlutedPane } from "./fluted-pane";
-import { SITE } from "@/lib/site";
-
-export { SHELL } from "./editorial";
 
 /* ===========================================================================
- * Interior-page shell, carrying the same editorial system as the home page:
- * a visible grid, a running index, hairline rules, corner ticks, and one
- * loud full-bleed moment per page.
+ * Interior page furniture, in the cosmic idiom.
+ * ---------------------------------------------------------------------------
+ * This replaces the editorial set it grew out of: a pale hero wash, visible
+ * measure lines, corner crop marks, hairline section rules, a fluted-glass
+ * statement band. That system was coherent on its own terms and belonged to a
+ * different site. Kept beside the adopted home page it produced pages that
+ * were dark but not cosmic, and the seams showed.
+ *
+ * Two faults it was called out for, fixed here rather than patched:
+ *
+ * 1. SPACE. Sections ran py-20 to py-36 with mt-14 inside them. On a reading
+ *    page that is a lot of nothing between a heading and its content, and it
+ *    is most of why the pages felt padded out. Sections here are py-16 /
+ *    md:py-20, close to what the home page runs.
+ *
+ * 2. EYEBROWS EVERYWHERE. A mono kicker above every section is a template
+ *    rather than a decision, and it reads as filler. There is exactly ONE per
+ *    page now, on the page head, where it says what kind of page this is.
+ *    `Section` and `Head` do not accept one.
  * ======================================================================== */
 
-/** The hero's visible measure lines, reused so every page sits on one grid. */
-function GridLines() {
+export const SHELL = "mx-auto max-w-[76rem] px-6 sm:px-10 md:px-14 lg:px-20";
+
+/** The brand-hue glow discs the cosmic sections sit on. */
+function Orbs() {
   return (
-    <div aria-hidden className={`${SHELL} pointer-events-none absolute inset-0`}>
-      <div className="relative h-full">
-        <span className="absolute inset-y-0 left-0 w-px bg-on-paper/10" />
-        <span className="absolute inset-y-0 right-0 w-px bg-on-paper/10" />
-      </div>
-    </div>
+    <>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 left-[12%] h-[420px] w-[420px] rounded-full bg-[#7b3fe4]/18 blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 right-[10%] h-[380px] w-[380px] rounded-full bg-[#20c4f4]/10 blur-[130px]"
+      />
+    </>
   );
 }
 
 export function PageHead({
+  eyebrow,
   headline,
   accent,
   lede,
-  eyebrow,
 }: {
+  /** The one kicker on the page. */
+  eyebrow: string;
   headline: string;
+  /** The single word or phrase carrying the gradient. */
   accent?: string;
   lede?: string;
-  /* The mono kicker every cosmic section opens with. The editorial build
-     banned these outright, on the grounds that a heading needing a label
-     above it to announce itself is a heading doing its job badly. That still
-     holds as a general rule — but the adopted home page opens every single
-     section this way, and an interior page that does not is visibly from a
-     different site. Consistency with the direction wins over the rule. */
-  eyebrow?: string;
 }) {
   return (
-    <section className="bg-wash relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
-      <div aria-hidden className="grain-layer" />
-      {/* The glow orbs the cosmic sections sit on. Two blurred brand-hue
-          discs, exactly as the capability and teardown sections do it. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full bg-[#7b3fe4]/20 blur-[140px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-32 right-1/4 h-[380px] w-[380px] rounded-full bg-[#20c4f4]/10 blur-[130px]"
-      />
-      <GridLines />
+    <section
+      className="relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-20"
+      style={{
+        background:
+          "radial-gradient(circle at 50% 0%, #171033 0%, #0b0917 55%, #09090f 100%)",
+      }}
+    >
+      <Orbs />
       <div className={`${SHELL} relative`}>
-        {eyebrow ? (
-          <p className="label mb-5 text-[#a78bfa]">{eyebrow}</p>
-        ) : null}
-        <h1 className="display max-w-4xl text-[clamp(2.3rem,4.9vw,4.1rem)]">
+        <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa]">
+          {eyebrow}
+        </p>
+        <h1 className="mt-5 max-w-4xl text-[clamp(2.1rem,4.6vw,3.6rem)] font-light leading-[1.14] tracking-tight text-white">
           {headline}
           {accent ? (
             <>
               {" "}
-              <span className="text-gradient">{accent}</span>
+              <span className="bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] bg-clip-text font-normal text-transparent">
+                {accent}
+              </span>
             </>
           ) : null}
         </h1>
-
         {lede ? (
-          <p className="mt-8 max-w-2xl text-[1.05rem] leading-relaxed text-on-paper-dim">
+          <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-slate-300">
             {lede}
           </p>
         ) : null}
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-14 flex items-center justify-between border-t border-on-paper/15 pt-5">
-          <span className="label text-on-paper-dim">{SITE.location}</span>
-          <span className="label hidden text-on-paper-dim sm:block">
-            {SITE.lockupLine}
-          </span>
+/** A plain content section. `tone` alternates the ground so a long page has
+ *  rhythm without a device announcing each change. */
+export function Section({
+  children,
+  tone = "base",
+  orbs = false,
+  id,
+}: {
+  children: React.ReactNode;
+  tone?: "base" | "raised";
+  orbs?: boolean;
+  id?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={`relative overflow-hidden border-t border-white/[0.07] py-16 md:py-20 ${
+        tone === "raised" ? "bg-[#0d0b18]" : "bg-[#09090f]"
+      }`}
+    >
+      {orbs ? <Orbs /> : null}
+      <div className={`${SHELL} relative`}>{children}</div>
+    </section>
+  );
+}
+
+/** Section heading. No kicker, by design. */
+export function Head({
+  children,
+  accent,
+  lede,
+}: {
+  children: React.ReactNode;
+  accent?: string;
+  lede?: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <h2 className="text-[clamp(1.6rem,3vw,2.4rem)] font-light leading-[1.18] tracking-tight text-white">
+        {children}
+        {accent ? (
+          <>
+            {" "}
+            <span className="bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] bg-clip-text font-normal text-transparent">
+              {accent}
+            </span>
+          </>
+        ) : null}
+      </h2>
+      {lede ? (
+        <p className="mt-4 text-[0.95rem] font-light leading-relaxed text-slate-400">
+          {lede}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/** The closing band every interior page ends on. One route out: the form. */
+export function CtaBand({
+  headline,
+  accent,
+  body,
+}: {
+  headline: string;
+  accent?: string;
+  body: string;
+}) {
+  return (
+    <section
+      className="relative overflow-hidden border-t border-white/10 py-20 md:py-24"
+      style={{
+        background:
+          "linear-gradient(to bottom, #09090f 0%, #13172e 55%, #050507 100%)",
+      }}
+    >
+      <Orbs />
+      <div className={`${SHELL} relative`}>
+        <div className="max-w-2xl">
+          <h2 className="text-[clamp(1.7rem,3.2vw,2.6rem)] font-light leading-[1.16] tracking-tight text-white">
+            {headline}
+            {accent ? (
+              <>
+                {" "}
+                <span className="bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] bg-clip-text font-normal text-transparent">
+                  {accent}
+                </span>
+              </>
+            ) : null}
+          </h2>
+          <p className="mt-5 text-base font-light leading-relaxed text-slate-300">
+            {body}
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-5">
+            <a
+              href="/contact/"
+              className="rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-opacity hover:opacity-95"
+            >
+              Start a project
+            </a>
+            <a
+              href="mailto:create@gravino.in"
+              className="text-sm text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline"
+            >
+              create@gravino.in
+            </a>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/**
- * The full-bleed loud moment. One per page, always a brand render behind big
- * type with a fluted pane over one half — the Southern West International /
- * Clarity motif. `objectPosition` lets the same three renders read as
- * different images across pages rather than repeating a crop.
- */
-export function StatementBand({
-  src,
-  objectPosition = "center",
-  children,
-  fluteOn = "right",
-}: {
-  src: string;
-  objectPosition?: string;
-  children: React.ReactNode;
-  fluteOn?: "left" | "right";
-}) {
-  const right = fluteOn === "right";
-  return (
-    <section className="relative isolate overflow-hidden bg-ink text-on-ink">
-      <Image
-        src={src}
-        alt=""
-        aria-hidden
-        width={3200}
-        height={1800}
-        sizes="100vw"
-        style={{ objectPosition }}
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          background: right
-            ? "linear-gradient(90deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)"
-            : "linear-gradient(270deg, rgba(10,8,18,0.9) 0%, rgba(10,8,18,0.66) 48%, rgba(10,8,18,0.12) 100%)",
-        }}
-      />
-      {/* Half the band is seen through fluted glass — the image itself is
-          sliced and offset per rib, not overlaid with stripes. */}
-      <div aria-hidden className="absolute inset-0 -z-10">
-        <FlutedPane
-          src={src}
-          side={fluteOn}
-          objectPosition={objectPosition}
-        />
-      </div>
-
-      <div className={`${SHELL} py-24 md:py-36`}>
-        {/* Held to the un-fluted half. The glass side is bright and busy —
-            any copy crossing onto it stops being readable, which is exactly
-            what happened the first time this ran full width. */}
-        <p
-          className={`display text-[clamp(1.9rem,4vw,3.4rem)] text-white md:max-w-[46%] ${
-            right ? "max-w-3xl" : "ml-auto max-w-3xl text-right"
-          }`}
-        >
-          {children}
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/** The closing conversion band, shared by every interior page. */
-export function ClosingCta({
-  headline,
-  accent,
-  body,
-  cta = "Send us a deck",
-}: {
-  headline: string;
-  /** Kept in the signature so callers need no edit; rendered at full weight
-   *  rather than in the gradient, which each page spends once in its h1. */
-  accent?: string;
-  body: string;
-  cta?: string;
-}) {
-  return (
-    <section className="bg-ink py-24 text-on-ink md:py-32">
-      <div className={SHELL}>
-        <div className="h-px w-full bg-ink-line" />
-        <h2 className="display mt-10 max-w-3xl text-[clamp(1.9rem,3.8vw,3.2rem)]">
-          {headline}
-          {accent ? <> {accent}</> : null}
-        </h2>
-        <p className="mt-7 max-w-xl text-[1.02rem] leading-relaxed text-on-ink-dim">
-          {body}
-        </p>
-        <Link
-          href="/contact"
-          className="group mt-10 inline-flex items-center gap-2 rounded-full bg-on-ink px-7 py-4 text-sm font-medium text-ink transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98]"
-        >
-          {cta}
-          <span className="transition-transform duration-300 group-hover:translate-x-1">
-            &rarr;
-          </span>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-/** A framed figure — corner ticks plus rounded crop, as used on the home page. */
-export function Figure({
-  src,
-  alt,
-  caption,
-  sizes = "(max-width: 1024px) 100vw, 45vw",
-}: {
-  src: string;
-  alt: string;
-  caption?: string;
-  sizes?: string;
-}) {
-  return (
-    <figure className="relative">
-      <CornerMarks className="text-on-paper" />
-      <div className="overflow-hidden rounded-2xl">
-        <Image
-          src={src}
-          alt={alt}
-          width={3200}
-          height={1800}
-          sizes={sizes}
-          className="w-full object-cover"
-        />
-      </div>
-      {caption ? (
-        <figcaption className="label mt-4 text-on-paper-dim">
-          {caption}
-        </figcaption>
-      ) : null}
-    </figure>
-  );
-}
-
-/* The same nav and footer the home page renders — see cosmic-chrome.tsx for
-   why there used to be two of each. `pt-24` because that nav is FIXED rather
-   than absolute, so unlike the old one it no longer overlaps the first
-   section; the content has to start below it. */
 export function Page({ children }: { children: React.ReactNode }) {
   return (
     <>

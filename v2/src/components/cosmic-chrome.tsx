@@ -107,11 +107,11 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
         <a
           href="/"
           className="flex items-center hero-ui-interactive group"
-          aria-label="Gravino — home"
+          aria-label="Gravino, home"
         >
           <img
             src="/arun/logo.png"
-            alt="Gravino — Value Has Gravity"
+            alt="Gravino, Value Has Gravity"
             className="h-9 sm:h-10 md:h-11 w-auto object-contain transition-opacity duration-200 group-hover:opacity-85"
           />
         </a>
@@ -209,21 +209,16 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
  * ------------------------------------------------------------------------ */
 
 export function CosmicFooter({ home = false }: { home?: boolean }) {
-  const onPage = home
-    ? [
-        { label: "What we cover", href: "#what-we-cover" },
-        { label: "Portfolio", href: "#portfolio" },
-        { label: "Free teardown", href: "#teardown" },
-      ]
-    : [
-        { label: "What we cover", href: "/#what-we-cover" },
-        { label: "Portfolio", href: "/#portfolio" },
-        { label: "Free teardown", href: "/#teardown" },
-      ];
+  const prefix = home ? "" : "/";
+  const onPage = [
+    { label: "What we cover", href: `${prefix}#what-we-cover` },
+    { label: "Portfolio", href: `${prefix}#portfolio` },
+    { label: "Free teardown", href: `${prefix}#teardown` },
+  ];
 
   return (
     <footer
-      className="page-section pt-16 pb-10 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10"
+      className="page-section pt-16 pb-8 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10"
       style={{
         background:
           "radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%)",
@@ -234,7 +229,7 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
           <div className="col-span-2 sm:col-span-3 lg:col-span-2 lg:pr-10">
             <img
               src="/assets/logo.png"
-              alt="Gravino — Value Has Gravity"
+              alt="Gravino, Value Has Gravity"
               className="h-8 w-auto object-contain"
             />
             <p className="mt-5 text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
@@ -242,7 +237,7 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
             </p>
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-slate-400">
               One senior team for the full surface of how your business
-              communicates — decks, reports, brand, motion and campaigns.
+              communicates: decks, reports, brand, motion and campaigns.
             </p>
           </div>
 
@@ -268,8 +263,6 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
             <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
             <a href="/about/" className="text-sm text-slate-300 hover:text-white transition-colors">About</a>
             <a href="/contact/" className="text-sm text-slate-300 hover:text-white transition-colors">Contact</a>
-            <a href="/for/ceo/" className="text-sm text-slate-300 hover:text-white transition-colors">For chief executives</a>
-            <a href="/for/cfo/" className="text-sm text-slate-300 hover:text-white transition-colors">For CFOs</a>
           </nav>
 
           <div className="flex flex-col gap-3">
@@ -287,12 +280,24 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-mono text-slate-400">
-            &copy; 2026 Gravino &nbsp;/&nbsp; gravino.in
-          </p>
-          <p className="text-xs font-mono text-slate-400">
-            75+ years between four people, Chennai
+        {/* Legal row. The vanity line that used to sit here ("75+ years
+            between four people") was a claim, not a footer: it belongs in the
+            body copy where it is argued, not under a rule where nobody reads
+            it. Statutory links go here instead. */}
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a href="/privacy/" className="text-xs text-slate-400 hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/terms/" className="text-xs text-slate-400 hover:text-white transition-colors">Terms &amp; Disclaimer</a>
+            <a href="mailto:create@gravino.in" className="text-xs text-slate-400 hover:text-white transition-colors">Report an issue</a>
+          </nav>
+
+          {/* Set as a small mark rather than a sentence: name, rule, year. */}
+          <p className="flex items-center gap-3 text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
+            <span className="text-slate-300">Gravino</span>
+            <span aria-hidden className="h-px w-6 bg-white/20" />
+            <span>All rights reserved</span>
+            <span aria-hidden className="h-px w-6 bg-white/20" />
+            <span>2026</span>
           </p>
         </div>
       </div>

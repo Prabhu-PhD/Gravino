@@ -12,7 +12,7 @@ import { LabScenes } from "@/components/lab-scenes";
    disallow only asks crawlers not to fetch — it does not stop a page that was
    linked from somewhere else being indexed. */
 export const metadata = {
-  title: "Lab — glass",
+  title: "Lab: glass",
   robots: { index: false, follow: false },
 };
 

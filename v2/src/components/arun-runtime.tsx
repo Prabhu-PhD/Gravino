@@ -38,8 +38,6 @@ const SCRIPTS = [
   "/arun/ui.js",
   "/arun/capabilities.js",
   "/arun/app4.js",
-  // Ours, not his. Must come after ui.js - see the file's own header.
-  "/site/teardown-form.js",
 ];
 
 export function ArunRuntime() {

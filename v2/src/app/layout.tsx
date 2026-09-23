@@ -15,9 +15,9 @@ const dm = DM_Sans({
   display: "swap",
 });
 
-const TITLE = "Gravino — One team for everything your business needs to say";
+const TITLE = "Gravino | One team for everything your business needs to say";
 const DESCRIPTION =
-  "One senior team for the full surface of how your business communicates — investor decks, reports, brand, motion and campaigns. Where Balance Meets Value.";
+  "One senior team for the full surface of how your business communicates: investor decks, reports, brand, motion and campaigns. Where Balance Meets Value.";
 
 export const metadata: Metadata = {
   /* Without metadataBase, Next emits RELATIVE Open Graph image URLs, which no
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
      opengraph-image.jpg and icon.png beside this file are picked up by
      convention and resolved against it. */
   metadataBase: new URL(SITE_URL),
-  title: { default: TITLE, template: "%s — Gravino" },
+  title: { default: TITLE, template: "%s | Gravino" },
   description: DESCRIPTION,
   alternates: { canonical: "/" },
   openGraph: {

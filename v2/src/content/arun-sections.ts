@@ -2,8 +2,8 @@
  * Arun's downstream sections, verbatim.
  * ---------------------------------------------------------------------------
  * From lines 456-891 of his index4.html: what-we-cover, portfolio, teardown,
- * and the teardown modal. The footer moved out to cosmic-chrome.tsx, so the
- * home page and the interior pages render the same one.
+ * The footer moved out to cosmic-chrome.tsx and the teardown modal to
+ * teardown-form.tsx, so every page renders the same one of each.
  *
  * His proof-of-work section ("Credibility At Scale") was removed at the
  * client's request. It was also the last light-on-white section on the page.
@@ -52,7 +52,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
           <span class="block whitespace-nowrap font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">Team.</span>
         </h2>
         <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-sm sm:max-w-md">
-          From business communication to brand, growth and experience—we bring the disciplines together around what your business needs to achieve.
+          From business communication to brand, growth and experience, and we bring the disciplines together around what your business needs to achieve.
         </p>
       </div>
 
@@ -98,7 +98,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
               <div class="space-y-6 sm:space-y-7 pt-1">
                 <div class="cap-item-1 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Communicate with clarity — corporate &amp; business communication
+                    Communicate with clarity: corporate &amp; business communication
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     From company presentations to executive communications, we turn complex business information into clear, compelling narratives.
@@ -112,7 +112,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-2 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Win the room — investor &amp; stakeholder communication
+                    Win the room: investor &amp; stakeholder communication
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Build the story, structure the message and design the materials that help leaders communicate with confidence.
@@ -126,7 +126,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-3 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Lead with authority — thought leadership
+                    Lead with authority: thought leadership
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Turn expertise into communication that builds credibility, influence and trust.
@@ -148,7 +148,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
               <div class="space-y-6 sm:space-y-7 pt-1">
                 <div class="cap-item-1 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Define your difference — brand strategy
+                    Define your difference: brand strategy
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Find the position, purpose and promise that give your business a distinctive place in the market.
@@ -162,7 +162,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-2 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Make it recognisable — visual identity
+                    Make it recognisable: visual identity
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Create a visual system that makes your value visible, consistent and unmistakably yours.
@@ -176,7 +176,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-3 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Bring the brand to life — brand experience
+                    Bring the brand to life: brand experience
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Extend your identity across every touchpoint so the brand feels consistent wherever people meet it.
@@ -198,7 +198,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
               <div class="space-y-6 sm:space-y-7 pt-1">
                 <div class="cap-item-1 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Launch with momentum — go-to-market communication
+                    Launch with momentum: go-to-market communication
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Plan and execute product launches and market entries that generate immediate traction and interest.
@@ -212,7 +212,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-2 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Scale your presence — always-on marketing
+                    Scale your presence: always-on marketing
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Maintain continuous marketing momentum through consistent communication across your most important channels.
@@ -226,7 +226,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-3 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Convert at every touchpoint — sales enablement
+                    Convert at every touchpoint: sales enablement
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Equip sales teams with the communication assets they need to close conversations faster.
@@ -248,7 +248,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
               <div class="space-y-6 sm:space-y-7 pt-1">
                 <div class="cap-item-1 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Deliver seamless interactions — digital product communication
+                    Deliver seamless interactions: digital product communication
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Design the interfaces, onboarding flows and product communication that make digital products feel effortless.
@@ -262,7 +262,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-2 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Create an impression — spatial &amp; physical brand experience
+                    Create an impression: spatial &amp; physical brand experience
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Extend brand communication into real-world spaces, creating environments that leave lasting impressions.
@@ -276,7 +276,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
                 <div class="cap-item-3 space-y-2">
                   <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Bring stories to life — film, motion &amp; multimedia
+                    Bring stories to life: film, motion &amp; multimedia
                   </h4>
                   <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
                     Use motion, sound and moving image to communicate complex ideas with emotional resonance.
@@ -378,7 +378,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
         <div class="lg:col-span-7 space-y-6">
           <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">No Pitch Attached</span>
           <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Start with a look, <br><span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">not a commitment.</span></h2>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">Send us your current investor deck, report, or brand piece. We'll send back a one-page teardown — what's working, what's costing you, and what we'd change — at no cost, with no pitch attached. It's the fastest way to see how we think.</p>
+          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">Send us your current investor deck, report, or brand piece. We'll send back a one-page teardown: what's working, what's costing you, and what we'd change: at no cost, with no pitch attached. It's the fastest way to see how we think.</p>
           <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-400 leading-relaxed">How we start: tell us what's on your plate; we come back with scope, approach, and a clear quote after a short conversation. Your files and full copyright transfer to you on completion. What you share stays confidential.</p>
           <div class="pt-4 text-base sm:text-lg font-light text-white flex flex-wrap items-center gap-6 border-t border-white/15">
             <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#20c4f4]"></span>Clarity</span>
@@ -403,37 +403,5 @@ export const ARUN_SECTIONS_HTML = String.raw`
   </section>
 
 
-
-  <!-- INTERACTIVE TEARDOWN / PROJECT KICKOFF MODAL -->
-  <div id="teardownModal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-    <div class="modal-content w-full max-w-xl bg-[#182447] border border-[#a7b6f2]/25 rounded-3xl shadow-2xl p-6 sm:p-10 relative">
-      <button id="closeTeardownBtn" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors" aria-label="Close modal">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-      <div id="formStateInitial">
-        <div class="mb-6">
-          <span class="text-xs font-mono uppercase tracking-wider text-[#20c4f4]">Start with a look, not a commitment</span>
-          <h3 class="text-2xl font-light text-white mt-1">Get Your 1-Page Teardown</h3>
-          <p class="text-slate-300 text-xs sm:text-sm mt-2">Send us your current investor deck, report, or brand piece. We'll send back what's working, what's costing you, and what we'd change — at no cost, with no pitch attached.</p>
-        </div>
-        <form id="teardownForm" class="space-y-4">
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Your Name *</label><input type="text" required name="name" placeholder="Jane Doe" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Work Email *</label><input type="email" required name="email" placeholder="jane@company.com" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Company / Project *</label><input type="text" required name="company" placeholder="Acme Technologies" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Asset for Review *</label><select name="asset" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"><option value="deck">Investor Pitch Deck</option><option value="report">Annual / ESG Impact Report</option><option value="brand">Brand Identity &amp; Positioning</option><option value="motion">Product Launch Film / Video Narrative</option><option value="other">Full Surface Communications</option></select></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Link to Deck or Brief Context (Optional)</label><input type="text" name="link" placeholder="https://docsend.com/view/... or brief note" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div class="pt-3"><button type="submit" class="btn-gravino w-full py-3 text-sm">Submit for Confidential Review &rarr;</button></div>
-          <p class="text-[11px] text-slate-400 text-center font-mono">Files remain strictly confidential. Full copyright transfer on completion.</p>
-        </form>
-      </div>
-      <div id="formStateSuccess" class="hidden text-center py-8 space-y-4">
-        <div class="w-14 h-14 rounded-full bg-[#20c4f4]/20 border border-[#20c4f4] text-[#20c4f4] mx-auto flex items-center justify-center"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
-        <h3 class="text-2xl font-light text-white">Your Email Is Ready to Send</h3>
-        <p class="text-slate-300 text-sm max-w-md mx-auto">Your mail app should have opened with the request filled in — hit send and it reaches us directly. Once it lands, we'll send back your confidential 1-page teardown within 24 hours. No pitch attached.</p>
-        <p class="text-slate-400 text-xs max-w-md mx-auto">Nothing happened? Write to <a href="mailto:create@gravino.in" class="text-[#20c4f4] underline">create@gravino.in</a>.</p>
-        <button onclick="document.getElementById('teardownModal').classList.remove('active')" class="btn-gravino-outline text-xs mt-4">Close Window</button>
-      </div>
-    </div>
-  </div>
 
 `;

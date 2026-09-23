@@ -49,7 +49,7 @@ export const HERO = {
    *  "say.", "Balance" and "Model". One word per headline, never more. */
   headline: ["One team for everything", "your business needs to"],
   accent: "say.",
-  body: "One senior team across every format — learning your business once, then handling everything it has to say.",
+  body: "One senior team across every format, learning your business once, then handling everything it has to say.",
   primary: { label: "Send us a deck", href: "/contact" },
   secondary: { label: "See what we cover", href: "/services" },
 } as const;
@@ -109,7 +109,7 @@ export const GROUPS: Group[] = [
         title: "Win the room",
         kind: "High-stakes corporate communications",
         blurb:
-          "The deck, the board narrative, the keynote — where a “no” costs most. Built to survive the hardest question in the room, not just to open well.",
+          "The deck, the board narrative, the keynote, where a “no” costs most. Built to survive the hardest question in the room, not just to open well.",
         items: ["Pitch & investor decks", "Boardroom presentations", "Keynote design"],
       },
       {
@@ -125,7 +125,7 @@ export const GROUPS: Group[] = [
         title: "Own the conversation",
         kind: "Editorial design & thought leadership",
         blurb:
-          "Whitepapers, briefs and case studies a busy executive actually finishes — and remembers you for.",
+          "Whitepapers, briefs and case studies a busy executive actually finishes, and remembers you for.",
         items: ["Whitepapers", "Newsletters", "Case studies"],
       },
     ],
@@ -140,7 +140,7 @@ export const GROUPS: Group[] = [
         title: "Build an asset, not a logo",
         kind: "Strategic brand architecture",
         blurb:
-          "Positioning, identity systems and rebrands built to compound — so the brand reads as category leader before a word is spoken.",
+          "Positioning, identity systems and rebrands built to compound, so the brand reads as category leader before a word is spoken.",
         items: ["Positioning", "Visual identity systems", "Rebranding"],
       },
       {
@@ -179,7 +179,7 @@ export const GROUPS: Group[] = [
         title: "Make complexity obvious",
         kind: "Information design & data visualisation",
         blurb:
-          "Research and analytics a decision-maker grasps in seconds. The insight was always there — we make it impossible to miss.",
+          "Research and analytics a decision-maker grasps in seconds. The insight was always there; we make it impossible to miss.",
         items: ["Research synthesis", "Data storytelling", "Infographics"],
       },
     ],
@@ -202,7 +202,7 @@ export const GROUPS: Group[] = [
         title: "Command the space",
         kind: "Spatial, event & experiential design",
         blurb:
-          "Booths, environmental branding and print — as considered in the room as on screen.",
+          "Booths, environmental branding and print, as considered in the room as on screen.",
         items: ["Booths", "Environmental branding", "Print & packaging"],
       },
     ],
@@ -247,7 +247,7 @@ export const COMPARISON = {
     { k: "Coverage", v: ["One format each", "One person's range", "Full communications surface"] },
     { k: "Consistency", v: ["Fragments across hands", "Strong, single-threaded", "Systemised across all work"] },
     { k: "Cost shape", v: ["Unpredictable", "Fixed, even when idle", "Scales with need"] },
-    { k: "Idle capacity", v: ["—", "Paid whether used or not", "None — commissioned as needed"] },
+    { k: "Idle capacity", v: ["Not applicable", "Paid whether used or not", "None, commissioned as needed"] },
     { k: "Management load", v: ["You coordinate everyone", "You manage the role", "One point of contact"] },
   ],
   close: "You shouldn't have to build a department to solve a recurring problem.",
@@ -294,7 +294,7 @@ export const AUDIENCES = {
     role: "For the chief executive",
     headline: "Your story is your most valuable asset. We make sure it wins.",
     lede: "Seconds to secure the round, hold the room, convince the market you're worth the bet. In those seconds, how you communicate is the business.",
-    body: "Most underinvest exactly when the stakes are highest — the year's biggest meeting, a deck built overnight, a brand that signals “smaller than we are.” We build the balance instead: bold enough to inspire, grounded enough to trust.",
+    body: "Most underinvest exactly when the stakes are highest: the year's biggest meeting, a deck built overnight, a brand that signals “smaller than we are.” We build the balance instead: bold enough to inspire, grounded enough to trust.",
     pull: "A brilliant business with an unclear narrative is an undervalued one.",
     points: [
       {
@@ -319,8 +319,8 @@ export const AUDIENCES = {
     role: "For the chief financial officer",
     headline: "Senior design capability. Without the headcount line.",
     lede: "The decks, reports and brand assets never stop. An in-house team is a permanent cost for demand that arrives in waves; freelancers trade that for a brand fragmented across a dozen hands.",
-    body: "Gravino is the third option. One embedded team, covering every format — the capability of an in-house function without the fixed cost, the recruitment risk, or the idle capacity.",
-    pull: "The hidden cost of design isn't the invoice — it's the hours spent coordinating it.",
+    body: "Gravino is the third option. One embedded team, covering every format, with the capability of an in-house function without the fixed cost, the recruitment risk, or the idle capacity.",
+    pull: "The hidden cost of design isn't the invoice, it's the hours spent coordinating it.",
     points: [
       {
         title: "One partner, not ten vendors",
@@ -335,7 +335,7 @@ export const AUDIENCES = {
         body: "Every off-brand slide leaks value from an asset you paid for. Templates keep every team on-brand by default, so equity compounds.",
       },
     ],
-    close: "Transparent by default — clear scope, quotes after a short conversation, no surprise line items.",
+    close: "Transparent by default: clear scope, quotes after a short conversation, no surprise line items.",
     offer:
       "Send a recent set of company decks. We'll return one page on where design spend is leaking and where it's working.",
   },

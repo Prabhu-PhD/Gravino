@@ -19,24 +19,36 @@
 
 @theme {
   /* --- Grounds ------------------------------------------------------------
-     Ink is warm-shifted (hint of violet) rather than pure #000 so the violet
-     gradient sits IN it instead of on top of it. Paper is warm off-white —
-     the opac / Trupeer end of the reference set, not clinical white. */
-  --color-ink: #0a0812;
-  --color-ink-soft: #14111f;
-  --color-ink-line: #241f36;
+     BOTH GROUNDS ARE NOW DARK. The home page is Arun's cosmic build, and an
+     off-white interior page beside it read as a different company, so the
+     paper ground was re-pitched onto his palette rather than the pages being
+     rewritten one by one — every interior page already used these tokens and
+     almost nothing hardcoded a colour.
 
-  --color-paper: #f7f5f2;
-  --color-paper-soft: #efece7;
-  --color-paper-line: #ddd8d0;
+     The names still mean what they meant: `paper` is the READING ground and
+     `ink` is the LOUD ground. What changed is that the contrast between them
+     is now depth rather than polarity, which is how the home page works too.
+
+     Values are taken from Arun's own sections: #09090f is his page base,
+     #0f0c1d the middle of his radial section wash, #050507 and #13172e the
+     ends of his teardown gradient. */
+  --color-ink: #050507;
+  --color-ink-soft: #13172e;
+  --color-ink-line: #2a2545;
+
+  --color-paper: #09090f;
+  --color-paper-soft: #0f0c1d;
+  --color-paper-line: #23203a;
 
   /* --- Text ---------------------------------------------------------------
      Named by the ground they sit on, so a component can never accidentally
      put low-contrast text on the wrong side. */
   --color-on-ink: #f4f2f8;
   --color-on-ink-dim: #a49dbb;
-  --color-on-paper: #16141d;
-  --color-on-paper-dim: #6a6577;
+  /* Matched to the slate-100 / slate-400 the cosmic build sets its body text
+     in, so a paragraph does not change colour between home and /about. */
+  --color-on-paper: #e9ebf5;
+  --color-on-paper-dim: #9aa2bd;
 
   /* --- The one gradient ---------------------------------------------------
      Gravino's brand hues (indigo → violet → periwinkle → blush) pushed to the
@@ -49,16 +61,17 @@
   --color-grad-4: #f0b6d3;
 
   /* Single accent for links, focus rings, active states. */
-  --color-accent: #7c4dff;
-  --color-accent-on-ink: #b9a0ff;
+  /* His #7b3fe4 and #a7b6f2 — the two accents already on the home page. */
+  --color-accent: #7b3fe4;
+  --color-accent-on-ink: #a7b6f2;
 
-  /* The hero's pale ground, straight off the brochure: a cool blue-lilac
-     wash that warms toward the lower right. Its own tokens because the
-     bubble is composited onto it and the two have to agree. */
-  --color-wash-0: #e9eefb;
-  --color-wash-1: #eae6f8;
-  --color-wash-2: #f4ecf3;
-  --color-wash-3: #fdf8f4;
+  /* The page-head wash. Was the brochure's pale blue-lilac; now the same
+     move in the dark — a violet lift at the top left falling away to his
+     near-black, so an interior page opens the way the home page does. */
+  --color-wash-0: #171033;
+  --color-wash-1: #120d26;
+  --color-wash-2: #0b0917;
+  --color-wash-3: #06060a;
 
   /* --- Type --------------------------------------------------------------- */
   --font-display: var(--font-dm), ui-sans-serif, system-ui, sans-serif;
@@ -99,7 +112,9 @@ dd {
 /* The surfaces we did not draw still carry the design. Left at their
    defaults these belong to no design system at all. */
 ::selection {
-  background: var(--color-accent);
+  /* The cosmic build sets selection:bg-[#7b3fe4]/30 — matched here so the
+     behaviour does not change between the home page and the rest. */
+  background: color-mix(in oklab, var(--color-accent) 30%, transparent);
   color: #fff;
 }
 
@@ -178,8 +193,12 @@ table {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.4;
-  mix-blend-mode: overlay;
+  /* On the old off-white ground this was opacity 0.4 in `overlay`. Over a
+     near-black ground overlay lifts the blacks into grey haze, so it is
+     soft-light at a third the strength: still breaks up the flat areas,
+     without turning the page milky. */
+  opacity: 0.14;
+  mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
@@ -283,17 +302,17 @@ table {
   background-image:
     radial-gradient(
       58% 48% at 10% 6%,
-      color-mix(in oklab, var(--color-grad-2) 13%, transparent),
+      color-mix(in oklab, var(--color-grad-2) 22%, transparent),
       transparent 70%
     ),
     radial-gradient(
       48% 42% at 90% 20%,
-      color-mix(in oklab, var(--color-grad-4) 13%, transparent),
+      color-mix(in oklab, var(--color-grad-4) 18%, transparent),
       transparent 68%
     ),
     radial-gradient(
       70% 58% at 58% 98%,
-      color-mix(in oklab, var(--color-grad-3) 11%, transparent),
+      color-mix(in oklab, var(--color-grad-3) 16%, transparent),
       transparent 72%
     );
 }
@@ -303,16 +322,22 @@ table {
    the mesh ground a translucent fill plus a lit top edge already reads as
    glass, because the ground's colour genuinely comes through. */
 @utility glass {
+  /* Was a near-opaque WHITE fill, which is correct over an off-white ground
+     and a bright slab over a near-black one. Now the same construction in
+     reverse: a low-alpha white lift with a lit top edge, so the mesh ground
+     below still shows through and it reads as glass rather than as a panel.
+     This is what `glass-ink` already did — the two are now siblings at
+     different strengths rather than opposites. */
   border-radius: 1.25rem;
   background: linear-gradient(
     142deg,
-    rgba(255, 255, 255, 0.74),
-    rgba(255, 255, 255, 0.4)
+    rgba(255, 255, 255, 0.075),
+    rgba(255, 255, 255, 0.025)
   );
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.11);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 22px 44px -30px rgba(38, 28, 76, 0.5);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 26px 52px -32px rgba(0, 0, 0, 0.85);
 }
 
 @utility glass-ink {

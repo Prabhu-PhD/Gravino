@@ -54,7 +54,7 @@ export default function Contact() {
               className="card group flex flex-col justify-between p-8 transition-colors hover:border-accent md:p-10"
             >
               <div className="flex items-baseline justify-between">
-                <span className="label text-accent">01</span>
+                <span className="label text-accent-on-ink">01</span>
                 <span className="label text-on-paper-dim">Email</span>
               </div>
               <div className="mt-14">
@@ -72,7 +72,7 @@ export default function Contact() {
 
             <div className="card flex flex-col justify-between p-8 md:p-10">
               <div className="flex items-baseline justify-between">
-                <span className="label text-accent">02</span>
+                <span className="label text-accent-on-ink">02</span>
                 <span className="label text-on-paper-dim">Where we are</span>
               </div>
               <div className="mt-14">

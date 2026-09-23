@@ -17,7 +17,7 @@
  * ======================================================================== */
 
 (function () {
-  var TO = "hello@gravino.in";
+  var TO = "create@gravino.in";
 
   var LABELS = {
     deck: "Investor Pitch Deck",

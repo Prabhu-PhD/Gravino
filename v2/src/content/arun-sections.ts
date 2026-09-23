@@ -455,7 +455,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
         <div class="w-14 h-14 rounded-full bg-[#20c4f4]/20 border border-[#20c4f4] text-[#20c4f4] mx-auto flex items-center justify-center"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
         <h3 class="text-2xl font-light text-white">Your Email Is Ready to Send</h3>
         <p class="text-slate-300 text-sm max-w-md mx-auto">Your mail app should have opened with the request filled in — hit send and it reaches us directly. Once it lands, we'll send back your confidential 1-page teardown within 24 hours. No pitch attached.</p>
-        <p class="text-slate-400 text-xs max-w-md mx-auto">Nothing happened? Write to <a href="mailto:hello@gravino.in" class="text-[#20c4f4] underline">hello@gravino.in</a>.</p>
+        <p class="text-slate-400 text-xs max-w-md mx-auto">Nothing happened? Write to <a href="mailto:create@gravino.in" class="text-[#20c4f4] underline">create@gravino.in</a>.</p>
         <button onclick="document.getElementById('teardownModal').classList.remove('active')" class="btn-gravino-outline text-xs mt-4">Close Window</button>
       </div>
     </div>

@@ -17,7 +17,7 @@ export const SITE = {
   tagline: "Where Balance Meets Value",
   /** The line locked up under the logo mark in the brand art. */
   lockupLine: "Value Has Gravity.",
-  email: "hello@gravino.in", // TODO(confirm): real address — brochure says 〔add email〕
+  email: "create@gravino.in", // Confirmed by the client.
   whatsapp: "", // TODO(confirm): real number
   location: "Chennai, India",
   markets: "US · Europe · Gulf · India",

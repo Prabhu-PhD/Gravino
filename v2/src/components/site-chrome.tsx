@@ -29,7 +29,10 @@ export function SiteNav() {
   return (
     <header className="absolute inset-x-0 top-0 z-30">
       <div className="mx-auto flex max-w-[88rem] items-center justify-between px-6 py-6 md:px-10">
-        <Wordmark />
+        {/* `dark` now that the reading ground is dark too — the mark draws
+            itself in on-ink vs on-paper, and without this it rendered in the
+            dark ink colour on a near-black header. */}
+        <Wordmark dark />
         <nav className="hidden items-center gap-8 md:flex">
           {NAV.map((n) => (
             <Link

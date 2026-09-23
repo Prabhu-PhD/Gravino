@@ -39,7 +39,7 @@ export default function Services() {
               {g.disciplines.map((d) => (
                 <article key={d.n} className="card flex flex-col p-8">
                   <div className="flex items-baseline justify-between">
-                    <span className="label text-accent">{d.n}</span>
+                    <span className="label text-accent-on-ink">{d.n}</span>
                     <span className="label text-on-paper-dim">
                       {g.n}
                       <span className="opacity-40"> / {TOTAL}</span>
@@ -48,7 +48,7 @@ export default function Services() {
                   <h3 className="mt-6 font-display text-[1.3rem] font-medium leading-snug tracking-[-0.02em]">
                     {d.title}
                   </h3>
-                  <p className="label mt-2 text-accent">{d.kind}</p>
+                  <p className="label mt-2 text-accent-on-ink">{d.kind}</p>
                   <p className="mt-5 text-[0.95rem] leading-relaxed text-on-paper-dim">
                     {d.blurb}
                   </p>

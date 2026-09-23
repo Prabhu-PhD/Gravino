@@ -1,24 +1,23 @@
 import { GravityHero } from "@/components/gravity-hero";
+import { ArunSections } from "@/components/arun-sections";
+import { ArunRuntime } from "@/components/arun-runtime";
 import "../arun.css";
 
 export const metadata = { title: "Cosmic hero — port preview" };
 
-/* Preview route for the ported gravity hero.
-   Kept off the home page until the downstream sections are ported too, so the
-   working v2 home page is not broken half-way through the port.
+/* Preview route for Arun's build running inside Next.
+   Kept off the home page until it is signed off, so the working v2 home page
+   is not broken half-way through.
 
-   The empty sections below are not filler: the engine's scroll-lock logic
-   looks up #what-we-cover, #proof-of-work, #teardown and #contact by id to
-   decide when to release the pinned hero. Without them those lookups return
-   null and the hero never unlocks. */
+   Note there is no #contact element. app4.js looks one up, but index4.html
+   does not contain it either, so this matches his build rather than adding
+   an element he does not have. */
 export default function CosmicPreview() {
   return (
-    <div className="bg-[#09090f] text-slate-100 antialiased">
+    <div className="bg-[#09090f] text-slate-100 antialiased selection:bg-[#7b3fe4]/30 selection:text-white">
       <GravityHero />
-      <section id="what-we-cover" className="min-h-screen bg-[#09090f]" />
-      <section id="proof-of-work" className="min-h-screen bg-[#09090f]" />
-      <section id="teardown" className="min-h-screen bg-[#09090f]" />
-      <section id="contact" className="min-h-screen bg-[#09090f]" />
+      <ArunSections />
+      <ArunRuntime />
     </div>
   );
 }

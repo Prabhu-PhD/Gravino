@@ -55,7 +55,19 @@
         if (stage && targetPanel) {
           const h = targetPanel.scrollHeight || targetPanel.offsetHeight;
           if (h > 0) {
-            stage.style.minHeight = Math.max(h + 24, 630) + 'px';
+            /* OURS: the 630px floor is a desktop measurement. Below the lg
+               breakpoint the totem is a row of tabs rather than a column of
+               numerals beside the panel, so nothing needs reserving and the
+               floor only leaves a large empty well under the shorter
+               panels. Above lg it is unchanged. */
+            var floor = window.matchMedia('(min-width: 1024px)').matches ? 630 : 0;
+            /* setProperty with 'important', not stage.style.minHeight.
+               His stylesheet sets .cap-panel-stage a min-height of 520px
+               !important below the lg breakpoint, and a plain inline style
+               loses to it - the panels are absolutely positioned, so the
+               stage would keep a fixed height and the taller panels would
+               overflow into the section beneath. */
+            stage.style.setProperty('min-height', Math.max(h + 24, floor) + 'px', 'important');
           }
         }
       }

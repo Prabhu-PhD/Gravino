@@ -1,8 +1,11 @@
 /* ===========================================================================
  * Arun's downstream sections, verbatim.
  * ---------------------------------------------------------------------------
- * Lines 456-891 of his index4.html: what-we-cover, portfolio, proof-of-work,
- * teardown, the footer and the teardown modal.
+ * From lines 456-891 of his index4.html: what-we-cover, portfolio, teardown,
+ * the footer and the teardown modal.
+ *
+ * His proof-of-work section ("Credibility At Scale") was removed at the
+ * client's request. It was also the last light-on-white section on the page.
  *
  * This is HTML rather than JSX on purpose. The three scripts that drive these
  * sections - ui.js, capabilities.js and app4.js - are his, unmodified, and
@@ -61,18 +64,22 @@ export const ARUN_SECTIONS_HTML = String.raw`
             
             <button class="num-selector active" data-target="cap-1" aria-label="01 Business Communication">
               <span class="num-text">01</span>
+              <span class="num-label">Business Communication</span>
             </button>
             
             <button class="num-selector" data-target="cap-2" aria-label="02 Brand & Identity">
               <span class="num-text">02</span>
+              <span class="num-label">Brand &amp; Identity</span>
             </button>
             
             <button class="num-selector" data-target="cap-3" aria-label="03 Marketing & Growth">
               <span class="num-text">03</span>
+              <span class="num-label">Marketing &amp; Growth</span>
             </button>
             
             <button class="num-selector" data-target="cap-4" aria-label="04 Experience & Engagement">
               <span class="num-text">04</span>
+              <span class="num-label">Experience &amp; Engagement</span>
             </button>
 
           </div>
@@ -359,23 +366,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
 
 
-  <!-- SECTION: PROOF OF WORK -->
-  <section id="proof-of-work" class="page-section py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-slate-200 bg-gradient-to-b from-[#fafafc] via-[#f0f4fa] to-[#fafafc] text-slate-900 relative overflow-hidden scroll-mt-20">
-    <div class="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="max-w-7xl mx-auto relative z-10">
-      <div class="mb-16">
-        <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">Credibility At Scale</span>
-        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-slate-900 leading-[1.15]">Proof of <span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">Work.</span></h2>
-        <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-600 leading-relaxed max-w-sm sm:max-w-md mt-3">How We Work &middot; Battle-tested across major global markets.</p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-0 lg:divide-x lg:divide-slate-200 pb-8">
-        <div class="lg:pr-8 space-y-4"><div class="text-6xl sm:text-7xl font-light text-[#7b3fe4] font-mono tracking-tight">4</div><div class="text-base font-semibold text-slate-900">Senior Leadership Core</div><p class="text-xs sm:text-sm md:text-[15px] text-slate-600 leading-relaxed font-light">Dedicated senior leadership on every execution, zero junior handoffs.</p><div class="pt-4 border-t border-slate-200 font-mono text-[11px] text-[#7b3fe4] font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#7b3fe4]"></span>100% Senior Involvement</div></div>
-        <div class="lg:px-8 space-y-4"><div class="text-6xl sm:text-7xl font-light text-[#0284c7] font-mono tracking-tight">75+ <span class="text-2xl text-[#0284c7]">Years</span></div><div class="text-base font-semibold text-slate-900">Combined Experience</div><p class="text-xs sm:text-sm md:text-[15px] text-slate-600 leading-relaxed font-light">Decades inside boardrooms, IPO roadshows, and international brand rollouts.</p><div class="pt-4 border-t border-slate-200 font-mono text-[11px] text-[#0284c7] font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#0284c7]"></span>Boardroom &amp; Capital Battle-Tested</div></div>
-        <div class="lg:px-8 space-y-4"><div class="text-4xl sm:text-5xl font-light text-[#ec4899] font-mono tracking-tight pt-3 sm:pt-4">Systemic</div><div class="text-base font-semibold text-slate-900">Process Architecture</div><p class="text-xs sm:text-sm md:text-[15px] text-slate-600 leading-relaxed font-light">Standardized frameworks, intake automation, and enterprise governance.</p><div class="pt-4 border-t border-slate-200 font-mono text-[11px] text-[#ec4899] font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#ec4899]"></span>Repeatable Governance</div></div>
-        <div class="lg:pl-8 space-y-4"><div class="text-4xl sm:text-5xl font-light text-[#3867d6] font-mono tracking-tight pt-3 sm:pt-4">Global</div><div class="text-base font-semibold text-slate-900">International Engagements</div><p class="text-xs sm:text-sm md:text-[15px] text-slate-600 leading-relaxed font-light">Active engagements across US, Europe, Gulf, and India.</p><div class="pt-4 border-t border-slate-200 font-mono text-[11px] text-[#3867d6] font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#3867d6]"></span>US &middot; Europe &middot; Gulf &middot; India</div></div>
-      </div>
-    </div>
-  </section>
+
 
   <!-- SECTION: START WITH A LOOK (CTA) -->
   <section id="teardown" class="page-section py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10 bg-gradient-to-b from-[#09090f] via-[#13172e] to-[#050507] relative overflow-hidden scroll-mt-20">
@@ -410,22 +401,66 @@ export const ARUN_SECTIONS_HTML = String.raw`
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="page-section py-14 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10" style="background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Gravino — Value Has Gravity" class="h-7 sm:h-8 w-auto object-contain">
+  <!-- FOOTER
+       Rebuilt. His was one row: a logo, seven links and a copyright line.
+       It carried no address, no location, no route to the pages that answer
+       a buyer's next question, and it repeated in-page anchors as though
+       they were destinations.
+
+       This is the same information architecture the interior pages' footer
+       already used, in the cosmic treatment: who we are, where to go, and
+       how to reach us - with the in-page anchors kept separate from the
+       pages, because they are not the same kind of thing. -->
+  <footer class="page-section pt-16 pb-10 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10" style="background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
+
+        <!-- Brand block -->
+        <div class="col-span-2 sm:col-span-3 lg:col-span-2 lg:pr-10">
+          <img src="/assets/logo.png" alt="Gravino — Value Has Gravity" class="h-8 w-auto object-contain">
+          <p class="mt-5 text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
+            Where Balance Meets Value
+          </p>
+          <p class="mt-4 max-w-xs text-sm font-light leading-relaxed text-slate-400">
+            One senior team for the full surface of how your business
+            communicates — decks, reports, brand, motion and campaigns.
+          </p>
+        </div>
+
+        <!-- On this page -->
+        <nav class="flex flex-col gap-3">
+          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">On this page</p>
+          <a href="#what-we-cover" class="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
+          <a href="#portfolio" class="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
+          <a href="#teardown" class="text-sm text-slate-300 hover:text-white transition-colors">Free teardown</a>
+        </nav>
+
+        <!-- Pages -->
+        <nav class="flex flex-col gap-3">
+          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">Pages</p>
+          <a href="/services" class="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
+          <a href="/about" class="text-sm text-slate-300 hover:text-white transition-colors">About</a>
+          <a href="/contact" class="text-sm text-slate-300 hover:text-white transition-colors">Contact</a>
+          <a href="/for/ceo" class="text-sm text-slate-300 hover:text-white transition-colors">For chief executives</a>
+          <a href="/for/cfo" class="text-sm text-slate-300 hover:text-white transition-colors">For CFOs</a>
+        </nav>
+
+        <!-- Contact -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">Contact</p>
+          <a href="mailto:create@gravino.in" class="text-sm text-slate-300 hover:text-white transition-colors break-all">create@gravino.in</a>
+          <p class="text-sm text-slate-400">Chennai, India</p>
+          <p class="text-sm text-slate-500">US &middot; Europe &middot; Gulf &middot; India</p>
+        </div>
+
       </div>
-      <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs text-slate-400">
-        <a href="/services" class="hover:text-white transition-colors">The Model</a>
-        <a href="#what-we-cover" class="hover:text-white transition-colors">What We Cover</a>
-        <a href="/about" class="hover:text-white transition-colors">Why Embedded</a>
-        <a href="#proof-of-work" class="hover:text-white transition-colors">Proof of Work</a>
-        <a href="/for/ceo" class="hover:text-white transition-colors">For CEOs</a>
-        <a href="/for/cfo" class="hover:text-white transition-colors">For CFOs</a>
-        <a href="/contact" class="hover:text-white transition-colors">Contact</a>
+
+      <div class="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs font-mono text-slate-500">&copy; 2026 Gravino &nbsp;/&nbsp; gravino.in</p>
+        <p class="text-xs font-mono text-slate-500">75+ years between four people, Chennai</p>
       </div>
-      <div class="text-xs text-slate-500 font-mono">&copy; 2026 Gravino. All rights reserved.</div>
+
     </div>
   </footer>
 

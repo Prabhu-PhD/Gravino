@@ -652,3 +652,125 @@ body {
         transform: translateY(0);
       }
     }
+
+/* ===========================================================================
+   Responsive corrections - ours, not Arun's.
+   ---------------------------------------------------------------------------
+   NOTE ON !important BELOW. It is not laziness. His page carried a SECOND
+   copy of the capability-totem rules in an inline <head> style block, and
+   every declaration in it is flagged !important with NO media condition, so
+   it beats any later rule in this file whatever the order or specificity.
+   Confirmed by walking the CSSOM rather than by reading: `.num-selector` and
+   `.num-selector .num-text` each match twice, once normally and once
+   !important with an empty media condition. Overriding it needs the same
+   weapon. That block is left intact rather than unpicked, because it is also
+   what makes the desktop totem look right.
+   ========================================================================= */
+
+/* --- Hero 2 leader lines ---------------------------------------------------
+   The four caption cards the lines point at live inside `hidden md:block`,
+   so below 768px they are display:none and getBoundingClientRect() returns
+   all zeros. app4.js then drew every line from x1=0, y1=0 - the top-left
+   corner of the screen - fanning across the planet to the ring dots. That is
+   what "the lines are not connecting to the cards" was.
+
+   The lines are a desktop device: they annotate cards positioned around the
+   planet. In the mobile layout those cards are replaced by a stacked pill
+   list below the planet, and running four curves from a ring behind the
+   planet down to a list would cross the subject and read as noise. So the
+   overlay is not drawn where the thing it annotates does not exist - the
+   colour dot on each pill already carries the same association.
+
+   display:none rather than opacity, because app4.js writes opacity inline
+   every frame and would win. */
+@media (max-width: 767px) {
+  #ring-lines-svg {
+    display: none !important;
+  }
+}
+
+/* --- Capability selector on tablet and mobile ------------------------------
+   His totem is four 74px numerals stacked vertically with no labels. At
+   desktop width it sits beside the panel and reads as an index. Below the lg
+   breakpoint it becomes the whole interface: a column of bare numbers that
+   does not look tappable, above a panel that changes when you do. There is
+   no way to tell what 03 is before choosing it.
+
+   Below lg it becomes what it actually is - a set of tabs. Numeral kept as a
+   small index, label shown, laid out as pills so the tap target is a real
+   target. The desktop totem is untouched. */
+.num-label {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  #totem-numbers {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin: 0 !important;
+    width: 100%;
+  }
+
+  .num-selector {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    padding: 0.85rem 1rem !important;
+    margin: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0.85rem !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  /* The numeral stops being the headline and becomes an index. */
+  .num-selector .num-text {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 1.6rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .num-selector .num-label {
+    display: block !important;
+    font-size: 0.875rem;
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    color: #cbd5e1;
+  }
+
+  /* Hover styling is meaningless on a touch screen and left a tab looking
+     half-selected after a tap, so it is neutralised here. */
+  .num-selector:hover .num-text {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .num-selector.active {
+    border-color: rgba(168, 85, 247, 0.55) !important;
+    background: rgba(123, 63, 228, 0.16) !important;
+  }
+
+  .num-selector.active .num-text,
+  .num-selector.active:hover .num-text {
+    transform: none !important;
+  }
+
+  .num-selector.active .num-label {
+    color: #ffffff;
+  }
+
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  #totem-numbers {
+    grid-template-columns: 1fr 1fr;
+  }
+}

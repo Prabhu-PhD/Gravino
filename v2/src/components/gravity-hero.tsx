@@ -52,7 +52,6 @@ export function GravityHero() {
               <a href="#what-we-cover" className="hover:text-white transition-colors duration-200">What We Cover</a>
               <a href="#portfolio" className="hover:text-white transition-colors duration-200">Portfolio</a>
               <a href="/about" className="hover:text-white transition-colors duration-200">Why Embedded</a>
-              <a href="#proof-of-work" className="hover:text-white transition-colors duration-200">Proof of Work</a>
             </div>
 
             <button className="trigger-teardown text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm">
@@ -94,7 +93,6 @@ export function GravityHero() {
               <a href="#what-we-cover" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">What We Cover</a>
               <a href="#portfolio" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Portfolio</a>
               <a href="/about" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Why Embedded</a>
-              <a href="#proof-of-work" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Proof of Work</a>
               <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
                 Start a Project / Free Teardown
               </button>

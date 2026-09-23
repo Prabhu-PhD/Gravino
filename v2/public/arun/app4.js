@@ -1,38 +1,3 @@
-/* ===========================================================================
- * Gravity hero engine - ported from Arun's app4.js (the "Dual Hero" build).
- * ---------------------------------------------------------------------------
- * Kept as close to verbatim as possible ON PURPOSE. This file carries a lot of
- * hand-tuning - camera positions, particle counts, bezier travel paths, ring
- * geometry - and rewriting it into idiomatic React hooks would have thrown all
- * of that away for no benefit. A thin client component mounts it instead.
- *
- * What actually changed from the original:
- *   1. window.THREE -> a real import. Arun loads three r128 from a CDN; this
- *      project already has npm three r184.
- *   2. Texture.encoding -> Texture.colorSpace. This was the ONLY genuine
- *      r128 -> r184 break in the entire file; everything else he uses is
- *      stable API across those versions.
- *   3. "assets/..." -> "/arun/...", served from Next's public directory.
- *   4. The DOMContentLoaded wrapper became an exported init() that the React
- *      effect calls once the container is actually in the DOM.
- *
- * NOTE: the engine reaches into the page by element id (hero1-ui, hero2-ui,
- * ring-dot-N, what-we-cover, teardown, ...) because the scroll-lock logic
- * coordinates the hero with the sections below it. Those ids must exist in the
- * markup, or the corresponding behaviour silently no-ops.
- * ======================================================================== */
-
-import * as THREE from "three";
-
-export function initGravityHero() {
-  /* Arun tuned every colour in this scene against three r128, where
-     ColorManagement was OFF by default and the renderer wrote linear values
-     straight out. r184 turns it ON, so identical inputs render darker and
-     flatter — which is exactly how the planet came through on the first run.
-     Disabling it reproduces his intended look rather than re-grading a few
-     hundred hand-picked values. */
-  THREE.ColorManagement.enabled = false;
-
 // Gravino — Index 3 Standalone Dual Hero Engine
 // Features:
 // 1. Single Click / Scroll Trigger: Smooth cinematic cosmic travel between Scene 1 and Scene 2.
@@ -42,7 +7,9 @@ export function initGravityHero() {
 // 4. Scene 2 Layout: Text positioned on top-left above particles. Planet & rings placed as low as possible.
 // 5. Razor-Sharp Concentric Rings: Luminous neon glow and clear concentric toruses.
 // 6. Dynamic Ring Marker Lines & Dummy Callouts: 6 floating cards anchored dynamically to the 6 circles.
+const THREE = window.THREE;
 
+document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('canvas-container');
   if (!container) return;
 
@@ -264,46 +231,24 @@ export function initGravityHero() {
   innerCoreMesh.renderOrder = 1;
   sphereGroup.add(innerCoreMesh);
 
-  /* ---------------------------------------------------------------------
-     Arun's shell was `transmission: 0.92, opacity: 0.30` on three r128. That
-     is not portable to r184, and the two obvious ports are both wrong:
-
-       - Keep 0.92. r184 builds its transmission render target from the
-         OPAQUE scene only, and the core below is a transparent
-         ShaderMaterial, so the glass samples empty background and the
-         planet goes flat navy with no magenta at all. (Making the core
-         opaque so the pass can see it does NOT rescue this - tested, still
-         flat.)
-       - Drop to 0. The shell stops transmitting but keeps its full envMap
-         and clearcoat, so it becomes a mirror and paints a glossy bubble
-         over the core. This was the visible regression.
-
-     What the shell actually CONTRIBUTES in Arun's render is a dark veil:
-     it dims the hot core and lets only the rim survive. Hiding it entirely
-     leaves a blazing magenta blob, so it is not decorative.
-
-     So it is rebuilt as that veil, measured against his build side by side:
-     no transmission, a much heavier opacity to do the dimming, and the
-     reflectivity pulled right down so it stops mirroring the environment.
-     --------------------------------------------------------------------- */
   const glassMaterial = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color('#030c1c'),
     emissive: new THREE.Color('#010714'),
     emissiveIntensity: 0.10,
-    roughness: 0.28,
+    roughness: 0.12,
     metalness: 0.0,
-    transmission: 0,
+    transmission: 0.92,
     ior: 1.50,
     thickness: 1.6,
     bumpMap: noiseTexture,
     bumpScale: 0.003,
     roughnessMap: noiseTexture,
     envMap: studioHDRITexture,
-    envMapIntensity: 0.08,
-    clearcoat: 0.18,
-    clearcoatRoughness: 0.32,
+    envMapIntensity: 0.70,
+    clearcoat: 0.80,
+    clearcoatRoughness: 0.08,
     transparent: true,
-    opacity: 0.58
+    opacity: 0.30
   });
 
   const glassSphere = new THREE.Mesh(new THREE.SphereGeometry(1.5, 64, 64), glassMaterial);
@@ -348,7 +293,7 @@ export function initGravityHero() {
   }
 
   const moonStoneTexture = new THREE.CanvasTexture(moonCanvas);
-  moonStoneTexture.colorSpace = THREE.SRGBColorSpace;
+  moonStoneTexture.encoding = THREE.sRGBEncoding;
 
   const rockBumpCanvas = document.createElement('canvas');
   rockBumpCanvas.width = 512; rockBumpCanvas.height = 512;
@@ -1364,5 +1309,4 @@ export function initGravityHero() {
     hero1CamPos.x = baseCameraX;
     hero1LookAt.x = baseCameraX;
   });
-
-}
+});

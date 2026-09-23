@@ -3,16 +3,28 @@
 import { useEffect, useRef } from "react";
 
 /* ===========================================================================
- * The gravity hero — Arun's dual-hero scene, mounted inside Next.
+ * The gravity hero - Arun's dual-hero scene, mounted inside Next.
  * ---------------------------------------------------------------------------
  * Markup converted from his index4.html rather than retyped, so the class
  * strings and element ids match what the engine expects exactly. The engine
  * finds its targets by id, so renaming anything here silently disables the
  * behaviour attached to it.
  *
- * The engine is imported dynamically inside the effect for two reasons: it
- * touches window/document at module scope, and it pulls in three, which has
- * no business in the server bundle.
+ * THE ENGINE IS NOT PORTED. `public/arun/app4.js` is byte-identical to the
+ * file Arun shipped, and it runs on the three r128 he shipped with it
+ * (`public/arun/three.min.js`), loaded as plain scripts rather than bundled.
+ *
+ * This replaced an ES-module port onto the npm three r184 already in this
+ * app. The port was the wrong call: the scene carries several hundred
+ * hand-tuned values, and every defect it produced - the flattened colour,
+ * the texture encoding, the glass shell turning into a mirror - came from
+ * the r128 -> r184 jump, which the port itself introduced. Running his
+ * version removes that whole class of bug instead of chasing it.
+ *
+ * The cost, stated plainly: a second copy of three, 603KB, on whichever
+ * route mounts this. Next code-splits per route, so it does not load
+ * alongside the r184 used by the logo sphere elsewhere, but it is real
+ * weight and r128 is frozen at 2021.
  * ======================================================================== */
 
 export function GravityHero() {
@@ -24,13 +36,27 @@ export function GravityHero() {
     // duplicate renderer on top of the first.
     if (started.current) return;
     started.current = true;
-    let cancelled = false;
-    import("@/lib/gravity-hero").then((m) => {
-      if (!cancelled) m.initGravityHero();
-    });
-    return () => {
-      cancelled = true;
-    };
+
+    const load = (src: string) =>
+      new Promise<void>((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve();
+        const el = document.createElement("script");
+        el.src = src;
+        el.async = false; // preserve order: three must define window.THREE first
+        el.onload = () => resolve();
+        el.onerror = () => reject(new Error(`failed to load ${src}`));
+        document.body.appendChild(el);
+      });
+
+    (async () => {
+      await load("/arun/three.min.js");
+      await load("/arun/app4.js");
+      /* app4.js does its work inside a DOMContentLoaded listener, which fired
+         long before React mounted this component. Dispatching the event is
+         what lets the file stay byte-identical to his rather than being
+         rewritten into an exported init function. */
+      document.dispatchEvent(new Event("DOMContentLoaded"));
+    })().catch((err) => console.error("[gravity-hero]", err));
   }, []);
 
   return (

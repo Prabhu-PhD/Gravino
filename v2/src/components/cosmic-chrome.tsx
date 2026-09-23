@@ -215,9 +215,12 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
    - "What we cover" appeared in BOTH columns, pointing at two different
      places: the home page's capability section, and /services. Nothing on
      screen distinguished them, so it read as a bug.
-   - a footer that lists another page's scroll positions as though they were
-     destinations is clutter. Anyone on the home page can scroll; anyone who
-     is not does not want to be sent there mid-page.
+   - a whole column of another page's scroll positions is clutter.
+
+   The duplicate was the real fault. One anchor survives, Portfolio, because
+   it is somewhere a visitor wants to go and there is no page to send them to
+   instead. Contact is not repeated here either: the column beside this one
+   already carries the address.
 
    One nav column now, listing every page including the home page, so the
    footer is a complete map of the site rather than two partial ones. The
@@ -253,10 +256,13 @@ export function CosmicFooter() {
             <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
               Pages
             </p>
-            <a href="/" className="text-sm text-slate-300 hover:text-white transition-colors">Home</a>
-            <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
             <a href="/about/" className="text-sm text-slate-300 hover:text-white transition-colors">About</a>
-            <a href="/contact/" className="text-sm text-slate-300 hover:text-white transition-colors">Contact</a>
+            <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
+            {/* Portfolio is a section of the home page, not a route of its
+                own. It is listed here anyway because it is a destination a
+                visitor actually wants; the reason the anchors were pulled out
+                before was the duplicate label, which is gone. */}
+            <a href="/#portfolio" className="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
           </nav>
 
           <div className="flex flex-col gap-3">

@@ -264,24 +264,34 @@ export function initGravityHero() {
   innerCoreMesh.renderOrder = 1;
   sphereGroup.add(innerCoreMesh);
 
+  /* ---------------------------------------------------------------------
+     Arun's shell was `transmission: 0.92, opacity: 0.30` on three r128. That
+     is not portable to r184, and the two obvious ports are both wrong:
+
+       - Keep 0.92. r184 builds its transmission render target from the
+         OPAQUE scene only, and the core below is a transparent
+         ShaderMaterial, so the glass samples empty background and the
+         planet goes flat navy with no magenta at all. (Making the core
+         opaque so the pass can see it does NOT rescue this - tested, still
+         flat.)
+       - Drop to 0. The shell stops transmitting but keeps its full envMap
+         and clearcoat, so it becomes a mirror and paints a glossy bubble
+         over the core. This was the visible regression.
+
+     What the shell actually CONTRIBUTES in Arun's render is a dark veil:
+     it dims the hot core and lets only the rim survive. Hiding it entirely
+     leaves a blazing magenta blob, so it is not decorative.
+
+     So it is rebuilt as that veil, measured against his build side by side:
+     no transmission, a much heavier opacity to do the dimming, and the
+     reflectivity pulled right down so it stops mirroring the environment.
+     --------------------------------------------------------------------- */
   const glassMaterial = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color('#030c1c'),
     emissive: new THREE.Color('#010714'),
     emissiveIntensity: 0.10,
-    roughness: 0.12,
+    roughness: 0.28,
     metalness: 0.0,
-    /* Arun had transmission: 0.92 here, which is correct on r128 and wrong on
-       r184. Measured, not guessed: hiding this shell at runtime made the
-       inner core render exactly like his reference, so the shader was never
-       the problem — the shell was covering it.
-       The mechanism is that r184 builds a transmission render target from the
-       OPAQUE scene only, and the core below uses a transparent ShaderMaterial.
-       So the glass sampled the empty background instead of the core and
-       painted its own dark #030c1c over it. Lowering opacity made it worse,
-       not better, which is what ruled out simple alpha.
-       At 0 the shell stops transmitting and simply sits over the core as
-       glossy glass, so the clearcoat highlight and rim survive while the
-       iridescent Fresnel underneath comes through. */
     transmission: 0,
     ior: 1.50,
     thickness: 1.6,
@@ -289,11 +299,11 @@ export function initGravityHero() {
     bumpScale: 0.003,
     roughnessMap: noiseTexture,
     envMap: studioHDRITexture,
-    envMapIntensity: 0.70,
-    clearcoat: 0.80,
-    clearcoatRoughness: 0.08,
+    envMapIntensity: 0.08,
+    clearcoat: 0.18,
+    clearcoatRoughness: 0.32,
     transparent: true,
-    opacity: 0.30
+    opacity: 0.58
   });
 
   const glassSphere = new THREE.Mesh(new THREE.SphereGeometry(1.5, 64, 64), glassMaterial);

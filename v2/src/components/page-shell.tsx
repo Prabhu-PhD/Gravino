@@ -66,7 +66,7 @@ export function PageHead({
         <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa]">
           {eyebrow}
         </p>
-        <h1 className="mt-5 max-w-4xl text-[clamp(2.1rem,4.6vw,3.6rem)] font-light leading-[1.14] tracking-tight text-white">
+        <h1 className="mt-5 max-w-4xl text-[clamp(2.4rem,5.8vw,4.5rem)] font-light leading-[1.08] tracking-[-0.03em] text-white">
           {headline}
           {accent ? (
             <>
@@ -78,7 +78,7 @@ export function PageHead({
           ) : null}
         </h1>
         {lede ? (
-          <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-slate-300">
+          <p className="mt-7 max-w-2xl text-[1.0625rem] font-light leading-[1.65] text-slate-300 sm:text-lg">
             {lede}
           </p>
         ) : null}
@@ -142,6 +142,46 @@ export function Head({
         </p>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * A statement band. The pages were measured at fifteen type styles with
+ * almost no range between them: the page headline 34px, the section headings
+ * 26px, the stat numbers 30px, and everything at weight 300. Nothing
+ * dominated, so nothing was emphasised, so the whole page read flat.
+ *
+ * This is the correction: one line per page, set far larger than anything
+ * around it, on its own ground with room either side. It only works if it is
+ * used ONCE, which is why there is no variant and no options.
+ */
+export function Statement({
+  children,
+  attribution,
+}: {
+  children: React.ReactNode;
+  attribution?: string;
+}) {
+  return (
+    <section
+      className="relative overflow-hidden border-t border-white/[0.07] py-20 md:py-28"
+      style={{
+        background:
+          "radial-gradient(circle at 20% 50%, #17103300 0%, #09090f 70%), linear-gradient(to right, #120d26, #09090f)",
+      }}
+    >
+      <Orbs />
+      <div className={`${SHELL} relative`}>
+        <p className="max-w-4xl text-[clamp(1.5rem,3.4vw,2.6rem)] font-light leading-[1.28] tracking-[-0.02em] text-white">
+          {children}
+        </p>
+        {attribution ? (
+          <p className="mt-6 text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa]">
+            {attribution}
+          </p>
+        ) : null}
+      </div>
+    </section>
   );
 }
 

@@ -378,3 +378,40 @@ table {
   border: 1px solid var(--color-paper-line);
   background: var(--color-paper);
 }
+
+/* ---------------------------------------------------------------------------
+   Shared chrome
+   ---------------------------------------------------------------------------
+   The nav is rendered by cosmic-chrome.tsx on EVERY page, but the rules that
+   style it lived only in arun.css, which only the home page imports. So the
+   scroll handler was adding `.scrolled` on interior pages and nothing was
+   listening: the header stayed fully transparent while the page moved under
+   it, and text scrolled through the logo.
+
+   Measured on /about before the fix: hasScrolledClass true, background
+   rgba(0,0,0,0), backdrop-filter none.
+
+   These are Arun's values, copied rather than moved. The home page still gets
+   its own copy from arun.css, where his inline !important block would
+   override anything here anyway.
+   ------------------------------------------------------------------------ */
+
+#main-header {
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    padding 0.4s ease,
+    backdrop-filter 0.4s ease,
+    -webkit-backdrop-filter 0.4s ease;
+}
+
+#main-header.scrolled {
+  background-color: rgba(9, 9, 15, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}

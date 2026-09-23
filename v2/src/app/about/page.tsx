@@ -1,5 +1,12 @@
-import { Page, PageHead, Section, Head, CtaBand } from "@/components/page-shell";
-import { MODEL, COMPARISON, SECTORS, SITE } from "@/lib/site";
+import {
+  Page,
+  PageHead,
+  Section,
+  Head,
+  Statement,
+  CtaBand,
+} from "@/components/page-shell";
+import { MODEL, COMPARISON, SECTORS, SITE, PROBLEM } from "@/lib/site";
 
 export const metadata = {
   title: "About",
@@ -82,6 +89,8 @@ export default function About() {
         </div>
       </Section>
 
+      <Statement attribution="What we actually are">{PROBLEM.pull}</Statement>
+
       <Section tone="raised">
         <Head accent="works." lede="Three things hold across every engagement, whatever the format.">
           How the work
@@ -116,11 +125,13 @@ export default function About() {
               in {SITE.location}, working across {SITE.markets}.
             </p>
 
-            <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-7">
+            <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10">
               {FACTS.map(([n, label]) => (
                 <div key={label}>
-                  <dt className="text-3xl font-light text-white">{n}</dt>
-                  <dd className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                  <dt className="text-[clamp(2.1rem,5vw,3.5rem)] font-light leading-none tracking-[-0.04em] text-white">
+                    {n}
+                  </dt>
+                  <dd className="mt-3 text-xs leading-relaxed text-slate-400">
                     {label}
                   </dd>
                 </div>

@@ -1,5 +1,12 @@
-import { Page, PageHead, Section, Head, CtaBand } from "@/components/page-shell";
-import { GROUPS } from "@/lib/site";
+import {
+  Page,
+  PageHead,
+  Section,
+  Head,
+  Statement,
+  CtaBand,
+} from "@/components/page-shell";
+import { GROUPS, BALANCE } from "@/lib/site";
 
 export const metadata = {
   title: "What we cover",
@@ -34,7 +41,7 @@ export default function Services() {
       {GROUPS.map((g, i) => (
         <Section key={g.n} tone={i % 2 ? "raised" : "base"} orbs={i === 0}>
           <div className="flex items-baseline gap-5">
-            <span className="text-sm font-mono text-[#a78bfa]">{g.n}</span>
+            <span className="mt-1 text-sm font-mono text-[#a78bfa]">{g.n}</span>
             <Head lede={g.premise}>{g.name}</Head>
           </div>
 
@@ -44,7 +51,7 @@ export default function Services() {
                 key={d.n}
                 className="border-l border-white/10 pl-6 transition-colors hover:border-[#a78bfa]/50"
               >
-                <h3 className="text-lg font-medium leading-snug text-white">
+                <h3 className="text-[1.35rem] font-normal leading-snug tracking-[-0.015em] text-white">
                   {d.title}
                 </h3>
                 <p className="mt-2.5 text-[0.95rem] font-light leading-relaxed text-slate-400">
@@ -62,6 +69,8 @@ export default function Services() {
           </div>
         </Section>
       ))}
+
+      <Statement attribution="Why any of this matters">{BALANCE.pull}</Statement>
 
       <CtaBand
         headline="Not sure which of these you"

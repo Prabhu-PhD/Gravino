@@ -18,7 +18,7 @@ import { useEffect, useRef } from "react";
  * anchor on the home page AND the name of /services. Standardised here:
  *
  *     What We Cover  -> /services
- *     Portfolio      -> the home page's portfolio section
+ *     Portfolio      -> /portfolio
  *     About          -> /about
  *     Contact        -> /contact
  *
@@ -38,16 +38,10 @@ import { useEffect, useRef } from "react";
 
 const NAV = [
   { label: "What We Cover", href: "/services/" },
-  { label: "Portfolio", anchor: "portfolio" },
+  { label: "Portfolio", href: "/portfolio/" },
   { label: "About", href: "/about/" },
   { label: "Contact", href: "/contact/" },
 ] as const;
-
-/** In-page on the home page; back to the home page from anywhere else. */
-function hrefFor(item: (typeof NAV)[number], home: boolean) {
-  if (!("anchor" in item)) return item.href;
-  return home ? `#${item.anchor}` : `/#${item.anchor}`;
-}
 
 export function CosmicNav({ home = false }: { home?: boolean }) {
   const drawer = useRef<HTMLDivElement>(null);
@@ -104,10 +98,22 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
         id="main-header"
         className="fixed top-0 left-0 w-full z-50 px-6 sm:px-10 md:px-14 lg:px-20 pt-7 pb-4 flex items-center justify-between bg-transparent border-b border-transparent pointer-events-auto"
       >
+        {/* ON THE HOME PAGE this scrolls to the top instead of navigating.
+            href="/" there meant a full reload of a WebGL scene the visitor is
+            already looking at: several seconds of black, then the same page.
+            Everywhere else it is an ordinary link home. */}
         <a
           href="/"
+          onClick={
+            home
+              ? (e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              : undefined
+          }
           className="flex items-center hero-ui-interactive group"
-          aria-label="Gravino, home"
+          aria-label={home ? "Back to top" : "Gravino, home"}
         >
           <img
             src="/arun/logo.png"
@@ -121,7 +127,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
             {NAV.map((item) => (
               <a
                 key={item.label}
-                href={hrefFor(item, home)}
+                href={item.href}
                 className="hover:text-white transition-colors duration-200"
               >
                 {item.label}
@@ -178,7 +184,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
             {NAV.map((item) => (
               <a
                 key={item.label}
-                href={hrefFor(item, home)}
+                href={item.href}
                 className="mobile-nav-link text-slate-200 hover:text-white py-1.5"
               >
                 {item.label}
@@ -217,10 +223,10 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
      screen distinguished them, so it read as a bug.
    - a whole column of another page's scroll positions is clutter.
 
-   The duplicate was the real fault. One anchor survives, Portfolio, because
-   it is somewhere a visitor wants to go and there is no page to send them to
-   instead. Contact is not repeated here either: the column beside this one
-   already carries the address.
+   The duplicate was the real fault. Portfolio briefly stayed on as an anchor
+   because there was nowhere else to send people; it is a real page now, so
+   the footer holds no anchors at all. Contact is not repeated here either:
+   the column beside this one already carries the address.
 
    One nav column now, listing every page including the home page, so the
    footer is a complete map of the site rather than two partial ones. The
@@ -237,11 +243,16 @@ export function CosmicFooter() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
           <div className="col-span-2 lg:pr-10">
-            <img
-              src="/assets/logo.png"
-              alt="Gravino, Value Has Gravity"
-              className="h-8 w-auto object-contain"
-            />
+            {/* A bare <img> before, which is why clicking the logo appeared
+                to do nothing: people click a footer logo expecting home, and
+                there was no link under it. */}
+            <a href="/" aria-label="Gravino, home" className="inline-block">
+              <img
+                src="/assets/logo.png"
+                alt="Gravino, Value Has Gravity"
+                className="h-8 w-auto object-contain transition-opacity hover:opacity-85"
+              />
+            </a>
             <p className="mt-5 text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
               Where Balance Meets Value
             </p>
@@ -262,7 +273,7 @@ export function CosmicFooter() {
                 own. It is listed here anyway because it is a destination a
                 visitor actually wants; the reason the anchors were pulled out
                 before was the duplicate label, which is gone. */}
-            <a href="/#portfolio" className="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
+            <a href="/portfolio/" className="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
           </nav>
 
           <div className="flex flex-col gap-3">

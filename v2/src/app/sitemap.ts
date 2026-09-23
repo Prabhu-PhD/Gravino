@@ -5,7 +5,15 @@ import { SITE_URL } from "@/lib/site-url";
 /* Trailing slashes because the build sets trailingSlash: true, so these are
    the URLs that actually exist. A sitemap listing /about when the server
    301s to /about/ makes every entry a redirect. */
-const ROUTES = ["/", "/about/", "/services/", "/contact/", "/privacy/", "/terms/"];
+const ROUTES = [
+  "/",
+  "/about/",
+  "/services/",
+  "/portfolio/",
+  "/contact/",
+  "/privacy/",
+  "/terms/",
+];
 
 /* Required by `output: export`. Next treats a metadata route as dynamic by
    default - it is a function, and it could read the request - so it refuses

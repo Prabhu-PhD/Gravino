@@ -86,41 +86,66 @@ Propagation is usually minutes, occasionally hours. Check with:
 nslookup gravino.in
 ```
 
-## The form endpoint
+## The form: SMTP to Titan
 
-The teardown form posts to whatever `src/lib/form-transport.ts` selects. That
-file has the full reasoning; the short version is that the mailbox being on
-Titan rather than on this cPanel account rules out the simplest option.
+`create@gravino.in` is a GoDaddy mailbox on Titan, so the domain's MX records
+point at Titan rather than at this cPanel account. PHP's `mail()` would
+therefore have to relay out from a shared-hosting IP with no SPF
+authorisation for your domain, which is how form mail ends up in spam.
 
-**PHP `mail()` (`public/send.php`) is the current default and the weakest
-choice.** Because MX points at Titan, the mail is not delivered locally: it
-has to relay out from a shared-hosting IP that has no SPF authorisation for
-your domain. That is how form mail ends up in spam or bounced. It may work.
-Test it before you rely on it.
+`public/send.php` instead connects to Titan's own SMTP and authenticates as
+the mailbox. That makes us the authorised sender: SPF and DKIM align, and the
+mail is as deliverable as anything else sent from that account. Nothing
+passes through a third party, so the privacy policy stays true as written.
 
-Two better options, pick one:
+### Set it up
 
-**A. Web3Forms.** Create a free account, take the access key, and set it at
-build time:
+1. Copy `v2/mail-config.example.php`, fill in the real values.
+2. Upload it as `gravino-mail-config.php`, **one level above `public_html`**:
 
-```bash
-NEXT_PUBLIC_WEB3FORMS_KEY=your-key-here npm run build
+   ```
+   /home/youraccount/gravino-mail-config.php      <- here, NOT in public_html
+   /home/youraccount/public_html/send.php
+   ```
+
+   Above the web root so it can never be fetched over HTTP, even if PHP were
+   ever misconfigured and began serving `.php` files as text.
+
+3. `chmod 600` it.
+
+The password is the mailbox's own Titan password. If you would rather keep no
+password on the server, every value can come from environment variables
+instead (`GRAVINO_SMTP_USER`, `GRAVINO_SMTP_PASS`, and so on) set in cPanel or
+with `SetEnv` in `.htaccess`; `send.php` checks the environment first.
+
+### Prove it works before trusting it
+
+None of this code has ever been executed: there is no PHP on the machine it
+was written on. So there is a check that authenticates against Titan and
+sends nothing:
+
+```
+https://gravino.in/send.php?selftest=YOUR-TOKEN
 ```
 
-Nothing else changes. No credentials on the server. Two consequences: every
-submission passes through a third party, so **the privacy policy has to be
-rewritten** (it currently promises nothing leaves Gravino), and the free tier
-stops at 250 submissions a month.
+The token is `selftest_token` from the config. A pass returns
+`{"ok":true,...}` naming the host and account. A failure returns the actual
+SMTP error, which is what you want for diagnosis. Without a matching token
+the URL returns 404, so it gives nothing away to anyone who guesses the path.
 
-**B. Authenticated SMTP to Titan.** Keep `send.php` but send through
-`smtp.titan.email:465` using the mailbox's own credentials. This is the most
-correct option: Titan is the authorised sender for the domain, so SPF and
-DKIM align and deliverability matches normal mail from that account, and
-nothing goes through a third party. The cost is that the mailbox password has
-to sit on shared hosting. Ask and this can be written.
+Then **submit the real form once** and confirm the mail arrives.
 
-Whichever you choose, **submit the form once for real after upload.** Neither
-path has been executed yet.
+### If it fails
+
+- `Could not reach smtp.titan.email:465` means the host blocks outbound SMTP.
+  Some shared hosts do. Try port 587 in the config (`send.php` will use
+  STARTTLS automatically). If both are blocked, ask Broodle to open outbound
+  SMTP, or fall back to Web3Forms: set `NEXT_PUBLIC_WEB3FORMS_KEY` at build
+  time and rebuild. That routes submissions through a third party, so the
+  privacy policy would then need rewriting.
+- `SMTP expected 235` means the username or password is wrong.
+- `The form is not configured yet` means `send.php` cannot find the config
+  file or the environment variables.
 
 ## Verify after going live
 

@@ -11,3 +11,7 @@ next-env.d.ts
 
 # Build transcript, not source.
 build.log
+
+# SMTP credentials. The example template IS tracked; a filled-in copy never is.
+gravino-mail-config.php
+**/gravino-mail-config.php

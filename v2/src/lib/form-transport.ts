@@ -14,10 +14,14 @@
  * PHP mail() is no longer local delivery. It would have to relay from a
  * shared-hosting IP, out to Titan, with no SPF alignment for that IP, which
  * is the exact arrangement that lands form mail in spam or gets it rejected
- * outright. send.php is kept as a fallback but it is now the WEAKEST of the
- * three options, not the strongest.
+ * outright.
  *
- * Two better ones:
+ * DECIDED: send.php no longer calls mail() at all. It speaks authenticated
+ * SMTP to Titan directly (option B below) and is the primary path.
+ * Web3Forms stays wired up here as the fallback for one specific failure,
+ * which some shared hosts do have: outbound SMTP being blocked entirely.
+ *
+ * The two options considered:
  *
  *   A. WEB3FORMS. Set NEXT_PUBLIC_WEB3FORMS_KEY and the form posts to them
  *      and they deliver. No credentials sit on the web server. Costs are

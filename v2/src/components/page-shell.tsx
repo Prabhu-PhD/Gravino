@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SiteNav, SiteFooter } from "./site-chrome";
+import { CosmicNav, CosmicFooter } from "./cosmic-chrome";
 import { SHELL, CornerMarks } from "./editorial";
 import { FlutedPane } from "./fluted-pane";
 import { SITE } from "@/lib/site";
@@ -29,16 +29,37 @@ export function PageHead({
   headline,
   accent,
   lede,
+  eyebrow,
 }: {
   headline: string;
   accent?: string;
   lede?: string;
+  /* The mono kicker every cosmic section opens with. The editorial build
+     banned these outright, on the grounds that a heading needing a label
+     above it to announce itself is a heading doing its job badly. That still
+     holds as a general rule — but the adopted home page opens every single
+     section this way, and an interior page that does not is visibly from a
+     different site. Consistency with the direction wins over the rule. */
+  eyebrow?: string;
 }) {
   return (
     <section className="bg-wash relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
       <div aria-hidden className="grain-layer" />
+      {/* The glow orbs the cosmic sections sit on. Two blurred brand-hue
+          discs, exactly as the capability and teardown sections do it. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full bg-[#7b3fe4]/20 blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 right-1/4 h-[380px] w-[380px] rounded-full bg-[#20c4f4]/10 blur-[130px]"
+      />
       <GridLines />
       <div className={`${SHELL} relative`}>
+        {eyebrow ? (
+          <p className="label mb-5 text-[#a78bfa]">{eyebrow}</p>
+        ) : null}
         <h1 className="display max-w-4xl text-[clamp(2.3rem,4.9vw,4.1rem)]">
           {headline}
           {accent ? (
@@ -204,12 +225,16 @@ export function Figure({
   );
 }
 
+/* The same nav and footer the home page renders — see cosmic-chrome.tsx for
+   why there used to be two of each. `pt-24` because that nav is FIXED rather
+   than absolute, so unlike the old one it no longer overlaps the first
+   section; the content has to start below it. */
 export function Page({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <SiteNav />
+      <CosmicNav />
       <main>{children}</main>
-      <SiteFooter />
+      <CosmicFooter />
     </>
   );
 }

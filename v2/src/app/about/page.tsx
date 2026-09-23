@@ -30,6 +30,7 @@ export default function About() {
   return (
     <Page>
       <PageHead
+        eyebrow="Embedded Communications Partner"
         headline="A senior team, built around one"
         accent="discipline."
         lede={`${SITE.experienceYears}+ years of combined experience in the rooms where communication decides the outcome — seed rounds, boardrooms, IPO roadshows, and the reporting that follows.`}

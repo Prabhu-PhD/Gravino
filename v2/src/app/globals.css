@@ -163,23 +163,34 @@ table {
    Set in the brand face rather than a monospace, which would be a costume
    for "technical" on a page with no code, data or measurement in it. */
 @utility label {
-  font-family: var(--font-body);
+  /* REVERSAL, on purpose. This was set in the brand face, with a comment
+     arguing that monospace would be "a costume for technical" on a page with
+     no code on it. That was the right call for the editorial build. It is
+     the wrong call now: every small label on the home page is mono at
+     0.2em - VALUE HAS GRAVITY, COMPREHENSIVE CAPABILITY, CONFIDENTIAL
+     REVIEW - and matching the adopted direction beats winning the original
+     argument. */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.6875rem;
   font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 /* Display headline: tight leading + negative tracking, the single loudest
    element on any screen. Fluid so it holds its 2–3 line shape at every width. */
 @utility display {
+  /* Re-pitched onto the home page's headline treatment. The editorial
+     original was weight 500 at 0.96 leading with -0.035em tracking: a dense,
+     printed-page voice. The cosmic build sets its headings light, at 1.15
+     leading with modest tracking, and the two sitting side by side was most
+     of why an interior page still read as a different site even after the
+     palette matched. Type does more of that work than colour does. */
   font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 0.96;
-  /* Floor is -0.04em; large display sizes sit at the floor, and the utility
-     tightens further only where a size class overrides it. */
-  letter-spacing: -0.035em;
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
@@ -206,12 +217,13 @@ table {
    the brand ramp ("say." / "Balance" / "Model"). More than one and it stops
    reading as emphasis. */
 @utility text-gradient {
+  /* Arun's exact ramp — violet to sky — so the highlighted word on an
+     interior heading is the same colour as the one on the home page. */
   background-image: linear-gradient(
-    100deg,
-    var(--color-grad-3) 0%,
-    var(--color-grad-2) 34%,
-    #6ea8ee 68%,
-    #3f92f0 100%
+    to right,
+    #a78bfa 0%,
+    #60a5fa 55%,
+    #38bdf8 100%
   );
   -webkit-background-clip: text;
   background-clip: text;

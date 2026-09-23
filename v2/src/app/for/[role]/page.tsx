@@ -45,6 +45,7 @@ export default async function AudiencePage({
   return (
     <Page>
       <PageHead
+        eyebrow={role === "ceo" ? "For the chief executive" : "For the CFO"}
         headline={a.headline}
         lede={a.lede}
       />

@@ -29,6 +29,7 @@ export default function Contact() {
   return (
     <Page>
       <PageHead
+        eyebrow="No Pitch Attached"
         headline="Start with a look, not a"
         accent="commitment."
         lede={TEARDOWN.body}

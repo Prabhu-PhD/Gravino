@@ -2,7 +2,8 @@
  * Arun's downstream sections, verbatim.
  * ---------------------------------------------------------------------------
  * From lines 456-891 of his index4.html: what-we-cover, portfolio, teardown,
- * the footer and the teardown modal.
+ * and the teardown modal. The footer moved out to cosmic-chrome.tsx, so the
+ * home page and the interior pages render the same one.
  *
  * His proof-of-work section ("Credibility At Scale") was removed at the
  * client's request. It was also the last light-on-white section on the page.
@@ -401,68 +402,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
     </div>
   </section>
 
-  <!-- FOOTER
-       Rebuilt. His was one row: a logo, seven links and a copyright line.
-       It carried no address, no location, no route to the pages that answer
-       a buyer's next question, and it repeated in-page anchors as though
-       they were destinations.
 
-       This is the same information architecture the interior pages' footer
-       already used, in the cosmic treatment: who we are, where to go, and
-       how to reach us - with the in-page anchors kept separate from the
-       pages, because they are not the same kind of thing. -->
-  <footer class="page-section pt-16 pb-10 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10" style="background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);">
-    <div class="max-w-7xl mx-auto">
-
-      <div class="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
-
-        <!-- Brand block -->
-        <div class="col-span-2 sm:col-span-3 lg:col-span-2 lg:pr-10">
-          <img src="/assets/logo.png" alt="Gravino — Value Has Gravity" class="h-8 w-auto object-contain">
-          <p class="mt-5 text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
-            Where Balance Meets Value
-          </p>
-          <p class="mt-4 max-w-xs text-sm font-light leading-relaxed text-slate-400">
-            One senior team for the full surface of how your business
-            communicates — decks, reports, brand, motion and campaigns.
-          </p>
-        </div>
-
-        <!-- On this page -->
-        <nav class="flex flex-col gap-3">
-          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">On this page</p>
-          <a href="#what-we-cover" class="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
-          <a href="#portfolio" class="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
-          <a href="#teardown" class="text-sm text-slate-300 hover:text-white transition-colors">Free teardown</a>
-        </nav>
-
-        <!-- Pages -->
-        <nav class="flex flex-col gap-3">
-          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">Pages</p>
-          <a href="/services" class="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
-          <a href="/about" class="text-sm text-slate-300 hover:text-white transition-colors">About</a>
-          <a href="/contact" class="text-sm text-slate-300 hover:text-white transition-colors">Contact</a>
-          <a href="/for/ceo" class="text-sm text-slate-300 hover:text-white transition-colors">For chief executives</a>
-          <a href="/for/cfo" class="text-sm text-slate-300 hover:text-white transition-colors">For CFOs</a>
-        </nav>
-
-        <!-- Contact -->
-        <div class="flex flex-col gap-3">
-          <p class="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">Contact</p>
-          <a href="mailto:create@gravino.in" class="text-sm text-slate-300 hover:text-white transition-colors break-all">create@gravino.in</a>
-          <p class="text-sm text-slate-400">Chennai, India</p>
-          <p class="text-sm text-slate-500">US &middot; Europe &middot; Gulf &middot; India</p>
-        </div>
-
-      </div>
-
-      <div class="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-xs font-mono text-slate-500">&copy; 2026 Gravino &nbsp;/&nbsp; gravino.in</p>
-        <p class="text-xs font-mono text-slate-500">75+ years between four people, Chennai</p>
-      </div>
-
-    </div>
-  </footer>
 
   <!-- INTERACTIVE TEARDOWN / PROJECT KICKOFF MODAL -->
   <div id="teardownModal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">

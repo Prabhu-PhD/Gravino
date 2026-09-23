@@ -1,6 +1,7 @@
 import { GravityHero } from "@/components/gravity-hero";
 import { ArunSections } from "@/components/arun-sections";
 import { ArunRuntime } from "@/components/arun-runtime";
+import { CosmicFooter } from "@/components/cosmic-chrome";
 import "./arun.css";
 
 /* The home page: Arun's cosmic build, running his own engine and markup.
@@ -18,6 +19,7 @@ export default function Home() {
     <div className="bg-[#09090f] text-slate-100 antialiased selection:bg-[#7b3fe4]/30 selection:text-white">
       <GravityHero />
       <ArunSections />
+      <CosmicFooter home />
       <ArunRuntime />
     </div>
   );

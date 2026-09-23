@@ -20,6 +20,7 @@ export default function Services() {
   return (
     <Page>
       <PageHead
+        eyebrow="Comprehensive Capability"
         headline="The full surface, ten disciplines"
         accent="deep."
         lede="Organised around the outcome each produces, not the department it would sit in — so you can see how much of your communications surface one team covers."

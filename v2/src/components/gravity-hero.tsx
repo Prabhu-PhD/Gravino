@@ -1,3 +1,5 @@
+import { CosmicNav } from "./cosmic-chrome";
+
 /* ===========================================================================
  * The gravity hero - Arun's dual-hero scene, mounted inside Next.
  * ---------------------------------------------------------------------------
@@ -39,34 +41,8 @@ export function GravityHero() {
         {/* ================================================================= */}
         {/* PERSISTENT TOP NAVIGATION — sleek sticky black box header         */}
         {/* ================================================================= */}
-        <header id="main-header" className="fixed top-0 left-0 w-full z-50 px-6 sm:px-10 md:px-14 lg:px-20 pt-7 pb-4 flex items-center justify-between bg-transparent border-b border-transparent pointer-events-auto">
-          {/* Top Left: Gravino Logo */}
-          <a href="#" className="flex items-center hero-ui-interactive group" aria-label="Gravino Home">
-            <img src="/arun/logo.png" alt="Gravino — Value Has Gravity" className="h-9 sm:h-10 md:h-11 w-auto object-contain transition-opacity duration-200 group-hover:opacity-85" />
-          </a>
+        <CosmicNav home />
 
-          {/* Top Right: Minimal Menus & Subtle CTA */}
-          <div className="flex items-center gap-6 sm:gap-8 hero-ui-interactive">
-            <div className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-medium tracking-wide text-slate-300">
-              <a href="/services" className="hover:text-white transition-colors duration-200">The Model</a>
-              <a href="#what-we-cover" className="hover:text-white transition-colors duration-200">What We Cover</a>
-              <a href="#portfolio" className="hover:text-white transition-colors duration-200">Portfolio</a>
-              <a href="/about" className="hover:text-white transition-colors duration-200">Why Embedded</a>
-            </div>
-
-            <button className="trigger-teardown text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm">
-              <span>Start a Project</span>
-              <span className="text-xs">&rarr;</span>
-            </button>
-
-            {/* Mobile Menu Toggle Button */}
-            <button id="mobileMenuBtn" className="md:hidden text-slate-300 hover:text-white p-1.5 rounded-lg border border-white/10 hover:border-white/30 transition-all" aria-label="Open mobile menu">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </header>
 
         {/* Floating Planetary Orbit Toggle Button (Positioned in top-right) */}
         <div id="cosmicToggleWrapper" className="fixed top-[82px] right-6 sm:right-10 md:right-14 lg:right-20 z-40 pointer-events-auto transition-all duration-300">
@@ -78,29 +54,7 @@ export function GravityHero() {
         </div>
 
         {/* Mobile Navigation Drawer */}
-        <div id="mobileMenuDrawer" className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 hidden opacity-0 transition-opacity duration-300 hero-ui-interactive">
-          <div className="p-6 bg-[#111118]/95 border-b border-white/10 -translate-y-full transition-transform duration-300">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10">
-              <a href="#" className="flex items-center">
-                <img src="/arun/logo.png" alt="Gravino" className="h-7 w-auto object-contain" />
-              </a>
-              <button id="closeMobileMenuBtn" className="text-slate-400 hover:text-white p-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="flex flex-col gap-4 pt-5 text-base">
-              <a href="/services" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">The Model</a>
-              <a href="#what-we-cover" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">What We Cover</a>
-              <a href="#portfolio" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Portfolio</a>
-              <a href="/about" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Why Embedded</a>
-              <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
-                Start a Project / Free Teardown
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ================================================================= */}
+{/* ================================================================= */}
         {/* HERO PINNED WRAPPER (100vh for seamless instant scroll from downstream sections) */}
         {/* ================================================================= */}
   

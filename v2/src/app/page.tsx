@@ -1,36 +1,24 @@
-import { SiteNav, SiteFooter } from "@/components/site-chrome";
-import {
-  Hero,
-  Problem,
-  Model,
-  Coverage,
-  Proof,
-  Teardown,
-} from "@/components/sections";
+import { GravityHero } from "@/components/gravity-hero";
+import { ArunSections } from "@/components/arun-sections";
+import { ArunRuntime } from "@/components/arun-runtime";
+import "./arun.css";
 
-/* Six sections and a proof strip, down from nine.
-   Two were cut for saying the same thing twice: Balance folded into Problem
-   (one argument, previously split across two abstract setup sections), and
-   the Statement band went entirely — it restated Balance's idea in bigger
-   type without adding a fact. Its visual treatment survives on the closing
-   CTA, which had content but no presence.
+/* The home page: Arun's cosmic build, running his own engine and markup.
 
-   Tonally: a light run, the dark peak at Coverage, a light breath, then the
-   dark close. The freelancer/in-house comparison table now lives only on
-   /for/cfo, where it is the entire argument rather than a detour. */
+   The previous light home page lives in git history — see the commit shown
+   by `git log -- src/app/page.tsx` immediately before this one. Its copy
+   model in src/lib/site.ts is still live and still drives /about, /services,
+   /contact and /for/[role].
+
+   There is no #contact element. app4.js looks one up, but index4.html does
+   not contain it either, so this matches his build rather than inventing an
+   element he does not have. */
 export default function Home() {
   return (
-    <>
-      <SiteNav />
-      <main>
-        <Hero />
-        <Problem />
-        <Model />
-        <Coverage />
-        <Proof />
-        <Teardown />
-      </main>
-      <SiteFooter />
-    </>
+    <div className="bg-[#09090f] text-slate-100 antialiased selection:bg-[#7b3fe4]/30 selection:text-white">
+      <GravityHero />
+      <ArunSections />
+      <ArunRuntime />
+    </div>
   );
 }

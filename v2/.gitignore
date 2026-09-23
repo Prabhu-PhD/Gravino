@@ -8,3 +8,6 @@ next-env.d.ts
 
 # Production build dir, kept separate from the dev server (see next.config.mjs).
 /.next-build/
+
+# Build transcript, not source.
+build.log

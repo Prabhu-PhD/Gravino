@@ -145,6 +145,90 @@ export function Head({
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * Surfaces
+ * ---------------------------------------------------------------------------
+ * The interior pages were text on a flat ground with hairline rules: one
+ * surface for the whole page, so nothing read as an object and the eye had
+ * nothing to land on. The home page does not work that way. Its panels are
+ * translucent black over the starfield with a blur behind them, which is why
+ * they sit ON the page rather than in it.
+ *
+ * Same construction here, at the smaller scale a reading page needs: a low
+ * alpha lift, a 1px border, a lit top edge, and a blur so the glow orbs
+ * behind actually come through. The hover state brightens the border rather
+ * than moving anything, because a page of cards that all lift on hover is
+ * noise.
+ * ------------------------------------------------------------------------ */
+
+const CARD_BASE =
+  "relative overflow-hidden rounded-2xl border border-white/10 " +
+  "bg-gradient-to-b from-white/[0.055] to-white/[0.015] backdrop-blur-sm " +
+  "shadow-[0_18px_40px_-24px_rgba(0,0,0,0.9)] transition-colors duration-300";
+
+/** The lit top edge. One bright hairline is most of what says "glass". */
+function Lip() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+    />
+  );
+}
+
+export function Card({
+  children,
+  className = "",
+  interactive = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** Off for cards that are not links and should not suggest they are. */
+  interactive?: boolean;
+}) {
+  return (
+    <div
+      className={`${CARD_BASE} ${
+        interactive ? "hover:border-[#a78bfa]/40" : ""
+      } ${className}`}
+    >
+      <Lip />
+      {children}
+    </div>
+  );
+}
+
+/** A larger surface for one big thing: a table, a form, a figure. */
+export function Panel({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0a14]/80 backdrop-blur-sm shadow-[0_24px_60px_-30px_rgba(0,0,0,0.95)] ${className}`}
+    >
+      <Lip />
+      {children}
+    </div>
+  );
+}
+
+/** Section opener with an index, so a long page has visible structure. */
+export function SectionMark({ n, label }: { n: string; label: string }) {
+  return (
+    <div className="mb-7 flex items-center gap-4">
+      <span className="text-sm font-mono text-[#a78bfa]">{n}</span>
+      <span aria-hidden className="h-px flex-1 bg-white/12" />
+      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 /**
  * A statement band. The pages were measured at fifteen type styles with
  * almost no range between them: the page headline 34px, the section headings

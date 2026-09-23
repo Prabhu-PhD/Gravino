@@ -1,4 +1,12 @@
-import { Page, PageHead, Statement, CtaBand, SHELL } from "@/components/page-shell";
+import {
+  Page,
+  PageHead,
+  Card,
+  Panel,
+  Statement,
+  CtaBand,
+  SHELL,
+} from "@/components/page-shell";
 import { WORKS } from "@/lib/work";
 
 export const metadata = {
@@ -72,39 +80,51 @@ export default function Portfolio() {
                     {w.summary}
                   </p>
 
-                  <dl className="mt-8 space-y-5 border-t border-white/10 pt-7">
-                    <div>
-                      <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
-                        The situation
-                      </dt>
-                      <dd className="mt-2 max-w-xl text-[0.95rem] font-light leading-relaxed text-slate-400">
-                        {w.situation}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
-                        What we did
-                      </dt>
-                      <dd className="mt-2 max-w-xl text-[0.95rem] font-light leading-relaxed text-slate-400">
-                        {w.approach}
-                      </dd>
-                    </div>
-                  </dl>
+                  {/* The two long beats sit on their own surface so the block
+                      reads as a case study rather than as more page. */}
+                  <Panel className="mt-7 p-6">
+                    <dl className="space-y-5">
+                      <div>
+                        <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
+                          The situation
+                        </dt>
+                        <dd className="mt-2 text-[0.925rem] font-light leading-relaxed text-slate-400">
+                          {w.situation}
+                        </dd>
+                      </div>
+                      <div className="border-t border-white/[0.08] pt-5">
+                        <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
+                          What we did
+                        </dt>
+                        <dd className="mt-2 text-[0.925rem] font-light leading-relaxed text-slate-400">
+                          {w.approach}
+                        </dd>
+                      </div>
+                    </dl>
+                  </Panel>
 
-                  <ul className="mt-7 flex flex-wrap gap-2">
+                  <div className="mt-5 flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                      Made
+                    </span>
                     {w.made.map((m) => (
-                      <li
+                      <span
                         key={m}
-                        className="rounded-md border border-white/12 px-3 py-1.5 text-xs text-slate-400"
+                        className="rounded-md border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300"
                       >
                         {m}
-                      </li>
+                      </span>
                     ))}
-                  </ul>
+                  </div>
 
-                  <p className="mt-7 border-l-2 border-[#a78bfa]/60 pl-5 text-base font-light leading-relaxed text-white">
-                    {w.outcome}
-                  </p>
+                  <Card interactive={false} className="mt-5 p-5">
+                    <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                      What changed
+                    </p>
+                    <p className="mt-2 text-base font-light leading-relaxed text-white">
+                      {w.outcome}
+                    </p>
+                  </Card>
                 </div>
               </div>
             </div>

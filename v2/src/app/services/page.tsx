@@ -3,6 +3,8 @@ import {
   PageHead,
   Section,
   Head,
+  Card,
+  SectionMark,
   Statement,
   CtaBand,
 } from "@/components/page-shell";
@@ -14,19 +16,23 @@ export const metadata = {
     "Ten disciplines across capital and corporate narrative, brand and identity, growth and digital, and public and physical experience.",
 };
 
-/* Rebuilt from the card-grid version, which had three problems that together
-   made it read as filler rather than as an argument:
+/* Three versions of this page now, and the history matters because it is
+   easy to read this one as a return to the first.
 
-   - Every discipline carried a running index ("01 / 04") and a second label
-     under its title repeating the category. Two pieces of chrome per card,
-     neither of which a reader uses.
-   - Four full-bleed alternating sections at py-28, one per group, so the page
-     was mostly vertical space.
-   - Big padded cards for what is really a list.
+   V1 was a card grid. It was wrong, but not because cards are wrong: each
+   card carried a running index AND a second label repeating its own
+   category, the sections ran at py-28, and the cards were padded boxes that
+   said nothing a list would not.
 
-   It is now one section per group at normal rhythm, and each discipline is a
-   row: title, one line, the things it covers. The numbering that survives is
-   the group's, because four groups is a structure worth seeing. */
+   V2 stripped it to a bordered list. That fixed the clutter and went too far
+   the other way: one flat surface for the whole page, nothing for the eye to
+   land on.
+
+   V3 is cards again, but as SURFACES rather than containers: the same
+   translucent glass the home page uses, at reading scale, with the index
+   moved up to the section mark where it belongs and no repeated category
+   label. The disciplines are objects on the page; the page is not a list of
+   boxes. */
 
 export default function Services() {
   return (
@@ -40,31 +46,29 @@ export default function Services() {
 
       {GROUPS.map((g, i) => (
         <Section key={g.n} tone={i % 2 ? "raised" : "base"} orbs={i === 0}>
-          <div className="flex items-baseline gap-5">
-            <span className="mt-1 text-sm font-mono text-[#a78bfa]">{g.n}</span>
-            <Head lede={g.premise}>{g.name}</Head>
-          </div>
+          <SectionMark n={g.n} label={`${g.disciplines.length} disciplines`} />
+          <Head lede={g.premise}>{g.name}</Head>
 
-          <div className="mt-10 grid gap-x-12 gap-y-9 md:grid-cols-2">
+          <div className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {g.disciplines.map((d) => (
-              <article
-                key={d.n}
-                className="border-l border-white/10 pl-6 transition-colors hover:border-[#a78bfa]/50"
-              >
-                <h3 className="text-[1.35rem] font-normal leading-snug tracking-[-0.015em] text-white">
+              <Card key={d.n} className="flex flex-col p-6">
+                <h3 className="text-[1.3rem] font-normal leading-snug tracking-[-0.015em] text-white">
                   {d.title}
                 </h3>
-                <p className="mt-2.5 text-[0.95rem] font-light leading-relaxed text-slate-400">
+                <p className="mt-3 flex-1 text-[0.925rem] font-light leading-relaxed text-slate-400">
                   {d.blurb}
                 </p>
-                <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
+                <ul className="mt-5 flex flex-wrap gap-1.5 border-t border-white/10 pt-4">
                   {d.items.map((it) => (
-                    <li key={it} className="text-xs text-slate-500">
+                    <li
+                      key={it}
+                      className="rounded-md bg-white/[0.04] px-2.5 py-1 text-[11px] text-slate-400"
+                    >
                       {it}
                     </li>
                   ))}
                 </ul>
-              </article>
+              </Card>
             ))}
           </div>
         </Section>

@@ -8,7 +8,13 @@ import { LabScenes } from "@/components/lab-scenes";
    with its own PMREM of a 2048px environment. An earlier version of this page
    put seven on screen and the browser stopped responding to scroll. */
 
-export const metadata = { title: "Lab — glass" };
+/* Not part of the site: noindex as well as the robots.txt disallow, since a
+   disallow only asks crawlers not to fetch — it does not stop a page that was
+   linked from somewhere else being indexed. */
+export const metadata = {
+  title: "Lab — glass",
+  robots: { index: false, follow: false },
+};
 
 export default function Lab() {
   return (

@@ -414,15 +414,18 @@ export const ARUN_SECTIONS_HTML = String.raw`
   <footer class="page-section py-14 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10" style="background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
       <div class="flex items-center gap-3">
-        <img src="assets/logo.png" alt="Gravino — Value Has Gravity" class="h-7 sm:h-8 w-auto object-contain">
+        <img src="/assets/logo.png" alt="Gravino — Value Has Gravity" class="h-7 sm:h-8 w-auto object-contain">
       </div>
       <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs text-slate-400">
-        <a href="#model" class="hover:text-white transition-colors">The Model</a>
+        <a href="/services" class="hover:text-white transition-colors">The Model</a>
         <a href="#what-we-cover" class="hover:text-white transition-colors">What We Cover</a>
-        <a href="#why-embedded" class="hover:text-white transition-colors">Why Embedded</a>
+        <a href="/about" class="hover:text-white transition-colors">Why Embedded</a>
         <a href="#proof-of-work" class="hover:text-white transition-colors">Proof of Work</a>
+        <a href="/for/ceo" class="hover:text-white transition-colors">For CEOs</a>
+        <a href="/for/cfo" class="hover:text-white transition-colors">For CFOs</a>
+        <a href="/contact" class="hover:text-white transition-colors">Contact</a>
       </div>
-      <div class="text-xs text-slate-500 font-mono">&copy; 2025 Gravino. All rights reserved.</div>
+      <div class="text-xs text-slate-500 font-mono">&copy; 2026 Gravino. All rights reserved.</div>
     </div>
   </footer>
 
@@ -439,19 +442,20 @@ export const ARUN_SECTIONS_HTML = String.raw`
           <p class="text-slate-300 text-xs sm:text-sm mt-2">Send us your current investor deck, report, or brand piece. We'll send back what's working, what's costing you, and what we'd change — at no cost, with no pitch attached.</p>
         </div>
         <form id="teardownForm" class="space-y-4">
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Your Name *</label><input type="text" required placeholder="Jane Doe" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Work Email *</label><input type="email" required placeholder="jane@company.com" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Company / Project *</label><input type="text" required placeholder="Acme Technologies" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Asset for Review *</label><select class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"><option value="deck">Investor Pitch Deck</option><option value="report">Annual / ESG Impact Report</option><option value="brand">Brand Identity &amp; Positioning</option><option value="motion">Product Launch Film / Video Narrative</option><option value="other">Full Surface Communications</option></select></div>
-          <div><label class="block text-xs font-mono text-slate-300 mb-1">Link to Deck or Brief Context (Optional)</label><input type="text" placeholder="https://docsend.com/view/... or brief note" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
+          <div><label class="block text-xs font-mono text-slate-300 mb-1">Your Name *</label><input type="text" required name="name" placeholder="Jane Doe" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
+          <div><label class="block text-xs font-mono text-slate-300 mb-1">Work Email *</label><input type="email" required name="email" placeholder="jane@company.com" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
+          <div><label class="block text-xs font-mono text-slate-300 mb-1">Company / Project *</label><input type="text" required name="company" placeholder="Acme Technologies" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
+          <div><label class="block text-xs font-mono text-slate-300 mb-1">Asset for Review *</label><select name="asset" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"><option value="deck">Investor Pitch Deck</option><option value="report">Annual / ESG Impact Report</option><option value="brand">Brand Identity &amp; Positioning</option><option value="motion">Product Launch Film / Video Narrative</option><option value="other">Full Surface Communications</option></select></div>
+          <div><label class="block text-xs font-mono text-slate-300 mb-1">Link to Deck or Brief Context (Optional)</label><input type="text" name="link" placeholder="https://docsend.com/view/... or brief note" class="w-full bg-[#09090f] border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7b3fe4]"></div>
           <div class="pt-3"><button type="submit" class="btn-gravino w-full py-3 text-sm">Submit for Confidential Review &rarr;</button></div>
           <p class="text-[11px] text-slate-400 text-center font-mono">Files remain strictly confidential. Full copyright transfer on completion.</p>
         </form>
       </div>
       <div id="formStateSuccess" class="hidden text-center py-8 space-y-4">
         <div class="w-14 h-14 rounded-full bg-[#20c4f4]/20 border border-[#20c4f4] text-[#20c4f4] mx-auto flex items-center justify-center"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
-        <h3 class="text-2xl font-light text-white">We've Received Your Request</h3>
-        <p class="text-slate-300 text-sm max-w-md mx-auto">Our senior team will review your submission and send back your confidential 1-page teardown within 24 hours. No pitch attached.</p>
+        <h3 class="text-2xl font-light text-white">Your Email Is Ready to Send</h3>
+        <p class="text-slate-300 text-sm max-w-md mx-auto">Your mail app should have opened with the request filled in — hit send and it reaches us directly. Once it lands, we'll send back your confidential 1-page teardown within 24 hours. No pitch attached.</p>
+        <p class="text-slate-400 text-xs max-w-md mx-auto">Nothing happened? Write to <a href="mailto:hello@gravino.in" class="text-[#20c4f4] underline">hello@gravino.in</a>.</p>
         <button onclick="document.getElementById('teardownModal').classList.remove('active')" class="btn-gravino-outline text-xs mt-4">Close Window</button>
       </div>
     </div>

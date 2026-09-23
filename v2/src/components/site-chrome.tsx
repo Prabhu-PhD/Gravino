@@ -4,11 +4,24 @@ import { SITE, NAV, SOCIALS } from "@/lib/site";
 
 /* Nav and footer. */
 
+/* A PLAIN ANCHOR, NOT next/link, AND THAT IS DELIBERATE.
+
+   The home page loads arun.css and runs Arun's engine, which sets
+   `hero-locked` on <html> to pin the hero. Next does not unload a route's
+   CSS on client navigation and the engine has no teardown, so a soft
+   navigation from here to / and back left this page with the cosmic
+   stylesheet applied, `hero-locked` still set (the page could not scroll),
+   a dark body behind light text and an orphaned canvas still rendering.
+   Measured, not theorised - it reproduced every time.
+
+   A full document load tears all of that down for free. The cost is one
+   reload on this single transition, on a marketing site where the home page
+   is a heavy WebGL scene we do not want retained in memory anyway. */
 function Wordmark({ dark = false, px = 21 }: { dark?: boolean; px?: number }) {
   return (
-    <Link href="/" aria-label={`${SITE.name} — home`} className="inline-block">
+    <a href="/" aria-label={`${SITE.name} — home`} className="inline-block">
       <Logomark px={px} dark={dark} />
-    </Link>
+    </a>
   );
 }
 
@@ -87,9 +100,19 @@ export function SiteFooter() {
             &copy; {new Date().getFullYear()} {SITE.name} &nbsp;/&nbsp;{" "}
             {SITE.domain}
           </p>
+          {/* Every social href is still "#" pending the real profile URLs.
+              A link that goes nowhere is worse than no link, so an
+              unconfirmed entry simply does not render — the moment a real
+              URL lands in site.ts the label appears with no code change. */}
           <div className="flex gap-6">
-            {SOCIALS.map((s) => (
-              <a key={s.label} href={s.href} className="label text-on-ink-dim hover:text-on-ink">
+            {SOCIALS.filter((s) => s.href && s.href !== "#").map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="label text-on-ink-dim hover:text-on-ink"
+              >
                 {s.label}
               </a>
             ))}

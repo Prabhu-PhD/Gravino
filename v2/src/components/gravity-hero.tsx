@@ -48,10 +48,10 @@ export function GravityHero() {
           {/* Top Right: Minimal Menus & Subtle CTA */}
           <div className="flex items-center gap-6 sm:gap-8 hero-ui-interactive">
             <div className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-medium tracking-wide text-slate-300">
-              <a href="#model" className="hover:text-white transition-colors duration-200">The Model</a>
+              <a href="/services" className="hover:text-white transition-colors duration-200">The Model</a>
               <a href="#what-we-cover" className="hover:text-white transition-colors duration-200">What We Cover</a>
               <a href="#portfolio" className="hover:text-white transition-colors duration-200">Portfolio</a>
-              <a href="#why-embedded" className="hover:text-white transition-colors duration-200">Why Embedded</a>
+              <a href="/about" className="hover:text-white transition-colors duration-200">Why Embedded</a>
               <a href="#proof-of-work" className="hover:text-white transition-colors duration-200">Proof of Work</a>
             </div>
 
@@ -90,10 +90,10 @@ export function GravityHero() {
               </button>
             </div>
             <div className="flex flex-col gap-4 pt-5 text-base">
-              <a href="#model" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">The Model</a>
+              <a href="/services" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">The Model</a>
               <a href="#what-we-cover" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">What We Cover</a>
               <a href="#portfolio" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Portfolio</a>
-              <a href="#why-embedded" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Why Embedded</a>
+              <a href="/about" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Why Embedded</a>
               <a href="#proof-of-work" className="mobile-nav-link text-slate-200 hover:text-white py-1.5">Proof of Work</a>
               <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
                 Start a Project / Free Teardown

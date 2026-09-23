@@ -21,7 +21,7 @@ export default function Home() {
       <GravityHero />
       <ArunSections />
       <TeardownModal />
-      <CosmicFooter home />
+      <CosmicFooter />
       <ArunRuntime />
     </div>
   );

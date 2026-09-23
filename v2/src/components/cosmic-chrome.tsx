@@ -208,14 +208,21 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
  * pages render the same component.
  * ------------------------------------------------------------------------ */
 
-export function CosmicFooter({ home = false }: { home?: boolean }) {
-  const prefix = home ? "" : "/";
-  const onPage = [
-    { label: "What we cover", href: `${prefix}#what-we-cover` },
-    { label: "Portfolio", href: `${prefix}#portfolio` },
-    { label: "Free teardown", href: `${prefix}#teardown` },
-  ];
+/* The footer used to carry a second nav column, "On the home page", listing
+   the home page's in-page anchors next to a "Pages" column listing the
+   routes. Two problems, one of them visible at a glance:
 
+   - "What we cover" appeared in BOTH columns, pointing at two different
+     places: the home page's capability section, and /services. Nothing on
+     screen distinguished them, so it read as a bug.
+   - a footer that lists another page's scroll positions as though they were
+     destinations is clutter. Anyone on the home page can scroll; anyone who
+     is not does not want to be sent there mid-page.
+
+   One nav column now, listing every page including the home page, so the
+   footer is a complete map of the site rather than two partial ones. The
+   `home` prop went with it: there is nothing page-specific left here. */
+export function CosmicFooter() {
   return (
     <footer
       className="page-section pt-16 pb-8 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10"
@@ -225,8 +232,8 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
       }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
-          <div className="col-span-2 sm:col-span-3 lg:col-span-2 lg:pr-10">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
+          <div className="col-span-2 lg:pr-10">
             <img
               src="/assets/logo.png"
               alt="Gravino, Value Has Gravity"
@@ -241,25 +248,12 @@ export function CosmicFooter({ home = false }: { home?: boolean }) {
             </p>
           </div>
 
-          <nav className="flex flex-col gap-3">
-            <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
-              On the home page
-            </p>
-            {onPage.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                className="text-sm text-slate-300 hover:text-white transition-colors"
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
 
           <nav className="flex flex-col gap-3">
             <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
               Pages
             </p>
+            <a href="/" className="text-sm text-slate-300 hover:text-white transition-colors">Home</a>
             <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
             <a href="/about/" className="text-sm text-slate-300 hover:text-white transition-colors">About</a>
             <a href="/contact/" className="text-sm text-slate-300 hover:text-white transition-colors">Contact</a>

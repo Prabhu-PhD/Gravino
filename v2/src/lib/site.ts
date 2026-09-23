@@ -240,7 +240,7 @@ export const COMPARISON = {
   label: "Why an embedded partner",
   headline: "Why this beats the alternatives.",
   intro:
-    "Three ways to solve this. One gives you senior craft, full coverage and predictable cost at once.",
+    "Only one of them gives you senior craft, full coverage and predictable cost at the same time.",
   columns: ["Freelancers", "In-house hire", "Gravino"],
   rows: [
     { k: "Seniority", v: ["Varies job to job", "One person's ceiling", "Senior team, every project"] },

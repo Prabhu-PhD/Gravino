@@ -20,18 +20,30 @@ export const metadata = {
 export default function Contact() {
   return (
     <Page>
+      {/* The lede used to be TEARDOWN.body, which says "send a deck, we will
+          send back one page" directly under a headline that already said
+          "send one thing, get a page back". The same sentence twice, once
+          large and once small. The headline keeps the offer; the lede now
+          answers the question the offer raises, which is what it costs you
+          to ask. */}
       <PageHead
         eyebrow="Start a project"
         headline="Send one thing. Get a page back inside"
         accent="24 hours."
-        lede={TEARDOWN.body}
+        lede="No cost, no obligation, and nothing to sit through. One of the four of us reads what you send and writes back with specifics, whether or not you ever work with us."
       />
 
       <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] py-16 md:py-20">
         <div className={`${SHELL} relative`}>
           <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
             {/* The form first on every width: it is the point of the page. */}
-            <div className="rounded-3xl border border-white/10 bg-[#0d0b18] p-6 sm:p-8">
+            <div className="rounded-2xl border border-white/10 bg-[#0d0b18] p-6 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.95)] sm:p-8">
+              <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#20c4f4]">
+                The teardown
+              </p>
+              <h2 className="mt-2 mb-6 text-xl font-light text-white">
+                Tell us what to look at
+              </h2>
               <TeardownForm />
             </div>
 

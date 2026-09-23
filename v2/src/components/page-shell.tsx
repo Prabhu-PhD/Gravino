@@ -230,14 +230,18 @@ export function SectionMark({ n, label }: { n: string; label: string }) {
 }
 
 /**
- * A statement band. The pages were measured at fifteen type styles with
- * almost no range between them: the page headline 34px, the section headings
- * 26px, the stat numbers 30px, and everything at weight 300. Nothing
- * dominated, so nothing was emphasised, so the whole page read flat.
+ * A statement band: the one loud line on a page.
  *
- * This is the correction: one line per page, set far larger than anything
- * around it, on its own ground with room either side. It only works if it is
- * used ONCE, which is why there is no variant and no options.
+ * The first version set it left-aligned at roughly heading size with a small
+ * label underneath, which meant it read as another paragraph rather than as
+ * the thing the page is saying. Emphasis is not just size; it is what the
+ * eye lands on first and how much room it is given.
+ *
+ * So: the label moves ABOVE, where it introduces rather than footnotes. A
+ * gradient rule runs down the left edge and marks the whole block as one
+ * utterance. The type is larger, the measure is narrower so the lines break
+ * where a person would pause, and the band is given real vertical room. One
+ * per page, or the emphasis is worth nothing.
  */
 export function Statement({
   children,
@@ -248,22 +252,29 @@ export function Statement({
 }) {
   return (
     <section
-      className="relative overflow-hidden border-t border-white/[0.07] py-20 md:py-28"
+      className="relative overflow-hidden border-t border-white/[0.07] py-24 md:py-32"
       style={{
         background:
-          "radial-gradient(circle at 20% 50%, #17103300 0%, #09090f 70%), linear-gradient(to right, #120d26, #09090f)",
+          "radial-gradient(90% 120% at 12% 50%, #1b1140 0%, #0c0a1a 55%, #09090f 100%)",
       }}
     >
       <Orbs />
       <div className={`${SHELL} relative`}>
-        <p className="max-w-4xl text-[clamp(1.5rem,3.4vw,2.6rem)] font-light leading-[1.28] tracking-[-0.02em] text-white">
-          {children}
-        </p>
-        {attribution ? (
-          <p className="mt-6 text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa]">
-            {attribution}
+        <div className="relative max-w-3xl pl-7 sm:pl-10">
+          {/* The rule that binds the block together. */}
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-0 w-[3px] rounded-full bg-gradient-to-b from-[#a78bfa] via-[#60a5fa] to-transparent"
+          />
+          {attribution ? (
+            <p className="mb-5 text-[11px] font-mono uppercase tracking-[0.22em] text-[#a78bfa]">
+              {attribution}
+            </p>
+          ) : null}
+          <p className="text-[clamp(1.75rem,4.2vw,3.15rem)] font-light leading-[1.22] tracking-[-0.025em] text-white">
+            {children}
           </p>
-        ) : null}
+        </div>
       </div>
     </section>
   );

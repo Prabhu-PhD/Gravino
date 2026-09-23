@@ -9,16 +9,19 @@ import {
   Statement,
   CtaBand,
 } from "@/components/page-shell";
-import { MODEL, COMPARISON, SECTORS, SITE, PROBLEM } from "@/lib/site";
+import { MODEL, COMPARISON, SECTORS, SITE, PROBLEM, BALANCE } from "@/lib/site";
 
 export const metadata = {
   title: "About",
   description: `A senior ${SITE.teamSize}-person team with ${SITE.experienceYears}+ years between them, covering ten communications disciplines under one point of contact.`,
 };
 
-/* The comparison leads the argument, because it is the strongest thing in the
-   collateral and a buyer's first question is why this shape of company exists
-   at all. It was previously buried on /for/cfo, now removed.
+/* The page opens on the idea the firm was built around, then uses the
+   comparison as evidence one section down. That order was the other way
+   round and the comparison is an argument about other people, which is the
+   wrong first thing to say about yourself. The table itself was previously
+   buried on /for/cfo, now removed, and it is still the strongest thing in
+   the collateral.
 
    NOTHING HERE IS INVENTED. No named biographies, no client logos, no
    funding-stage claims. The brochure says "a senior four-person core team"
@@ -35,16 +38,27 @@ const FACTS = [
 export default function About() {
   return (
     <Page>
+      {/* The page used to open on the competitive comparison: "most
+          companies have two bad options, we are the third". That is an
+          argument about other people, and it is the wrong first thing to say
+          about yourself. It still runs, one section down, where it belongs
+          as evidence rather than as an introduction.
+
+          It opens instead on the idea the firm was built around. BALANCE in
+          site.ts calls it "the discipline we built the firm around", so this
+          is the company's own words, not a new position invented here. */}
       <PageHead
         eyebrow="About Gravino"
-        headline="Most companies have two bad options. We are the"
-        accent="third."
-        lede="Freelancers give you craft in one format at a time. An in-house hire gives you one person's range, paid for whether the work is there or not. Gravino is a senior team you embed instead."
+        headline="Every high-stakes communication is a"
+        accent="balancing act."
+        lede={BALANCE.body}
       />
 
       <Section orbs>
-        <SectionMark n="01" label="The comparison" />
-        <Head lede={COMPARISON.intro}>Three ways to solve it.</Head>
+        <SectionMark n="01" label="Why we exist in this shape" />
+        <Head lede={COMPARISON.intro}>
+          Most companies have two bad options.
+        </Head>
 
         {/* The table sits on its own surface rather than bleeding into the
             page, and the Gravino column is tinted so the answer is visible
@@ -116,57 +130,60 @@ export default function About() {
         </div>
       </Section>
 
+      {/* The sectors card sat beside a four-cell stat grid and held four
+          short lines, so it was mostly empty space pretending to be a
+          column. There are only four sectors and inventing more would be a
+          lie, so the LAYOUT changed instead: the team argument runs full
+          width, the figures become a four-across row beneath it, and the
+          sectors are a single inline strip rather than a tall box with
+          nothing in it. */}
       <Section>
         <SectionMark n="03" label="The team" />
 
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div>
-            <Head accent="small." lede="Senior people doing the work themselves, rather than a large team where the people who sold it are not the people who make it.">
-              The team is deliberately
-            </Head>
-            {/* TODO(confirm): names, roles, photos and short bios for the four.
-                The brochure gives the count and nothing else, so this stays a
-                statement of the model until the client supplies them. */}
-            <p className="mt-6 text-[0.95rem] font-light leading-relaxed text-slate-400">
-              {SITE.experienceYears}+ years between {SITE.teamSize} people, in
-              the rooms where communication decides the outcome: funding
-              conversations, boardrooms, and the reporting that follows. Based
-              in {SITE.location}, working across {SITE.markets}.
-            </p>
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <Head accent="small." lede="Senior people doing the work themselves, rather than a large team where the people who sold it are not the people who make it.">
+            The team is deliberately
+          </Head>
+          {/* TODO(confirm): names, roles, photos and short bios for the four.
+              The brochure gives the count and nothing else, so this stays a
+              statement of the model until the client supplies them. */}
+          <p className="text-[0.95rem] font-light leading-relaxed text-slate-400 lg:pt-2">
+            {SITE.experienceYears}+ years between {SITE.teamSize} people, in
+            the rooms where communication decides the outcome: funding
+            conversations, boardrooms, and the reporting that follows. Based
+            in {SITE.location}, working across {SITE.markets}.
+          </p>
+        </div>
 
-            <dl className="mt-9 grid grid-cols-2 gap-4">
-              {FACTS.map(([n, label]) => (
-                <Card key={label} interactive={false} className="p-5">
-                  <dt className="text-[clamp(2.1rem,5vw,3.25rem)] font-light leading-none tracking-[-0.04em] text-white">
-                    {n}
-                  </dt>
-                  <dd className="mt-3 text-xs leading-relaxed text-slate-400">
-                    {label}
-                  </dd>
-                </Card>
-              ))}
-            </dl>
-          </div>
+        <dl className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {FACTS.map(([n, label]) => (
+            <Card key={label} interactive={false} className="p-5 sm:p-6">
+              <dt className="text-[clamp(2.1rem,5vw,3.25rem)] font-light leading-none tracking-[-0.04em] text-white">
+                {n}
+              </dt>
+              <dd className="mt-3 text-xs leading-relaxed text-slate-400">
+                {label}
+              </dd>
+            </Card>
+          ))}
+        </dl>
 
-          <Card interactive={false} className="p-7 lg:self-start">
-            <h3 className="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500">
-              Sectors we work in
-            </h3>
-            <ul className="mt-5 divide-y divide-white/[0.08]">
-              {SECTORS.map((s) => (
-                <li
-                  key={s}
-                  className="py-3.5 text-base font-light text-slate-200 first:pt-0"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 border-t border-white/[0.08] pt-5 text-sm font-light leading-relaxed text-slate-500">
-              The work is the same shape in each: something important has to be
-              explained to people who decide with it.
-            </p>
-          </Card>
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-3 rounded-2xl border border-white/10 bg-white/[0.025] px-5 py-4 sm:px-6">
+          <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+            Sectors
+          </span>
+          {SECTORS.map((sec) => (
+            <span
+              key={sec}
+              className="rounded-md bg-white/[0.05] px-3 py-1.5 text-sm font-light text-slate-200"
+            >
+              {sec}
+            </span>
+          ))}
+          <span className="w-full text-sm font-light leading-relaxed text-slate-500 sm:w-auto sm:flex-1 sm:pl-2">
+            The work is the same shape in each: something important has to be
+            explained to people who decide with it.
+          </span>
         </div>
       </Section>
 

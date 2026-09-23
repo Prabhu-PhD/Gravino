@@ -48,24 +48,39 @@ const ASSETS = [
 
 type State = "idle" | "sending" | "sent" | "error";
 
+/* The fields were a flat dark rectangle with a grey border: correct, and
+   indistinguishable from any form anywhere. These read as wells cut into the
+   card. An inset shadow gives them depth, the ground is slightly darker than
+   the card behind them, and focus lifts the border to the brand violet with
+   a soft ring rather than the browser default. */
 const FIELD_CLASS =
-  "w-full rounded-lg border border-white/15 bg-[#09090f] px-3.5 py-2.5 text-sm text-white " +
-  "placeholder:text-slate-600 focus:border-[#7b3fe4] focus:outline-none " +
-  "focus:ring-1 focus:ring-[#7b3fe4]/40 transition-colors";
+  "w-full rounded-lg border border-white/12 bg-black/40 px-4 py-3 text-[0.95rem] text-white " +
+  "shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] placeholder:text-slate-600 " +
+  "transition-[border-color,box-shadow] duration-200 outline-none " +
+  "hover:border-white/20 focus:border-[#a78bfa] " +
+  "focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),0_0_0_3px_rgba(167,139,250,0.18)]";
 
 function Label({
   children,
   optional,
+  mark = true,
 }: {
   children: React.ReactNode;
   optional?: boolean;
+  /* The select always holds a value, so marking it required would be
+     telling the visitor to do something they cannot fail to have done. */
+  mark?: boolean;
 }) {
   return (
-    <span className="mb-1 block text-[11px] font-mono uppercase tracking-[0.14em] text-slate-400">
+    <span className="mb-1.5 block text-[11px] font-mono uppercase tracking-[0.14em] text-slate-400">
       {children}
       {optional ? (
         <span className="ml-2 normal-case tracking-normal text-slate-600">
           optional
+        </span>
+      ) : mark ? (
+        <span aria-hidden className="ml-1 text-[#a78bfa]">
+          *
         </span>
       ) : null}
     </span>
@@ -151,7 +166,7 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3.5">
+    <form onSubmit={onSubmit} className="space-y-4">
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label>
@@ -172,14 +187,30 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
       <div className={compact ? "space-y-3.5" : "grid gap-3 sm:grid-cols-2"}>
         <Field label="Company" name="company" autoComplete="organization" />
         <label className="block">
-          <Label>What should we look at</Label>
-          <select name="asset" defaultValue={ASSETS[0]} className={FIELD_CLASS}>
-            {ASSETS.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
+          <Label mark={false}>What should we look at</Label>
+          <div className="relative">
+            <select
+              name="asset"
+              defaultValue={ASSETS[0]}
+              className={`${FIELD_CLASS} cursor-pointer appearance-none pr-10`}
+            >
+              {ASSETS.map((a) => (
+                <option key={a} value={a} className="bg-[#0d0b18]">
+                  {a}
+                </option>
+              ))}
+            </select>
+            <svg
+              aria-hidden
+              viewBox="0 0 20 20"
+              className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         </label>
       </div>
 
@@ -205,13 +236,27 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
       <button
         type="submit"
         disabled={state === "sending"}
-        className="w-full rounded-lg bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-opacity hover:opacity-95 disabled:opacity-60"
+        className="group flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgba(123,63,228,0.8)] transition-all duration-200 hover:shadow-[0_14px_36px_-10px_rgba(123,63,228,0.95)] disabled:opacity-60"
       >
-        {state === "sending" ? "Sending..." : "Send it over"}
+        {state === "sending" ? "Sending" : "Send it over"}
+        <span
+          aria-hidden
+          className={
+            state === "sending"
+              ? "animate-pulse"
+              : "transition-transform duration-200 group-hover:translate-x-0.5"
+          }
+        >
+          &rarr;
+        </span>
       </button>
 
-      <p className="text-center text-[11px] leading-relaxed text-slate-500">
-        Confidential. No pitch attached. Copyright transfers to you on completion.
+      <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[11px] leading-relaxed text-slate-500">
+        <span>Confidential</span>
+        <span aria-hidden className="text-slate-700">&middot;</span>
+        <span>No pitch attached</span>
+        <span aria-hidden className="text-slate-700">&middot;</span>
+        <span>Copyright transfers to you</span>
       </p>
     </form>
   );

@@ -9,7 +9,7 @@ import {
   Statement,
   CtaBand,
 } from "@/components/page-shell";
-import { MODEL, COMPARISON, SECTORS, SITE, PROBLEM, BALANCE } from "@/lib/site";
+import { MODEL, COMPARISON, SITE, PROBLEM, BALANCE } from "@/lib/site";
 
 export const metadata = {
   title: "About",
@@ -24,16 +24,15 @@ export const metadata = {
    the collateral.
 
    NOTHING HERE IS INVENTED. No named biographies, no client logos, no
-   funding-stage claims. The brochure says "a senior four-person core team"
-   and nothing more, so that is what this says, with the TODO below marking
-   where real names and photos go. */
+   funding-stage claims.
 
-const FACTS = [
-  [String(SITE.teamSize), "Senior practitioners at the core"],
-  [`${SITE.experienceYears}+`, "Years between them"],
-  ["10", "Disciplines covered in house"],
-  ["1", "Point of contact, whatever the format"],
-] as const;
+   THE TEAM SECTION WAS REMOVED at the client's request. It was a heading, a
+   row of four stat cards and a strip of sectors, and it said less than the
+   two sections above it already do: the comparison establishes why the firm
+   has this shape, and the model says how it works. The figures it carried
+   (four people, 75+ years, ten disciplines, one contact) are all still on
+   the page in the copy. When real names, photos and bios arrive, that is a
+   reason to bring a team section back, not a reason to keep an empty one. */
 
 export default function About() {
   return (
@@ -127,63 +126,6 @@ export default function About() {
               </p>
             </Card>
           ))}
-        </div>
-      </Section>
-
-      {/* The sectors card sat beside a four-cell stat grid and held four
-          short lines, so it was mostly empty space pretending to be a
-          column. There are only four sectors and inventing more would be a
-          lie, so the LAYOUT changed instead: the team argument runs full
-          width, the figures become a four-across row beneath it, and the
-          sectors are a single inline strip rather than a tall box with
-          nothing in it. */}
-      <Section>
-        <SectionMark n="03" label="The team" />
-
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-          <Head accent="small." lede="Senior people doing the work themselves, rather than a large team where the people who sold it are not the people who make it.">
-            The team is deliberately
-          </Head>
-          {/* TODO(confirm): names, roles, photos and short bios for the four.
-              The brochure gives the count and nothing else, so this stays a
-              statement of the model until the client supplies them. */}
-          <p className="text-[0.95rem] font-light leading-relaxed text-slate-400 lg:pt-2">
-            {SITE.experienceYears}+ years between {SITE.teamSize} people, in
-            the rooms where communication decides the outcome: funding
-            conversations, boardrooms, and the reporting that follows. Based
-            in {SITE.location}, working across {SITE.markets}.
-          </p>
-        </div>
-
-        <dl className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {FACTS.map(([n, label]) => (
-            <Card key={label} interactive={false} className="p-5 sm:p-6">
-              <dt className="text-[clamp(2.1rem,5vw,3.25rem)] font-light leading-none tracking-[-0.04em] text-white">
-                {n}
-              </dt>
-              <dd className="mt-3 text-xs leading-relaxed text-slate-400">
-                {label}
-              </dd>
-            </Card>
-          ))}
-        </dl>
-
-        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-3 rounded-2xl border border-white/10 bg-white/[0.025] px-5 py-4 sm:px-6">
-          <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
-            Sectors
-          </span>
-          {SECTORS.map((sec) => (
-            <span
-              key={sec}
-              className="rounded-md bg-white/[0.05] px-3 py-1.5 text-sm font-light text-slate-200"
-            >
-              {sec}
-            </span>
-          ))}
-          <span className="w-full text-sm font-light leading-relaxed text-slate-500 sm:w-auto sm:flex-1 sm:pl-2">
-            The work is the same shape in each: something important has to be
-            explained to people who decide with it.
-          </span>
         </div>
       </Section>
 

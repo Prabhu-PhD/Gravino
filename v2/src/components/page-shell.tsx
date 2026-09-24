@@ -1,4 +1,5 @@
 import { CosmicNav, CosmicFooter } from "./cosmic-chrome";
+import { TeardownModal } from "./teardown-form";
 
 /* ===========================================================================
  * Interior page furniture, in the cosmic idiom.
@@ -316,12 +317,11 @@ export function CtaBand({
             {body}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-5">
-            <a
-              href="/contact/"
-              className="rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-opacity hover:opacity-95"
-            >
+            {/* Opens the form rather than navigating to the page that has
+                the form on it. One fewer step to the thing being asked for. */}
+            <button className="trigger-teardown rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-opacity hover:opacity-95">
               Start a project
-            </a>
+            </button>
             <a
               href="mailto:create@gravino.in"
               className="text-sm text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline"
@@ -341,6 +341,8 @@ export function Page({ children }: { children: React.ReactNode }) {
       <CosmicNav />
       <main>{children}</main>
       <CosmicFooter />
+      {/* Site wide, so "Start a Project" has somewhere to open. */}
+      <TeardownModal />
     </>
   );
 }

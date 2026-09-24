@@ -135,22 +135,13 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
             ))}
           </div>
 
-          {/* On the home page this opens the teardown modal, which ui.js binds
-              by class. Off it there is no modal, so it goes to /contact. */}
-          {home ? (
-            <button className="trigger-teardown text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm">
-              <span>Start a Project</span>
-              <span className="text-xs">&rarr;</span>
-            </button>
-          ) : (
-            <a
-              href="/contact/"
-              className="text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm"
-            >
-              <span>Start a Project</span>
-              <span className="text-xs">&rarr;</span>
-            </a>
-          )}
+          {/* Opens the teardown modal on every page now. It used to be a
+              link to /contact off the home page, which is not what the
+              button says it does. The modal is rendered site-wide. */}
+          <button className="trigger-teardown text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm">
+            <span>Start a Project</span>
+            <span className="text-xs">&rarr;</span>
+          </button>
 
           <button
             id="mobileMenuBtn"
@@ -190,18 +181,9 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
                 {item.label}
               </a>
             ))}
-            {home ? (
-              <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
-                Start a Project / Free Teardown
-              </button>
-            ) : (
-              <a
-                href="/contact/"
-                className="w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg"
-              >
-                Start a Project / Free Teardown
-              </a>
-            )}
+            <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
+              Start a Project / Free Teardown
+            </button>
           </div>
         </div>
       </div>

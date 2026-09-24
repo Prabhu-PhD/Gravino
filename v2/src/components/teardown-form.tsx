@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FORM_ENDPOINT,
   buildPayload,
@@ -262,9 +262,64 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/* The modal the home page opens. Arun's ui.js finds it by id and the triggers
-   by class, so those two names are fixed; everything inside is ours. */
+/* The teardown modal, rendered on EVERY page.
+ *
+ * It used to live only on the home page, where Arun's ui.js opened it by
+ * class. Everywhere else "Start a Project" was a link to /contact, which is
+ * not what the button says it does: it says it starts a project, so it should
+ * open the form.
+ *
+ * The handlers below run on every page INCLUDING the home page, where ui.js
+ * binds the same triggers. That double binding is safe because both do the
+ * same idempotent thing: add or remove one class and set one style. Detecting
+ * ui.js instead would be racy, since ArunRuntime injects it after mount.
+ *
+ * What this adds over ui.js: closing on the backdrop and on Escape, and
+ * restoring focus. A modal you can only leave by finding the small x is a
+ * trap on a phone.
+ */
 export function TeardownModal() {
+  useEffect(() => {
+    const modal = document.getElementById("teardownModal");
+    if (!modal) return;
+
+    const open = () => {
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+      // Focus the first field so a keyboard user lands inside the dialog.
+      modal.querySelector<HTMLInputElement>("input[name='name']")?.focus();
+    };
+    const close = () => {
+      modal.classList.remove("active");
+      document.body.style.overflow = "";
+    };
+
+    const triggers = Array.from(
+      document.querySelectorAll<HTMLElement>(".trigger-teardown"),
+    );
+    triggers.forEach((t) => t.addEventListener("click", open));
+
+    document.getElementById("closeTeardownBtn")?.addEventListener("click", close);
+
+    // Clicking the backdrop, but not the panel itself.
+    const onBackdrop = (e: MouseEvent) => {
+      if (e.target === modal) close();
+    };
+    modal.addEventListener("click", onBackdrop);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && modal.classList.contains("active")) close();
+    };
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      triggers.forEach((t) => t.removeEventListener("click", open));
+      modal.removeEventListener("click", onBackdrop);
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
     <div
       id="teardownModal"

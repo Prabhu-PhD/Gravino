@@ -47,6 +47,7 @@ export default function About() {
           site.ts calls it "the discipline we built the firm around", so this
           is the company's own words, not a new position invented here. */}
       <PageHead
+        figure
         eyebrow="About Gravino"
         headline="Every high-stakes communication is a"
         accent="balancing act."

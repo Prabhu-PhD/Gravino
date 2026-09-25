@@ -1,5 +1,6 @@
 import { CosmicNav, CosmicFooter } from "./cosmic-chrome";
 import { TeardownModal } from "./teardown-form";
+import { CelestialFigure } from "./celestial-figure";
 
 /* ===========================================================================
  * Interior page furniture, in the cosmic idiom.
@@ -46,6 +47,7 @@ export function PageHead({
   headline,
   accent,
   lede,
+  figure = false,
 }: {
   /** The one kicker on the page. */
   eyebrow: string;
@@ -53,21 +55,39 @@ export function PageHead({
   /** The single word or phrase carrying the gradient. */
   accent?: string;
   lede?: string;
+  /** Put the celestial body to the right of the head.
+   *
+   *  Off by default, so adding a page does not silently add a WebGL context.
+   *  On for about / services / portfolio. Off for privacy and terms, where a
+   *  moving animation beside legal text is odd, and off for contact, where it
+   *  would compete with the form the visitor came to fill in. One word to
+   *  change your mind on any of them. */
+  figure?: boolean;
 }) {
   return (
     <section
-      className="relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-20"
+      className={`relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-20 ${
+        // Room for the figure, which is taller than this head would otherwise be.
+        figure ? "lg:min-h-[34rem] xl:min-h-[40rem]" : ""
+      }`}
       style={{
         background:
           "radial-gradient(circle at 50% 0%, #171033 0%, #0b0917 55%, #09090f 100%)",
       }}
     >
       <Orbs />
+      {figure ? <CelestialFigure /> : null}
       <div className={`${SHELL} relative`}>
         <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa]">
           {eyebrow}
         </p>
-        <h1 className="mt-5 max-w-4xl text-[clamp(2.4rem,5.8vw,4.5rem)] font-light leading-[1.08] tracking-[-0.03em] text-white">
+        <h1
+          className={`mt-5 text-[clamp(2.4rem,5.8vw,4.5rem)] font-light leading-[1.08] tracking-[-0.03em] text-white ${
+            /* Yield width to the figure rather than running under the sphere.
+             * Only from lg, which is the only place the figure exists. */
+            figure ? "max-w-4xl lg:max-w-[33rem] xl:max-w-[40rem]" : "max-w-4xl"
+          }`}
+        >
           {headline}
           {accent ? (
             <>
@@ -79,7 +99,11 @@ export function PageHead({
           ) : null}
         </h1>
         {lede ? (
-          <p className="mt-7 max-w-2xl text-[1.0625rem] font-light leading-[1.65] text-slate-300 sm:text-lg">
+          <p
+            className={`mt-7 text-[1.0625rem] font-light leading-[1.65] text-slate-300 sm:text-lg ${
+              figure ? "max-w-2xl lg:max-w-[31rem]" : "max-w-2xl"
+            }`}
+          >
             {lede}
           </p>
         ) : null}

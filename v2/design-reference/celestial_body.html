@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmospheric Celestial Body</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000000;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            z-index: 10;
+            transition: opacity 1s ease-out;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">INITIALIZING UNIVERSE...</div>
+    <div id="canvas-container"></div>
+
+    <!-- Import Three.js and addons via ES Modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+        // Adjust camera distance for portrait vs landscape viewing
+        if (window.innerWidth < window.innerHeight) {
+            camera.position.set(0, 0, 350);
+        } else {
+            camera.position.set(0, 0, 250);
+        }
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio for performance
+        container.appendChild(renderer.domElement);
+
+        const renderScene = new RenderPass(scene, camera);
+        
+        // Settings: resolution, strength, radius, threshold
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            0.5,  // Significantly reduced glow strength
+            0.3,  // Reduced soft spread radius
+            0.5   // Higher threshold so particles look sharper and less glowy
+        );
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // Core Planet Settings
+        const planetRadius = 100;
+        const planetXOffset = 40; // Shift right to focus on the left crescent
+
+        // Base black sphere blocks everything behind it
+        const baseGeo = new THREE.SphereGeometry(planetRadius, 64, 64);
+        const baseMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const baseSphere = new THREE.Mesh(baseGeo, baseMat);
+        baseSphere.position.x = planetXOffset;
+        scene.add(baseSphere);
+
+        // Slightly larger sphere for the smooth blue edge gradient
+        const atmosphereGeo = new THREE.SphereGeometry(planetRadius + 0.5, 64, 64);
+        const atmosphereMat = new THREE.ShaderMaterial({
+            uniforms: {
+                color: { value: new THREE.Color(0x0a337a) }, // Deep royal blue
+                lightDir: { value: new THREE.Vector3(-1.0, 0.0, 0.25).normalize() } // Light from left and slightly front
+            },
+            vertexShader: `
+                varying vec3 vWorldNormal;
+                varying vec3 vViewDir;
+                void main() {
+                    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                    vWorldNormal = normalize(mat3(modelMatrix) * normal);
+                    vViewDir = normalize(cameraPosition - worldPosition.xyz);
+                    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color;
+                uniform vec3 lightDir;
+                varying vec3 vWorldNormal;
+                varying vec3 vViewDir;
+                void main() {
+                    // How much the surface faces the light
+                    float lightIntensity = max(0.0, dot(vWorldNormal, lightDir));
+                    
+                    // Fresnel calculation for edge glow
+                    float fresnel = pow(1.0 - max(dot(vWorldNormal, vViewDir), 0.0), 1.8);
+                    
+                    // Combine light and fresnel to create the crescent edge
+                    float glow = fresnel * pow(lightIntensity, 1.2) * 2.0;
+                    
+                    if (glow <= 0.02) discard;
+                    
+                    gl_FragColor = vec4(color, glow);
+                }
+            `,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeo, atmosphereMat);
+        atmosphere.position.x = planetXOffset;
+        scene.add(atmosphere);
+
+        const surfaceParticleCount = 80000;
+        const surfaceGeo = new THREE.BufferGeometry();
+        const surfacePositions = new Float32Array(surfaceParticleCount * 3);
+        const surfaceColors = new Float32Array(surfaceParticleCount * 3);
+
+        for(let i = 0; i < surfaceParticleCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            
+            // Sphere radius slightly above base
+            const r = planetRadius + 0.6;
+            let x = r * Math.sin(phi) * Math.cos(theta);
+            let y = r * Math.sin(phi) * Math.sin(theta);
+            let z = r * Math.cos(phi);
+
+            surfacePositions[i*3] = x;
+            surfacePositions[i*3+1] = y;
+            surfacePositions[i*3+2] = z;
+
+            // Mix of deep blue, cyan, and white
+            const rand = Math.random();
+            if (rand < 0.6) {
+                surfaceColors[i*3]=0.1; surfaceColors[i*3+1]=0.3; surfaceColors[i*3+2]=0.9;
+            } else if (rand < 0.9) {
+                surfaceColors[i*3]=0.4; surfaceColors[i*3+1]=0.7; surfaceColors[i*3+2]=1.0;
+            } else {
+                surfaceColors[i*3]=1.0; surfaceColors[i*3+1]=1.0; surfaceColors[i*3+2]=1.0;
+            }
+        }
+
+        surfaceGeo.setAttribute('position', new THREE.BufferAttribute(surfacePositions, 3));
+        surfaceGeo.setAttribute('color', new THREE.BufferAttribute(surfaceColors, 3));
+
+        const surfaceMat = new THREE.ShaderMaterial({
+            uniforms: {
+                lightDir: { value: new THREE.Vector3(-1.0, 0.0, 0.25).normalize() },
+                pixelRatio: { value: renderer.getPixelRatio() },
+                windowHeight: { value: window.innerHeight }
+            },
+            vertexShader: `
+                uniform vec3 lightDir;
+                uniform float pixelRatio;
+                uniform float windowHeight;
+                attribute vec3 color;
+                
+                varying float vIntensity;
+                varying vec3 vColor;
+                varying vec3 vPosition;
+                
+                void main() {
+                    vColor = color;
+                    vPosition = position;
+                    
+                    // Calculate world normal to keep lighting fixed while planet rotates
+                    vec3 worldNormal = normalize(mat3(modelMatrix) * position);
+                    vIntensity = max(0.0, dot(worldNormal, lightDir));
+                    
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    
+                    // Dynamic size based on intensity and distance
+                    float baseSize = 1.0 + (vIntensity * 1.5);
+                    gl_PointSize = baseSize * pixelRatio * (windowHeight / 1000.0) * (200.0 / -mvPosition.z);
+                    
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                varying float vIntensity;
+                varying vec3 vColor;
+                varying vec3 vPosition;
+                
+                void main() {
+                    if (vIntensity <= 0.02) discard; // Hide particles on the dark side
+                    
+                    // Make particles circular
+                    float dist = length(gl_PointCoord - vec2(0.5));
+                    if (dist > 0.5) discard;
+                    
+                    // Generate pseudo-nebular wavy clusters using trig functions
+                    float wave = sin(vPosition.y * 0.06 + vPosition.x * 0.04) * 
+                                 cos(vPosition.z * 0.05 - vPosition.y * 0.07);
+                    float cluster = smoothstep(-0.4, 0.6, wave);
+                    
+                    // Combine radial fade, lighting intensity, and nebular clustering
+                    float alpha = smoothstep(0.5, 0.1, dist) * pow(vIntensity, 1.2) * (0.2 + 0.8 * cluster);
+                    
+                    gl_FragColor = vec4(vColor, alpha);
+                }
+            `,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const surfaceParticles = new THREE.Points(surfaceGeo, surfaceMat);
+        surfaceParticles.position.x = planetXOffset;
+        scene.add(surfaceParticles);
+
+        const ringParticleCount = 45000;
+        const ringGeo = new THREE.BufferGeometry();
+        const ringPositions = new Float32Array(ringParticleCount * 3);
+        const ringColors = new Float32Array(ringParticleCount * 3);
+
+        for (let i = 0; i < ringParticleCount; i++) {
+            // T parameter from -1 to 1 for vertical distribution
+            let t = (Math.random() - 0.5) * 2.0; 
+            // Bias towards the equator
+            t = Math.sign(t) * Math.pow(Math.abs(t), 1.4);
+
+            let y = t * 240; // Long vertical stretch
+            
+            // Calculate a curve mirroring the planet's left edge
+            let curveRadius = planetRadius + 18; 
+            // Base X position wrapping around the planet's offset
+            let curveX = planetXOffset - Math.sqrt(Math.max(0, curveRadius*curveRadius - y*y));
+            
+            // Spread particles outward and inward, thicker at ends
+            let spread = 2.0 + Math.abs(t) * 12.0; 
+            let noiseX = (Math.random() - 0.5) * spread;
+            let noiseY = (Math.random() - 0.5) * spread;
+            let noiseZ = (Math.random() - 0.5) * spread * 2.5; // Z depth
+            
+            ringPositions[i*3] = curveX + noiseX - 5; // Shift slightly further left
+            ringPositions[i*3+1] = y + noiseY;
+            ringPositions[i*3+2] = noiseZ;
+            
+            const rand = Math.random();
+            if(rand < 0.6) {
+                ringColors[i*3]=0.1; ringColors[i*3+1]=0.4; ringColors[i*3+2]=0.9;
+            } else if(rand < 0.85) {
+                ringColors[i*3]=0.4; ringColors[i*3+1]=0.8; ringColors[i*3+2]=1.0;
+            } else {
+                ringColors[i*3]=0.9; ringColors[i*3+1]=0.95; ringColors[i*3+2]=1.0;
+            }
+        }
+
+        ringGeo.setAttribute('position', new THREE.BufferAttribute(ringPositions, 3));
+        ringGeo.setAttribute('color', new THREE.BufferAttribute(ringColors, 3));
+
+        // Reusing the surface material structure but modified for the ring
+        const ringMat = new THREE.ShaderMaterial({
+            uniforms: {
+                pixelRatio: { value: renderer.getPixelRatio() },
+                windowHeight: { value: window.innerHeight }
+            },
+            vertexShader: `
+                uniform float pixelRatio;
+                uniform float windowHeight;
+                attribute vec3 color;
+                varying vec3 vColor;
+                void main() {
+                    vColor = color;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    
+                    // Dynamic size variation based on vertex ID simulation (using position hash)
+                    float randSize = fract(sin(dot(position.xyz, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
+                    float baseSize = 0.8 + (randSize * 1.2);
+                    
+                    gl_PointSize = baseSize * pixelRatio * (windowHeight / 1000.0) * (200.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vColor;
+                void main() {
+                    float dist = length(gl_PointCoord - vec2(0.5));
+                    if (dist > 0.5) discard;
+                    float alpha = smoothstep(0.5, 0.1, dist);
+                    gl_FragColor = vec4(vColor, alpha * 0.75); // Slight transparency
+                }
+            `,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const outerRing = new THREE.Points(ringGeo, ringMat);
+        scene.add(outerRing);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false;
+        controls.minDistance = 150;
+        controls.maxDistance = 500;
+        
+        // Restrict rotation to maintain the illusion and portrait framing
+        controls.minAzimuthAngle = -Math.PI / 6;
+        controls.maxAzimuthAngle = Math.PI / 6;
+        controls.minPolarAngle = Math.PI / 3;
+        controls.maxPolarAngle = 2 * Math.PI / 3;
+
+        // Hide loading text once ready
+        setTimeout(() => {
+            document.getElementById('loading').style.opacity = '0';
+        }, 1000);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Update shader uniforms based on new window size
+            surfaceMat.uniforms.windowHeight.value = window.innerHeight;
+            surfaceMat.uniforms.pixelRatio.value = renderer.getPixelRatio();
+            ringMat.uniforms.windowHeight.value = window.innerHeight;
+            ringMat.uniforms.pixelRatio.value = renderer.getPixelRatio();
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            // Rotate the surface particles faster for a more dynamic flowing stardust effect
+            // The shader calculates lighting in world space, so the crescent shape stays stationary!
+            surfaceParticles.rotation.y += delta * 0.045;
+            surfaceParticles.rotation.z += delta * 0.015;
+
+            // Gently float the outer ring with slightly increased speed
+            outerRing.position.y = Math.sin(time * 0.8) * 3.0;
+            outerRing.rotation.z = Math.sin(time * 0.2) * 0.02;
+
+            controls.update();
+            composer.render();
+        }
+
+        animate();
+    </script>
+</body>
+</html>

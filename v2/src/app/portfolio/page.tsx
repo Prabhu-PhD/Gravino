@@ -28,6 +28,7 @@ export default function Portfolio() {
   return (
     <Page>
       <PageHead
+        figure
         eyebrow="Selected work"
         headline="Four problems, and what we did"
         accent="about them."

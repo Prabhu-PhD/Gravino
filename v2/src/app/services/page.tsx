@@ -39,6 +39,7 @@ export default function Services() {
   return (
     <Page>
       <PageHead
+        figure
         eyebrow="Comprehensive capability"
         headline="Four capabilities. One connected"
         accent="team."

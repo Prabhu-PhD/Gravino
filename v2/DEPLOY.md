@@ -86,66 +86,73 @@ Propagation is usually minutes, occasionally hours. Check with:
 nslookup gravino.in
 ```
 
-## The form: SMTP to Titan
+## The form: Resend over HTTPS
 
-`create@gravino.in` is a GoDaddy mailbox on Titan, so the domain's MX records
-point at Titan rather than at this cPanel account. PHP's `mail()` would
-therefore have to relay out from a shared-hosting IP with no SPF
-authorisation for your domain, which is how form mail ends up in spam.
+`create@gravino.in` is a Titan mailbox at GoDaddy, so the domain's MX points
+away from this server. Two approaches were tried and ruled out before this
+one, and both rulings are evidence-based rather than guesses:
 
-`public/send.php` instead connects to Titan's own SMTP and authenticates as
-the mailbox. That makes us the authorised sender: SPF and DKIM align, and the
-mail is as deliverable as anything else sent from that account. Nothing
-passes through a third party, so the privacy policy stays true as written.
+- **PHP `mail()`** would relay from a shared IP that SPF does not authorise.
+  The record is `v=spf1 include:secureserver.net -all` and DMARC is
+  `p=quarantine`.
+- **Authenticated SMTP to Titan** cannot work on this host at all. Outbound
+  SMTP is transparently intercepted: a TLS handshake completes against
+  `192.0.2.1`, an address with nothing behind it, and presents
+  `CN=jp2.broodlepro.com`. Ports 25, 465 and 587 are all terminated by that
+  appliance. It is a network policy, not an account setting.
+
+Port 443 is clean, so `public/send.php` posts to **Resend's HTTPS API**. The
+key never leaves the server and the visitor's browser only talks to
+gravino.in.
+
+> **Never "fix" an SMTP or TLS error by disabling certificate verification.**
+> With an interceptor presenting its own certificate, that hands the
+> credential straight to it. `send.php` keeps `CURLOPT_SSL_VERIFYPEER` on
+> deliberately.
 
 ### Set it up
 
-1. Copy `v2/mail-config.example.php`, fill in the real values.
-2. Upload it as `gravino-mail-config.php`, **one level above `public_html`**:
+1. Create a free account at resend.com and make an API key (starts `re_`).
+2. Copy `v2/mail-config.example.php`, fill in `resend_key` and a
+   `selftest_token`.
+3. Upload it as `gravino-mail-config.php`, **one level above `public_html`**:
 
    ```
-   /home/youraccount/gravino-mail-config.php      <- here, NOT in public_html
-   /home/youraccount/public_html/send.php
+   /home/gravinoi/gravino-mail-config.php      <- here, NOT in public_html
+   /home/gravinoi/public_html/send.php
    ```
 
-   Above the web root so it can never be fetched over HTTP, even if PHP were
-   ever misconfigured and began serving `.php` files as text.
+4. `chmod 600` it.
 
-3. `chmod 600` it.
-
-The password is the mailbox's own Titan password. If you would rather keep no
-password on the server, every value can come from environment variables
-instead (`GRAVINO_SMTP_USER`, `GRAVINO_SMTP_PASS`, and so on) set in cPanel or
-with `SetEnv` in `.htaccess`; `send.php` checks the environment first.
-
-### Prove it works before trusting it
-
-None of this code has ever been executed: there is no PHP on the machine it
-was written on. So there is a check that authenticates against Titan and
-sends nothing:
+### Prove it before trusting it
 
 ```
 https://gravino.in/send.php?selftest=YOUR-TOKEN
 ```
 
-The token is `selftest_token` from the config. A pass returns
-`{"ok":true,...}` naming the host and account. A failure returns the actual
-SMTP error, which is what you want for diagnosis. Without a matching token
-the URL returns 404, so it gives nothing away to anyone who guesses the path.
+This contacts Resend, confirms the key is accepted, and **sends nothing**.
+Resend has no ping endpoint, so it posts a deliberately invalid payload:
+`422` means the key was accepted and only the payload was rejected, which is
+the pass condition. `401` or `403` means the key is wrong. Without a matching
+token the URL returns 404.
 
-Then **submit the real form once** and confirm the mail arrives.
+Then submit the real form once and confirm the mail arrives.
 
-### If it fails
+### Sending as your own address
 
-- `Could not reach smtp.titan.email:465` means the host blocks outbound SMTP.
-  Some shared hosts do. Try port 587 in the config (`send.php` will use
-  STARTTLS automatically). If both are blocked, ask Broodle to open outbound
-  SMTP, or fall back to Web3Forms: set `NEXT_PUBLIC_WEB3FORMS_KEY` at build
-  time and rebuild. That routes submissions through a third party, so the
-  privacy policy would then need rewriting.
-- `SMTP expected 235` means the username or password is wrong.
-- `The form is not configured yet` means `send.php` cannot find the config
-  file or the environment variables.
+Mail currently arrives **from Resend's shared sender**, with `Reply-To` set
+to the visitor, so replying from the inbox still answers them. To send as
+`create@gravino.in` instead: verify gravino.in inside Resend, add the DKIM
+records it gives you at GoDaddy, then change `from` in the config file. Do
+not change it before verifying, or the SPF `-all` and DMARC `p=quarantine`
+on your domain will quarantine the mail.
+
+### cPanel mail routing
+
+Email Routing for gravino.in must be set to **Remote Mail Exchanger**. It was
+on Local, which made Exim treat the domain as its own and drop mail into a
+local mailbox instead of relaying to Titan. That is fixed, but it is worth
+re-checking after any cPanel change.
 
 ## Verify after going live
 

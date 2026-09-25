@@ -90,10 +90,38 @@ AddType image/svg+xml .svg
 AddType application/manifest+json .webmanifest
 
 # --- Housekeeping ------------------------------------------------------------
-# No directory listings anywhere.
-Options -Indexes
+# Directory listings are turned off inside the cPanel hardening block at the
+# foot of this file, so the duplicate that used to sit here is gone.
 
 # Block dotfiles (this file included) from being fetched over HTTP.
 <FilesMatch "^\.">
   Require all denied
 </FilesMatch>
+
+# ==========================================================================
+# Everything below is appended and maintained by cPanel, reproduced here
+# VERBATIM so that deploying this file is a no-op rather than a silent
+# revert. It arrived on the live server on 2026-09-22 and the repo copy was
+# 255 bytes short of it, which meant any upload quietly removed it.
+#
+# Do not edit inside the BEGIN/END markers. cPanel locates its block by that
+# marker pair; if the text stops matching what it expects it may append a
+# second copy.
+#
+# The WordPress rules are irrelevant to this site, which has no PHP beyond
+# send.php. They are kept anyway because they cost nothing and removing them
+# would just invite cPanel to put them back.
+# ==========================================================================
+
+# BEGIN SECURITY HARDENING 20260922
+<Files xmlrpc.php>
+    Require all denied
+</Files>
+<Files wp-config.php>
+    Require all denied
+</Files>
+<Files wp-config-sample.php>
+    Require all denied
+</Files>
+Options -Indexes
+# END SECURITY HARDENING 20260922

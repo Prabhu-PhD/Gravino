@@ -3,10 +3,15 @@
 /* ===========================================================================
  * The celestial body that sits to the right of every interior page head.
  * ---------------------------------------------------------------------------
- * Adapted from celestial_body.html. The composition is kept as given, because
- * it is already right for this slot: the sphere is pushed right and lit from
- * the left, so the crescent faces back into the page toward the headline, and
- * the ring is a tall vertical sweep rather than a wide one.
+ * Adapted from design-reference/celestial_body.html. That file sits at the
+ * REPO ROOT on purpose, not inside v2/: Tailwind v4 auto-scans the whole build
+ * root, so a stray HTML file under v2/ silently becomes a source of utilities
+ * and moves the emitted CSS hash the moment anyone puts a class name in it.
+ *
+ * The composition is kept as given, because it is already right for this slot:
+ * the sphere is pushed right and lit from the left, so the crescent faces back
+ * into the page toward the headline, and the ring is a tall vertical sweep
+ * rather than a wide one.
  *
  * The good trick, kept intact: the particle shader computes lighting from the
  * WORLD normal, `mat3(modelMatrix) * position`, not the object normal. So the

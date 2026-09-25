@@ -98,6 +98,16 @@ AddType application/manifest+json .webmanifest
   Require all denied
 </FilesMatch>
 
+# PHP writes its error log into the script's own directory, which on this
+# host means public_html/error_log, i.e. INSIDE the web root. The server
+# currently returns 403 for it by default, verified from outside. That is
+# the server's default though, not ours, so it is stated here as well: this
+# file contains diagnostic detail from send.php failures and must never be
+# served whatever the host defaults to.
+<FilesMatch "^error_log$|\.log$">
+  Require all denied
+</FilesMatch>
+
 # ==========================================================================
 # Everything below is appended and maintained by cPanel, reproduced here
 # VERBATIM so that deploying this file is a no-op rather than a silent

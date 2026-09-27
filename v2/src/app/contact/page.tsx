@@ -73,7 +73,7 @@ export default function Contact() {
               </ol>
 
               <div className="mt-10 border-t border-white/10 pt-7">
-                <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-slate-500">
+                <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400">
                   Or reach us directly
                 </h3>
                 <a
@@ -83,7 +83,7 @@ export default function Contact() {
                   {SITE.email}
                 </a>
                 <p className="mt-3 text-sm text-slate-400">{SITE.location}</p>
-                <p className="mt-1 text-sm text-slate-500">{SITE.markets}</p>
+                <p className="mt-1 text-sm text-slate-400">{SITE.markets}</p>
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function Contact() {
       </section>
 
       <Section tone="raised">
-        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-slate-500">
+        <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400">
           The terms, up front
         </h2>
         <ul className="mt-6 grid gap-x-12 gap-y-5 md:grid-cols-3">

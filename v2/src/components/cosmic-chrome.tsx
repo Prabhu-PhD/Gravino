@@ -123,7 +123,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
         </a>
 
         <div className="flex items-center gap-6 sm:gap-8 hero-ui-interactive">
-          <div className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-medium tracking-wide text-slate-300">
+          <nav aria-label="Main" className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-medium tracking-wide text-slate-300">
             {NAV.map((item) => (
               <a
                 key={item.label}
@@ -133,7 +133,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
                 {item.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           {/* Opens the teardown modal on every page now. It used to be a
               link to /contact off the home page, which is not what the
@@ -143,7 +143,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
               glass, cyan edge, mono capitals, a live dot. Padding is a step
               up from the original (px-3.5 py-1.5) so the primary action
               keeps a comfortable tap target. */}
-          <button className="trigger-teardown group flex items-center gap-2 px-4 py-2 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer">
+          <button className="trigger-teardown group flex items-center gap-2 px-4 py-2 min-h-11 md:min-h-0 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer">
             <span aria-hidden className="w-2 h-2 rounded-full bg-cyan-400 group-hover:scale-125 transition-transform animate-pulse" />
             <span>Start a Project</span>
             <span aria-hidden className="text-cyan-300 text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
@@ -151,7 +151,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
 
           <button
             id="mobileMenuBtn"
-            className="md:hidden text-slate-300 hover:text-white p-1.5 rounded-lg border border-white/10 hover:border-white/30 transition-all"
+            className="md:hidden grid h-11 w-11 place-items-center text-slate-300 hover:text-white rounded-lg border border-white/10 hover:border-white/30 transition-all"
             aria-label="Open mobile menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,17 +253,17 @@ export function CosmicFooter() {
           </div>
 
 
-          <nav className="flex flex-col gap-3">
+          <nav aria-label="Pages" className="flex flex-col gap-1">
             <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
               Pages
             </p>
-            <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
-            <a href="/why-gravino/" className="text-sm text-slate-300 hover:text-white transition-colors">Why Gravino</a>
+            <a href="/services/" className="py-2 text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
+            <a href="/why-gravino/" className="py-2 text-sm text-slate-300 hover:text-white transition-colors">Why Gravino</a>
             {/* Portfolio is a section of the home page, not a route of its
                 own. It is listed here anyway because it is a destination a
                 visitor actually wants; the reason the anchors were pulled out
                 before was the duplicate label, which is gone. */}
-            <a href="/portfolio/" className="text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
+            <a href="/portfolio/" className="py-2 text-sm text-slate-300 hover:text-white transition-colors">Portfolio</a>
           </nav>
 
           <div className="flex flex-col gap-3">
@@ -286,10 +286,10 @@ export function CosmicFooter() {
             body copy where it is argued, not under a rule where nobody reads
             it. Statutory links go here instead. */}
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <a href="/privacy/" className="text-xs text-slate-400 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="/terms/" className="text-xs text-slate-400 hover:text-white transition-colors">Terms &amp; Disclaimer</a>
-            <a href="mailto:create@gravino.in" className="text-xs text-slate-400 hover:text-white transition-colors">Report an issue</a>
+          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-6 gap-y-0">
+            <a href="/privacy/" className="inline-block py-3 text-xs text-slate-400 hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/terms/" className="inline-block py-3 text-xs text-slate-400 hover:text-white transition-colors">Terms &amp; Disclaimer</a>
+            <a href="mailto:create@gravino.in" className="inline-block py-3 text-xs text-slate-400 hover:text-white transition-colors">Report an issue</a>
           </nav>
 
           {/* Set as a small mark rather than a sentence: name, rule, year. */}

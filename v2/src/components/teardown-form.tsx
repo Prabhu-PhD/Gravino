@@ -55,7 +55,7 @@ type State = "idle" | "sending" | "sent" | "error";
    a soft ring rather than the browser default. */
 const FIELD_CLASS =
   "w-full rounded-lg border border-white/12 bg-black/40 px-4 py-3 text-[0.95rem] text-white " +
-  "shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] placeholder:text-slate-600 " +
+  "shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] placeholder:text-slate-400 " +
   "transition-[border-color,box-shadow] duration-200 outline-none " +
   "hover:border-white/20 focus:border-[#a78bfa] " +
   "focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.6),0_0_0_3px_rgba(167,139,250,0.18)]";
@@ -75,7 +75,7 @@ function Label({
     <span className="mb-1.5 block text-[11px] font-mono uppercase tracking-[0.14em] text-slate-400">
       {children}
       {optional ? (
-        <span className="ml-2 normal-case tracking-normal text-slate-600">
+        <span className="ml-2 normal-case tracking-normal text-slate-400">
           optional
         </span>
       ) : mark ? (
@@ -251,7 +251,7 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
         </span>
       </button>
 
-      <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[11px] leading-relaxed text-slate-500">
+      <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[11px] leading-relaxed text-slate-400">
         <span>Confidential</span>
         <span aria-hidden className="text-slate-700">&middot;</span>
         <span>No pitch attached</span>
@@ -283,7 +283,32 @@ export function TeardownModal() {
     const modal = document.getElementById("teardownModal");
     if (!modal) return;
 
-    const open = () => {
+    /* Closed, the overlay is still in the DOM (it is shown by a class), so
+     * without this a screen reader would read the whole form a second time
+     * on every page, and Tab would walk into fields nobody can see. `inert`
+     * removes it from both until it opens. */
+    modal.setAttribute("inert", "");
+
+    /* Tie `inert` to the open state itself rather than to open()/close().
+     * On the home page ui.js also opens this dialog, including from buttons
+     * it injects after this effect has run, which the trigger list below
+     * never sees. If inert only lifted inside open(), a dialog opened by
+     * ui.js would appear on screen and refuse every click and keystroke.
+     * Watching the class makes it correct whoever opens or closes it. */
+    const sync = () => {
+      if (modal.classList.contains("active")) modal.removeAttribute("inert");
+      else modal.setAttribute("inert", "");
+    };
+    const watcher = new MutationObserver(sync);
+    watcher.observe(modal, { attributes: true, attributeFilter: ["class"] });
+
+    // Where focus goes back to when the dialog closes: the button that
+    // opened it, so a keyboard user is not dropped at the top of the page.
+    let returnTo: HTMLElement | null = null;
+
+    const open = (e?: Event) => {
+      returnTo = (e?.currentTarget as HTMLElement) ?? (document.activeElement as HTMLElement);
+      modal.removeAttribute("inert");
       modal.classList.add("active");
       document.body.style.overflow = "hidden";
       // Focus the first field so a keyboard user lands inside the dialog.
@@ -291,7 +316,10 @@ export function TeardownModal() {
     };
     const close = () => {
       modal.classList.remove("active");
+      modal.setAttribute("inert", "");
       document.body.style.overflow = "";
+      returnTo?.focus();
+      returnTo = null;
     };
 
     const triggers = Array.from(
@@ -308,11 +336,34 @@ export function TeardownModal() {
     modal.addEventListener("click", onBackdrop);
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && modal.classList.contains("active")) close();
+      if (!modal.classList.contains("active")) return;
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
+      // Keep Tab inside the dialog while it is open (aria-modal promises it).
+      if (e.key === "Tab") {
+        const f = Array.from(
+          modal.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((el) => el.offsetParent !== null);
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", onKey);
 
     return () => {
+      watcher.disconnect();
       triggers.forEach((t) => t.removeEventListener("click", open));
       modal.removeEventListener("click", onBackdrop);
       document.removeEventListener("keydown", onKey);
@@ -325,10 +376,16 @@ export function TeardownModal() {
       id="teardownModal"
       className="modal-overlay fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
     >
-      <div className="modal-content relative my-auto w-full max-w-lg rounded-2xl border border-[#a7b6f2]/25 bg-[#111129] p-5 shadow-2xl sm:p-7">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="teardownModalTitle"
+        className="modal-content relative my-auto w-full max-w-lg rounded-2xl border border-[#a7b6f2]/25 bg-[#111129] p-5 shadow-2xl sm:p-7"
+      >
+        {/* 44px: the one control everyone on a phone needs to hit. */}
         <button
           id="closeTeardownBtn"
-          className="absolute top-4 right-4 rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+          className="absolute top-3 right-3 grid h-11 w-11 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
           aria-label="Close"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +396,7 @@ export function TeardownModal() {
         <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#20c4f4]">
           No cost, no pitch
         </p>
-        <h3 className="mt-1.5 text-xl font-light text-white">
+        <h3 id="teardownModalTitle" className="mt-1.5 text-xl font-light text-white">
           Get your one-page teardown
         </h3>
         <p className="mt-1.5 mb-5 text-sm leading-relaxed text-slate-300">

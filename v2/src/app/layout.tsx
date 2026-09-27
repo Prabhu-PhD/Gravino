@@ -46,7 +46,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={dm.variable}>
-      <body>{children}</body>
+      <body>
+        {/* First thing a keyboard user reaches; hidden until focused. Every
+            page provides #main: interior pages on <main>, the home page on a
+            marker just before the hero (Arun's ids are left untouched). */}
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

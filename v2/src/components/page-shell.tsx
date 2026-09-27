@@ -247,7 +247,7 @@ export function SectionMark({ n, label }: { n: string; label: string }) {
     <div className="mb-7 flex items-center gap-4">
       <span className="text-sm font-mono text-[#a78bfa]">{n}</span>
       <span aria-hidden className="h-px flex-1 bg-white/12" />
-      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500">
+      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400">
         {label}
       </span>
     </div>
@@ -351,12 +351,11 @@ export function CtaBand({
               <span>Start a project</span>
               <span aria-hidden className="text-cyan-300 transition-transform group-hover:translate-x-0.5">&rarr;</span>
             </button>
-            <a
-              href="mailto:create@gravino.in"
-              className="text-sm text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline"
-            >
-              create@gravino.in
-            </a>
+            {/* The bare create@gravino.in link that sat here was removed
+                (client request, 2026-09-27): it offered a second, competing
+                action beside the one this band exists for, and the address is
+                already in the footer's Contact column just below and on
+                /contact. */}
           </div>
         </div>
       </div>
@@ -368,7 +367,9 @@ export function Page({ children }: { children: React.ReactNode }) {
   return (
     <>
       <CosmicNav />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1} className="outline-none">
+        {children}
+      </main>
       <CosmicFooter />
       {/* Site wide, so "Start a Project" has somewhere to open. */}
       <TeardownModal />

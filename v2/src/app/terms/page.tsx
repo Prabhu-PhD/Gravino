@@ -58,7 +58,7 @@ export default function Terms() {
             </div>
           ))}
 
-          <p className="border-t border-white/12 pt-6 text-sm font-light leading-relaxed text-slate-500">
+          <p className="border-t border-white/12 pt-6 text-sm font-light leading-relaxed text-slate-400">
             Anything unclear, write to{" "}
             <a href={`mailto:${SITE.email}`} className="text-slate-300 underline underline-offset-4 hover:text-white">
               {SITE.email}

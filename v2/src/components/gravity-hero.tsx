@@ -64,6 +64,9 @@ export function GravityHero() {
       {/* ================================================================= */}
         {/* HERO PINNED WRAPPER (100vh for seamless instant scroll from downstream sections) */}
         {/* ================================================================= */}
+        {/* Skip-link target. A separate marker so none of the ids app4.js and
+            ui.js look up are touched. */}
+        <span id="main" tabIndex={-1} className="sr-only" />
         <div id="hero-pinned-wrapper" className="relative" style={{height: "100vh", zIndex: "10"}}>
           <div className="sticky top-0 h-screen w-full overflow-hidden">
 

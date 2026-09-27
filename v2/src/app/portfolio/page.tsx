@@ -68,7 +68,7 @@ export default function Portfolio() {
                 <div className={flip ? "lg:order-1" : ""}>
                   <div className="flex items-baseline gap-4">
                     <span className="text-sm font-mono text-[#a78bfa]">{w.n}</span>
-                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
                       {w.sector} &middot; {w.year}
                     </span>
                   </div>
@@ -105,7 +105,7 @@ export default function Portfolio() {
                   </Panel>
 
                   <div className="mt-5 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
                       Made
                     </span>
                     {w.made.map((m) => (
@@ -119,7 +119,7 @@ export default function Portfolio() {
                   </div>
 
                   <Card interactive={false} className="mt-5 p-5">
-                    <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                    <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
                       What changed
                     </p>
                     <p className="mt-2 text-base font-light leading-relaxed text-white">

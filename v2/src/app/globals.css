@@ -559,3 +559,36 @@ table {
   .st .st-flow,
   .st .st-breathe { animation: none; }
 }
+
+/* ===========================================================================
+ * Focus on the home page's 01-04 capability buttons.
+ * ---------------------------------------------------------------------------
+ * arun.css sets `outline: none !important` on .num-selector, which beats the
+ * site-wide :focus-visible ring above, so keyboard users could not see which
+ * capability they were on (WCAG 2.4.7). This restores the same ring. It has
+ * to be !important to beat that rule at all, and the extra `html body` makes
+ * it more specific than Arun's, so it wins wherever that rule is declared.
+ * ======================================================================== */
+html body .num-selector:focus-visible {
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 6px !important;
+  border-radius: 4px;
+}
+
+/* Skip link: off-screen until a keyboard user tabs to it. */
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -64px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: #000;
+  color: #a5f3fc;
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  font: 500 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: top 0.2s ease;
+}
+.skip-link:focus-visible { top: 16px; }

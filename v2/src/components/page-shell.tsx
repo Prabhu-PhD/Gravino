@@ -343,8 +343,13 @@ export function CtaBand({
           <div className="mt-8 flex flex-wrap items-center gap-5">
             {/* Opens the form rather than navigating to the page that has
                 the form on it. One fewer step to the thing being asked for. */}
-            <button className="trigger-teardown rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-opacity hover:opacity-95">
-              Start a project
+            {/* Same look as the header's Start a Project (black glass, cyan
+                edge, mono capitals, live dot), a size up because here it is
+                the section's one action rather than a header control. */}
+            <button className="trigger-teardown group flex items-center gap-2.5 rounded-full border border-cyan-400/40 bg-black/75 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan-200 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-black/95 hover:text-white">
+              <span aria-hidden className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse transition-transform group-hover:scale-125" />
+              <span>Start a project</span>
+              <span aria-hidden className="text-cyan-300 transition-transform group-hover:translate-x-0.5">&rarr;</span>
             </button>
             <a
               href="mailto:create@gravino.in"

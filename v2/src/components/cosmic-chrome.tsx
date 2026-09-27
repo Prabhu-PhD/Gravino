@@ -38,8 +38,8 @@ import { useEffect, useRef } from "react";
 
 const NAV = [
   { label: "What We Cover", href: "/services/" },
+  { label: "Why Gravino", href: "/why-gravino/" },
   { label: "Portfolio", href: "/portfolio/" },
-  { label: "About", href: "/about/" },
   { label: "Contact", href: "/contact/" },
 ] as const;
 
@@ -138,9 +138,15 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
           {/* Opens the teardown modal on every page now. It used to be a
               link to /contact off the home page, which is not what the
               button says it does. The modal is rendered site-wide. */}
-          <button className="trigger-teardown text-xs font-medium px-4 py-2 rounded-full border border-white/20 text-white hover:border-white/60 hover:bg-white/[0.08] transition-all flex items-center gap-1.5 shadow-sm">
+          {/* Styled after the old "Planetary Orbit" toggle, which the client
+              liked and asked to be given to the action that matters: black
+              glass, cyan edge, mono capitals, a live dot. Padding is a step
+              up from the original (px-3.5 py-1.5) so the primary action
+              keeps a comfortable tap target. */}
+          <button className="trigger-teardown group flex items-center gap-2 px-4 py-2 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer">
+            <span aria-hidden className="w-2 h-2 rounded-full bg-cyan-400 group-hover:scale-125 transition-transform animate-pulse" />
             <span>Start a Project</span>
-            <span className="text-xs">&rarr;</span>
+            <span aria-hidden className="text-cyan-300 text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
           </button>
 
           <button
@@ -181,8 +187,10 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
                 {item.label}
               </a>
             ))}
-            <button className="trigger-teardown w-full mt-3 py-3 px-4 rounded-full bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] text-white font-semibold text-center shadow-lg">
-              Start a Project / Free Teardown
+            <button className="trigger-teardown group w-full mt-3 flex items-center justify-center gap-2.5 py-3 px-4 rounded-full bg-black/75 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md shadow-xl font-mono text-xs uppercase tracking-wider text-cyan-200 hover:text-white transition-all duration-300">
+              <span aria-hidden className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span>Start a Project / Free Teardown</span>
+              <span aria-hidden className="text-cyan-300">&rarr;</span>
             </button>
           </div>
         </div>
@@ -249,8 +257,8 @@ export function CosmicFooter() {
             <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
               Pages
             </p>
-            <a href="/about/" className="text-sm text-slate-300 hover:text-white transition-colors">About</a>
             <a href="/services/" className="text-sm text-slate-300 hover:text-white transition-colors">What we cover</a>
+            <a href="/why-gravino/" className="text-sm text-slate-300 hover:text-white transition-colors">Why Gravino</a>
             {/* Portfolio is a section of the home page, not a route of its
                 own. It is listed here anyway because it is a destination a
                 visitor actually wants; the reason the anchors were pulled out

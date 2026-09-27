@@ -44,14 +44,17 @@ export function GravityHero() {
         <CosmicNav home />
 
 
-        {/* Floating Planetary Orbit Toggle Button (Positioned in top-right) */}
-        <div id="cosmicToggleWrapper" className="fixed top-[82px] right-6 sm:right-10 md:right-14 lg:right-20 z-40 pointer-events-auto transition-all duration-300">
-          <button id="startCosmicTravelBtn" className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer group">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 group-hover:scale-125 transition-transform animate-pulse"></span>
-            <span id="cosmicBtnText">Planetary Orbit</span>
-            <span className="text-cyan-300 text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-          </button>
-        </div>
+        {/* The "Planetary Orbit" / "Return Home" toggle that sat here was
+            removed at the client's request (2026-09-27): its label read as a
+            second navigation and competed with "Start a Project", which is
+            the one action that matters. Its look was given to that button in
+            cosmic-chrome.tsx.
+
+            Nothing is stranded by removing it. app4.js guards every lookup of
+            #startCosmicTravelBtn, #cosmicBtnText and #cosmicToggleWrapper
+            with a null check, and the second scene (the four capabilities)
+            is still reached by scrolling, wheel and swipe, which is how most
+            visitors got there anyway. */}
 
         {/* Mobile Navigation Drawer */}
 {/* ================================================================= */}

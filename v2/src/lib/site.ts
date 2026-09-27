@@ -30,7 +30,6 @@ export const SITE = {
    brief and no outcome. Add the route and this entry together. */
 export const NAV = [
   { label: "What we cover", href: "/services" },
-  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
@@ -227,7 +226,7 @@ export const MODEL = [
   {
     n: "03",
     title: "One team, full range",
-    body: "Five-slide teaser to launch film to annual report. One team, one standard, no roster to manage.",
+    body: "Five-slide teaser to launch film to annual report, held to one standard by one team.",
   },
 ] as const;
 
@@ -235,6 +234,165 @@ export const MODEL = [
  * The comparison — the strongest section in the collateral, and the one the
  * CFO flyer is built around. Lives on a dark band.
  * ------------------------------------------------------------------------ */
+
+/* ---------------------------------------------------------------------------
+ * About: the embedded-partner position.
+ *
+ * Replaces COMPARISON and PROBLEM.pull on the About page. Those argued the
+ * case by running down the reader's alternatives ("most companies have two
+ * bad options", "most studios design your logo, most freelancers build one
+ * deck"): a self-scored table Gravino won on every row, and a pull quote that
+ * talked down the peers the business gets referrals from. The substance was
+ * real (one contact, cost that scales, consistency, no idle capacity) and is
+ * kept here, said about Gravino instead of against anyone else.
+ *
+ * "Embedded" was already the company's word ("why an embedded partner", "an
+ * embedded partner, not a vendor you re-brief"), so this promotes an existing
+ * position rather than inventing one.
+ * ------------------------------------------------------------------------ */
+
+/* ---------------------------------------------------------------------------
+ * About: who Gravino is.
+ *
+ * SOURCES, so every line can be traced:
+ *   TEAM        the earlier live site's About page (gravino-site), verbatim
+ *               except where a line compared the team with others.
+ *   PRINCIPLES  the earlier site ("standards live in systems", "you own
+ *               everything") and the brochure (confidentiality).
+ *   WHO         the earlier site ("small on purpose, senior by default",
+ *               "being small is the mechanism").
+ *
+ * Removed on the way in, because the page no longer argues by comparison:
+ *   "Most agencies sell you a pitch team and staff the work with juniors."
+ *   "Forty people cannot, which is why agencies that size need process."
+ *   "Not a pitch team with juniors behind it."
+ *
+ * TODO(confirm): the years below add up to 65, while SITE.experienceYears
+ * (and the brochure) say 75+. A reader can add four numbers. One of them has
+ * to change before this page goes live.
+ * ------------------------------------------------------------------------ */
+
+export type TeamMember = {
+  name: string;
+  initials: string;
+  role: string;
+  years: number;
+  tags: readonly string[];
+  bio: string;
+};
+
+export const ABOUT = {
+  eyebrow: "About Gravino",
+  headline: "Small on purpose,",
+  accent: "senior by default.",
+  lede: "Four senior people who do the work themselves. Based in Chennai, working with businesses in India, the Gulf, Europe and the US.",
+  who: {
+    label: "Who we are",
+    headline: "Four people.",
+    accent: "One standard.",
+    lede: "Being small is the mechanism, not a limitation. Four people who have each spent a career in high-stakes rooms can hold one standard across every format, and every client works with all four.",
+  },
+  believe: {
+    label: "What we believe",
+    headline: "The discipline we built",
+    accent: "the firm around.",
+  },
+  team: {
+    label: "The team",
+    headline: "The people",
+    accent: "who do the work.",
+    lede: "The four people you talk to are the four people who make the work, from the first call to the final file.",
+    /* EMPTY ON PURPOSE. The GitHub repo is public and the client does not
+     * want the team shown yet (2026-09-27), so names and bios are not kept
+     * here. They live in the PRIVATE repo Prabhu-PhD/gravino-site, in
+     * src/pages/about.html: four people, each with name, initials, role,
+     * years, tags and bio. Paste them back here when the team is to be shown,
+     * after resolving the years TODO above. */
+    people: [] as TeamMember[],
+  },
+  principles: {
+    label: "How we are built",
+    headline: "Built so the standard",
+    accent: "holds.",
+    items: [
+      {
+        title: "The people you meet do the work",
+        body: "There is no hand-off between the conversation and the craft. The team on the call is the team on the file.",
+      },
+      {
+        title: "Standards live in systems, not in heads",
+        body: "Template libraries, brand-compliance tooling and asset systems, so consistency survives us being busy and survives your team producing things without us.",
+      },
+      {
+        title: "You own everything at the end",
+        body: "Full copyright transfers on completion, source files included. Nothing is held back to keep you on a retainer.",
+      },
+      {
+        title: "What you share stays confidential",
+        body: "Decks before a round, results before they are announced. Material you share with us stays with us.",
+      },
+    ],
+  },
+  reach: {
+    label: "Where we work",
+    headline: "From Chennai,",
+    accent: "to four markets.",
+    lede: "Based in Chennai, India. Working with businesses across India, the Gulf, Europe and the US, and used to the time zones that come with that.",
+  },
+} as const;
+
+/** The markets as a list, for diagrams. Same source as SITE.markets. */
+export const MARKETS = SITE.markets.split("·").map((m) => m.trim());
+
+export const EMBEDDED = {
+  label: "What we are",
+  headline: "An embedded",
+  accent: "business communications partner.",
+  lede: "We work as part of your team on the communication your business is judged by: the investor deck, the board paper, the annual report, the story you take to market.",
+  points: [
+    {
+      title: "We learn your business once",
+      body: "Your numbers, your market, the way you talk about both. Every piece of work after the first starts from what we already know, so the first draft is already close.",
+    },
+    {
+      title: "We work to your calendar",
+      body: "Board cycles, funding rounds, reporting season, launches. We plan around the dates that matter to you, so the work is ready before it is needed.",
+    },
+    {
+      title: "One contact for every format",
+      body: "Deck, report, film or brand system: one person is accountable for it, and one standard runs across all of it.",
+    },
+    {
+      title: "Sized to the work",
+      body: "A defined project when the scope is clear, a retainer when the work is continuous. You pay for the capacity you use.",
+    },
+  ],
+  statement: "We become part of how your company communicates.",
+} as const;
+
+export const ALONGSIDE = {
+  label: "Where we fit",
+  headline: "Alongside the people",
+  accent: "you already have.",
+  lede: "Embedded means adding to your team, not replacing any part of it.",
+  points: [
+    {
+      title: "Your leadership",
+      body: "They know the business better than anyone. We help turn what they know into what an investor, a board or a market needs to hear.",
+    },
+    {
+      title: "Your marketing team",
+      body: "They run the brand and the campaigns. We take on the high-stakes material that lands on top of their day job.",
+    },
+    {
+      // DECISION PENDING: naming agencies is the clearest way to say Gravino
+      // does not compete with them, but it is only true if the business is
+      // content not to pitch against them for brand and campaign work.
+      title: "Your agency",
+      body: "They lead the creative. We make sure the deck, the report and the story behind them all say the same thing.",
+    },
+  ],
+} as const;
 
 export const COMPARISON = {
   label: "Why an embedded partner",

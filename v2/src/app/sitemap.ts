@@ -7,7 +7,7 @@ import { SITE_URL } from "@/lib/site-url";
    301s to /about/ makes every entry a redirect. */
 const ROUTES = [
   "/",
-  "/about/",
+  "/why-gravino/",
   "/services/",
   "/portfolio/",
   "/contact/",

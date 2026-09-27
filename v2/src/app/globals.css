@@ -534,7 +534,8 @@ table {
   transform-box: fill-box;
   transform-origin: 50% 50%;
   transform: rotate(0deg);
-  transition: transform 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--d, 0s) + 0.3s);
+  /* Exponential ease-out: settles level without the springy overshoot. */
+  transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d, 0s) + 0.3s);
 }
 .st[data-armed]:not([data-in]) .st-beam { transform: rotate(-9deg); }
 

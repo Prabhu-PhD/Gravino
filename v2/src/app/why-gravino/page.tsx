@@ -1,14 +1,17 @@
+import { pageMeta, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, Head, SectionMark, Statement, CtaBand } from "@/components/page-shell";
 import { Reveal, RevealWords, ScrollSpine } from "@/components/story";
 import { LearnOnce, YourCalendar, OneContact, SizedToWork, EmbeddedMap } from "@/components/infographics";
 import { d } from "@/lib/stagger";
 import { MODEL, EMBEDDED, ALONGSIDE } from "@/lib/site";
 
-export const metadata = {
-  title: "Why Gravino",
+export const metadata = pageMeta({
+  path: "/why-gravino/",
+  title: "Why Gravino | Embedded business communications partner",
   description:
     "An embedded business communications partner: we work as part of your team on the decks, reports and narratives your business is judged by.",
-};
+});
 
 /* ===========================================================================
  * /why-gravino -- the case for working with Gravino, told as a storyline.
@@ -32,6 +35,7 @@ const DIAGRAMS = [LearnOnce, YourCalendar, OneContact, SizedToWork];
 export default function WhyGravino() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("Why Gravino", "/why-gravino/")} />
       <PageHead
         figure
         eyebrow="Why Gravino"

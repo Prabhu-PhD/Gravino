@@ -1,10 +1,14 @@
+import { pageMeta, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, SHELL } from "@/components/page-shell";
 import { SITE } from "@/lib/site";
 
-export const metadata = {
-  title: "Privacy Policy",
-  description: "What Gravino collects through this website, why, and how to have it removed.",
-};
+export const metadata = pageMeta({
+  path: "/privacy/",
+  title: "Privacy Policy | Gravino",
+  description:
+    "What Gravino collects through this website, why, and how to have it removed.",
+});
 
 /* NOT LEGAL ADVICE, AND NOT YET REVIEWED BY A LAWYER.
    This is an accurate description of what the site actually does: one form,
@@ -40,6 +44,7 @@ const SECTIONS: [string, string[]][] = [
 export default function Privacy() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("Privacy Policy", "/privacy/")} />
       <PageHead
         eyebrow="Privacy Policy"
         headline="What we collect, and"

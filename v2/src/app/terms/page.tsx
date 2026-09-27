@@ -1,10 +1,14 @@
+import { pageMeta, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section } from "@/components/page-shell";
 import { SITE } from "@/lib/site";
 
-export const metadata = {
-  title: "Terms & Disclaimer",
-  description: "Terms of use for the Gravino website, and the terms attached to a free teardown.",
-};
+export const metadata = pageMeta({
+  path: "/terms/",
+  title: "Terms & Disclaimer | Gravino",
+  description:
+    "Terms of use for the Gravino website, and the terms attached to a free teardown.",
+});
 
 /* NOT LEGAL ADVICE, AND NOT YET REVIEWED BY A LAWYER. See the note in
    privacy/page.tsx. The commercial terms below restate what the brochure
@@ -38,6 +42,7 @@ const SECTIONS: [string, string[]][] = [
 export default function Terms() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("Terms & Disclaimer", "/terms/")} />
       <PageHead
         eyebrow="Terms & Disclaimer"
         headline="The terms, in plain"

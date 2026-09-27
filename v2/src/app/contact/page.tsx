@@ -1,12 +1,15 @@
+import { pageMeta, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, SHELL } from "@/components/page-shell";
 import { TeardownForm } from "@/components/teardown-form";
 import { SITE, TEARDOWN } from "@/lib/site";
 
-export const metadata = {
-  title: "Contact",
+export const metadata = pageMeta({
+  path: "/contact/",
+  title: "Contact | Free one-page teardown | Gravino",
   description:
     "Send a deck, a report or a brand piece. We reply with a one-page teardown inside 24 hours. No cost, no pitch.",
-};
+});
 
 /* Rebuilt around the form. The previous version was a numbered list of
    contact details with a mailto link, and no way to actually start anything
@@ -20,6 +23,7 @@ export const metadata = {
 export default function Contact() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("Contact", "/contact/")} />
       {/* The lede used to be TEARDOWN.body, which says "send a deck, we will
           send back one page" directly under a headline that already said
           "send one thing, get a page back". The same sentence twice, once

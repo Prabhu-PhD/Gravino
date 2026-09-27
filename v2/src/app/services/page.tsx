@@ -1,3 +1,5 @@
+import { pageMeta, breadcrumbLd, servicesLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import {
   Page,
   PageHead,
@@ -7,11 +9,12 @@ import {
 } from "@/components/page-shell";
 import { GROUPS, BALANCE } from "@/lib/site";
 
-export const metadata = {
-  title: "What we cover",
+export const metadata = pageMeta({
+  path: "/services/",
+  title: "What we cover | Decks, reports, brand, motion | Gravino",
   description:
     "Ten disciplines across capital and corporate narrative, brand and identity, growth and digital, and public and physical experience.",
-};
+});
 
 /* THIS PAGE IS THE HOME PAGE'S CAPABILITY SECTION, EXPANDED.
  * ---------------------------------------------------------------------------
@@ -38,6 +41,8 @@ export const metadata = {
 export default function Services() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("What we cover", "/services/")} />
+      <JsonLd data={servicesLd()} />
       <PageHead
         figure
         eyebrow="Comprehensive capability"

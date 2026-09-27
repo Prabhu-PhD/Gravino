@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { organizationLd } from "@/lib/seo";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site-url";
@@ -27,16 +29,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: TITLE, template: "%s | Gravino" },
   description: DESCRIPTION,
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: "Gravino",
-    title: TITLE,
-    description: DESCRIPTION,
-    url: "/",
-    locale: "en_IN",
-  },
-  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
+  /* Deliberately NO canonical, og:url, og:title or og:description here.
+     Metadata is inherited, and these used to be set to the home page's
+     values, so every page on the site declared itself a duplicate of the
+     home page and shared as the home page. Each page sets its own through
+     pageMeta() in src/lib/seo.ts. Only genuinely site-wide values stay. */
+  openGraph: { type: "website", siteName: "Gravino", locale: "en_IN" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
@@ -54,6 +53,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <JsonLd data={organizationLd()} />
       </body>
     </html>
   );

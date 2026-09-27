@@ -1,9 +1,12 @@
+import { pageMeta } from "@/lib/seo";
 import { Page, PageHead, Section, Card } from "@/components/page-shell";
 
-export const metadata = {
-  title: "Page not found",
-  robots: { index: false },
-};
+export const metadata = pageMeta({
+  path: "/404.html",
+  title: "Page not found | Gravino",
+  description: "This page could not be found on gravino.in.",
+  index: false,
+});
 
 /* ===========================================================================
  * The 404 page.

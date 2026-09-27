@@ -1,3 +1,5 @@
+import { pageMeta, breadcrumbLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import {
   Page,
   PageHead,
@@ -9,11 +11,12 @@ import {
 } from "@/components/page-shell";
 import { WORKS } from "@/lib/work";
 
-export const metadata = {
-  title: "Portfolio",
+export const metadata = pageMeta({
+  path: "/portfolio/",
+  title: "Portfolio | Gravino",
   description:
     "Four pieces of work, each told as what was at stake, what we did about it, and what changed.",
-};
+});
 
 /* Each work is one full section rather than a card in a grid, because a case
    study is an argument and an argument needs room to be made. The image and
@@ -27,6 +30,7 @@ export const metadata = {
 export default function Portfolio() {
   return (
     <Page>
+      <JsonLd data={breadcrumbLd("Portfolio", "/portfolio/")} />
       <PageHead
         figure
         eyebrow="Selected work"

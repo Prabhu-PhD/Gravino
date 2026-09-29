@@ -2,7 +2,8 @@ import { pageMeta, breadcrumbLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, Head, SectionMark, Statement, CtaBand } from "@/components/page-shell";
 import { Reveal, RevealWords, ScrollSpine } from "@/components/story";
-import { LearnOnce, YourCalendar, OneContact, SizedToWork, EmbeddedMap } from "@/components/infographics";
+import { EmbeddedMap } from "@/components/infographics";
+import { EmbeddedMorph } from "@/components/embedded-morph/embedded-morph";
 import { d } from "@/lib/stagger";
 import { MODEL, EMBEDDED, ALONGSIDE } from "@/lib/site";
 
@@ -30,7 +31,6 @@ export const metadata = pageMeta({
  * and no invented numbers: they draw the shape of a claim, not a measurement.
  * ======================================================================== */
 
-const DIAGRAMS = [LearnOnce, YourCalendar, OneContact, SizedToWork];
 
 export default function WhyGravino() {
   return (
@@ -44,40 +44,10 @@ export default function WhyGravino() {
         lede={EMBEDDED.lede}
       />
 
-      {/* 01 -- what embedded means: four claims, four diagrams. */}
-      <Section orbs>
-        <SectionMark n="01" label="What embedded means" />
-        <Head accent="in practice." lede="Four things change when the communications team is part of yours.">
-          What that means
-        </Head>
-
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {EMBEDDED.points.map((p, i) => {
-            const Diagram = DIAGRAMS[i];
-            return (
-              <Reveal
-                key={p.title}
-                className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-6 backdrop-blur-sm md:p-8"
-              >
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                />
-                <div className="st-fade flex items-baseline gap-3" style={d(0)}>
-                  <span className="text-sm font-mono text-[#a78bfa]">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="text-[1.3rem] font-normal leading-snug text-white">{p.title}</h3>
-                </div>
-                <div className="mt-6 rounded-2xl border border-white/[0.06] bg-black/25 p-4 md:p-5">
-                  <Diagram />
-                </div>
-                <p className="st-fade mt-6 text-[0.95rem] font-light leading-relaxed text-slate-300" style={d(3)}>
-                  {p.body}
-                </p>
-              </Reveal>
-            );
-          })}
-        </div>
-      </Section>
+      {/* 01 -- what embedded means: the client's morphing particle panel
+          (components/embedded-morph), which replaced four cards with a
+          diagram each. One visual that transforms between the principles. */}
+      <EmbeddedMorph principles={EMBEDDED.points} />
 
       <Statement attribution="The whole idea">
         <RevealWords text={EMBEDDED.statement} />

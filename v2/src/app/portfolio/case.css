@@ -1,0 +1,267 @@
+/* ===========================================================================
+ * Case-study template: Arun's Pivo page, as a reusable format.
+ * ---------------------------------------------------------------------------
+ * Every measurement below is ported from Arun's styles.css (Pivo repo,
+ * "pixel-faithful conversion of Pivo.pdf, 1080px canvas"). Where a value
+ * differs it says why. Prefixed cs- and unlayered so it cannot collide with
+ * the site's utilities, the same convention as the STORYLINE block.
+ *
+ * ONE DELIBERATE CHANGE from Arun's page, agreed with the client: his content
+ * sits in a 1080px column on flat grey (#1c1c1e). Here the column stays 1080px
+ * but each section's colour runs full-width behind it, so on a wide screen the
+ * page reads as bands of the brand's own colour rather than a strip in a void.
+ *
+ * Per-project brand comes in as custom properties set on .cs-root by the
+ * template: --cs-display, --cs-body, --cs-accent, --cs-glow, --cs-ground.
+ * ======================================================================== */
+
+.cs-root {
+  background: var(--cs-ground, #000);
+  color: #fff;
+  font-family: var(--cs-body), Georgia, serif;
+  /* Arun's page runs on the browser default, line-height: normal. Without
+     this, the site's base 1.5 leaks into every element he did not set
+     explicitly (measured on the palette titles: 33px against his normal). */
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+}
+.cs-col {
+  width: 1080px;
+  max-width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+.cs-band { width: 100%; position: relative; }
+
+/* ---- 1. brief slider: 1080 x 609 (16:9) ----------------------------------- */
+.cs-slider {
+  position: relative;
+  height: 609px;
+  overflow: hidden;
+  background: #000;
+}
+.cs-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cs-slide.is-active { opacity: 1; visibility: visible; z-index: 2; }
+.cs-slide-ask { background: #000; padding: 3rem; }
+.cs-ask { max-width: 800px; text-align: center; }
+.cs-ask-title {
+  font-family: var(--cs-body), Georgia, serif;
+  font-size: 52px;
+  font-weight: normal;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  margin-bottom: 2rem;
+}
+.cs-ask-label {
+  font-family: var(--cs-body), Georgia, serif;
+  font-size: 24px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+.cs-ask-body {
+  font-size: 22px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 780px;
+  margin: 0 auto;
+}
+.cs-slide-story { justify-content: flex-end; align-items: flex-end; padding: 3.5rem 4rem; }
+.cs-story {
+  position: relative;
+  z-index: 3;
+  max-width: 460px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.cs-story-heading {
+  font-family: var(--cs-display), Impact, sans-serif;
+  font-size: 58px;
+  font-weight: normal;
+  color: var(--cs-accent);
+  line-height: 0.98;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.85);
+}
+.cs-story-body {
+  font-size: 18px;
+  line-height: 1.35;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 18px rgba(0, 0, 0, 0.9);
+}
+.cs-story-body p + p { margin-top: 0.6rem; }
+.cs-slide-shade::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(0,0,0,.72) 0%, rgba(0,0,0,.5) 35%, rgba(0,0,0,.15) 60%, transparent 100%);
+}
+.cs-slide-shade .cs-story {
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.7) 0%, rgba(0,0,0,.45) 55%, rgba(0,0,0,0) 100%);
+  padding: 1.8rem 2.2rem;
+  margin: -1.8rem -2.2rem;
+}
+.cs-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(10, 45, 57, 0.65);
+  border: 1px solid rgba(252, 214, 146, 0.3);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+.cs-arrow:hover { background: var(--cs-accent); border-color: var(--cs-accent); transform: translateY(-50%) scale(1.08); }
+.cs-arrow-prev { left: 1.5rem; }
+.cs-arrow-next { right: 1.5rem; }
+.cs-arrow[hidden] { display: none; }
+.cs-dots {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  z-index: 10;
+}
+/* Arun's indicators are 3px bars. The visible bar is unchanged; the button
+   around it is 24px tall so it can actually be hit on a phone. */
+.cs-dot { background: none; border: 0; padding: 10px 0; cursor: pointer; }
+.cs-dot span {
+  display: block;
+  height: 3px;
+  width: 28px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.cs-dot[aria-current="true"] span { background: var(--cs-accent); width: 48px; }
+/* Addition: a pause control. Arun's autoplay could only be paused by hovering,
+   which a keyboard or touch user cannot do (WCAG 2.2.2). */
+.cs-pause {
+  position: absolute;
+  bottom: 0.9rem;
+  right: 1.2rem;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(10, 45, 57, 0.55);
+  border: 1px solid rgba(252, 214, 146, 0.25);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+/* ---- 2. reveal: logo over the landscape, moon behind ---------------------- */
+.cs-reveal { overflow: hidden; }
+.cs-reveal-head { max-width: 900px; margin: 0 auto; text-align: center; padding: 4rem 2rem 2.5rem; position: relative; z-index: 4; }
+.cs-reveal-intro { font-size: 21px; line-height: 1.55; color: var(--cs-glow); }
+.cs-reveal-intro span { display: block; margin-top: 0.4rem; }
+.cs-reveal-visual { position: relative; display: flex; flex-direction: column; align-items: center; }
+.cs-moon {
+  position: absolute;
+  top: 130px;
+  left: 23%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  box-shadow: 0 0 50px rgba(250, 215, 148, 0.35);
+  z-index: 1;
+  pointer-events: none;
+}
+.cs-reveal-logo { position: relative; z-index: 3; margin-bottom: -45px; width: 240px; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.6)); }
+.cs-reveal-land { position: relative; z-index: 2; width: 100%; height: auto; display: block; }
+
+/* ---- 3. palette ------------------------------------------------------------ */
+.cs-palette { display: grid; grid-template-columns: repeat(4, 1fr); }
+.cs-swatch { padding: 4rem 1.8rem 3rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 340px; }
+.cs-swatch h3 { font-size: 22px; font-weight: normal; margin-bottom: 0.8rem; }
+.cs-swatch p { font-size: 15px; line-height: 1.45; opacity: 0.9; }
+
+/* ---- 4. artwork ------------------------------------------------------------ */
+.cs-artwork { padding: 4rem 3rem; display: flex; justify-content: center; }
+.cs-artwork-card { width: 100%; max-width: 960px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); }
+.cs-artwork-card img { width: 100%; height: auto; display: block; }
+
+/* ---- 5. products ----------------------------------------------------------- */
+.cs-products { padding: 5rem 3.5rem 6.5rem; }
+.cs-products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: end; }
+.cs-product { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cs-product-img { width: 100%; min-height: 480px; display: flex; justify-content: center; align-items: flex-end; }
+.cs-product-img img { max-width: 100%; height: auto; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45)); }
+.cs-product-caption { margin-top: 2rem; font-size: 20px; line-height: 1.45; }
+
+/* ---- 6. campaign gallery --------------------------------------------------- */
+.cs-gallery { padding: 4.5rem 3.5rem; display: flex; justify-content: center; }
+.cs-gallery-grid { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+.cs-gallery-grid figure { box-shadow: 0 12px 35px rgba(0, 0, 0, 0.16); border-radius: 2px; overflow: hidden; }
+.cs-gallery-grid img { width: 100%; height: auto; display: block; }
+
+/* ---- 7. scene -------------------------------------------------------------- */
+.cs-scene img { width: 100%; height: auto; display: block; }
+
+/* ---- below 1080: the slider scales at 16:9, as in Arun's ------------------- */
+@media (max-width: 1080px) {
+  .cs-slider { height: 56.25vw; }
+}
+
+/* ---- phones: Arun's mobile layout, including his portrait slides --------- */
+@media (max-width: 768px) {
+  /* Arun's is 100dvh; ours sits under the 4rem case toolbar, so without the
+     subtraction the indicators and pause button fell below the fold. */
+  .cs-slider { height: calc(100vh - 4rem); height: calc(100dvh - 4rem); min-height: 560px; }
+  .cs-slide-ask { padding: 2.5rem 1.8rem; }
+  .cs-slide-story { padding: 2rem 1.6rem 4rem; align-items: flex-end; justify-content: center; background-image: var(--cs-mobile-bg) !important; background-position: center bottom; }
+  .cs-story { max-width: 100%; width: 100%; }
+  .cs-ask-title { font-size: 34px; margin-bottom: 1.5rem; }
+  .cs-ask-label { font-size: 20px; margin-bottom: 0.8rem; }
+  .cs-ask-body { font-size: 17px; }
+  .cs-story-heading { font-size: 36px; line-height: 1; }
+  .cs-story-body { font-size: 16px; }
+  .cs-arrow { display: none; } /* swipe on phones, as in Arun's */
+  .cs-reveal-head { padding: 3rem 1.5rem 1.5rem; }
+  .cs-reveal-intro { font-size: 17px; }
+  .cs-moon { width: 180px; height: 180px; top: 90px; left: 20%; }
+  .cs-reveal-logo { width: 180px; }
+  .cs-palette { grid-template-columns: 1fr; }
+  .cs-palette-band { background: none !important; }
+  .cs-swatch { min-height: 200px; padding: 2rem 1.5rem; }
+  .cs-artwork { padding: 3rem 1.25rem; }
+  .cs-products { padding: 4rem 1.5rem 5rem; }
+  .cs-products-grid { grid-template-columns: 1fr; }
+  .cs-product-img { min-height: auto; }
+  .cs-product-img img { width: calc(var(--w) * 0.8px) !important; }
+  .cs-product-caption { font-size: 18px; }
+  .cs-gallery { padding: 3rem 1.25rem; }
+  .cs-gallery-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-slide, .cs-arrow, .cs-dot span { transition: none; }
+}

@@ -12,12 +12,13 @@
  * Every fact here is one the live site already states in visible copy.
  * Deliberately left out, for the same reasons as the structured data in
  * src/lib/seo.ts: the team (hidden at the client's request), years of
- * experience (unconfirmed), and the PORTFOLIO. Its four clients are
- * placeholders; pointing AI engines at them would teach them fiction as fact
- * about Gravino. Add the portfolio link here when the real work is published.
+ * experience (unconfirmed). The portfolio IS listed: it now holds only real
+ * work, each case study labelled with what it actually was (e.g. a concept
+ * brand pitch), and the client is not named.
  * ======================================================================== */
 
 import { SITE, GROUPS, EMBEDDED, MARKETS } from "@/lib/site";
+import { CASES } from "@/lib/work";
 import { SITE_URL } from "@/lib/site-url";
 
 export const dynamic = "force-static";
@@ -65,6 +66,8 @@ export function GET() {
     `- [Home](${url("/")}): overview of Gravino and its capabilities.`,
     `- [Why Gravino](${url("/why-gravino/")}): what working with an embedded business communications partner is like, and where it fits alongside an existing team.`,
     `- [What we cover](${url("/services/")}): the ten disciplines in four groups, with what each produces.`,
+    `- [Portfolio](${url("/portfolio/")}): case studies, each told from the brief to the finished work.`,
+    ...CASES.map((c) => `- [${c.title}](${url(`/portfolio/${c.slug}/`)}): ${c.kind}. ${c.summary}`),
     `- [Contact](${url("/contact/")}): request the free one-page teardown or start a project.`,
     "",
     "## Optional",

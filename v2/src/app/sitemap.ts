@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { CASES } from "@/lib/work";
 import { SITE_URL } from "@/lib/site-url";
 
 /* Every public route. /lab is deliberately absent — see robots.ts. */
@@ -30,7 +31,10 @@ const LAST_MODIFIED = process.env.GRAVINO_COMMIT_DATE ?? "2026-09-25T00:00:00Z";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date(LAST_MODIFIED);
-  return ROUTES.map((path) => ({
+  // Every case study in src/lib/work.ts gets its own entry, so a new project
+  // is listed the moment it is added there.
+  const cases = CASES.map((c) => `/portfolio/${c.slug}/`);
+  return [...ROUTES, ...cases].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified,
     changeFrequency: "monthly" as const,

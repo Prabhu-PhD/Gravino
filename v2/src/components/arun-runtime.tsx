@@ -26,18 +26,30 @@ import { useEffect, useRef } from "react";
  * his - none of them needed rewriting into an init function.
  * ======================================================================== */
 
-/* ONE EDIT EXISTS IN ui.js, and it is the only one: the portfolio's second
+/* EDITS IN ui.js (search it for "EDIT (Gravino)"): the portfolio slider reads
+   its projects from #portfolioData (src/lib/work.ts) instead of four
+   hardcoded placeholder clients, drives the added Read more link, and hides
+   its thumbnails and arrows when there is only one project. Earlier: the portfolio's second
    image reference moved from .png to .jpg. That file was a photograph saved
    as a 949KB PNG; it is 41KB as a JPEG. It had been handled by a Next
    rewrite so his file could stay byte-identical, but `output: export` does
    not support rewrites, and coupling a content path to an Apache .htaccess
    rule is worse than changing one filename in a JS file. app4.js,
    capabilities.js and three.min.js remain byte-identical. */
+/* VERSIONED URLS. These four files keep fixed names (no content hash), and
+   .htaccess lets browsers cache JavaScript for a week. So an edit to ui.js
+   would reach returning visitors up to a week late, running the OLD script
+   against the NEW page: found when the Pivo slider still ran the old
+   hardcoded list of four placeholder clients, whose images had been deleted.
+   The query string changes with every commit (the commit date, injected by
+   next.config.mjs), so each release is a new URL and a fresh fetch, while an
+   unchanged release still hits the cache. */
+const V = encodeURIComponent(process.env.GRAVINO_COMMIT_DATE ?? "dev");
 const SCRIPTS = [
-  "/arun/three.min.js",
-  "/arun/ui.js",
-  "/arun/capabilities.js",
-  "/arun/app4.js",
+  `/arun/three.min.js?v=${V}`,
+  `/arun/ui.js?v=${V}`,
+  `/arun/capabilities.js?v=${V}`,
+  `/arun/app4.js?v=${V}`,
 ];
 
 export function ArunRuntime() {

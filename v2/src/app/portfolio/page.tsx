@@ -1,31 +1,28 @@
 import { pageMeta, breadcrumbLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
-import {
-  Page,
-  PageHead,
-  Card,
-  Panel,
-  Statement,
-  CtaBand,
-  SHELL,
-} from "@/components/page-shell";
-import { WORKS } from "@/lib/work";
+import { Page, PageHead, Section, CtaBand } from "@/components/page-shell";
+import { CASES } from "@/lib/work";
 
 export const metadata = pageMeta({
   path: "/portfolio/",
-  title: "Portfolio | Gravino",
+  title: "Portfolio | Case studies | Gravino",
   description:
-    "Four pieces of work, each told as what was at stake, what we did about it, and what changed.",
+    "Case studies told from the first brief to the finished work: the idea, the identity, the packaging, the campaign.",
 });
 
-/* Each work is one full section rather than a card in a grid, because a case
-   study is an argument and an argument needs room to be made. The image and
-   the story alternate sides so the page has a rhythm you can feel scrolling
-   without a device announcing each change.
-
-   The four beats (situation, approach, made, outcome) are the order a buyer
-   reads in. See work.ts, which also carries the warning that every client
-   here is still a placeholder. */
+/* ===========================================================================
+ * The portfolio index: one large card per case study.
+ * ---------------------------------------------------------------------------
+ * This replaced a page of four invented case studies told in paragraphs.
+ * Every project now opens into a full case study in Arun's format
+ * (/portfolio/<slug>/), so the index only has to say what each one is and
+ * invite the click. The cards are large on purpose: a portfolio is judged on
+ * the work, and a thumbnail grid of small tiles undersells it.
+ *
+ * Each card states the project's `kind` ("Concept brand pitch" and so on) up
+ * front. That label is the difference between an honest portfolio and one
+ * that implies commissions it did not have.
+ * ======================================================================== */
 
 export default function Portfolio() {
   return (
@@ -34,118 +31,56 @@ export default function Portfolio() {
       <PageHead
         figure
         eyebrow="Selected work"
-        headline="Four problems, and what we did"
-        accent="about them."
-        lede="Not a gallery. Each one is the situation we walked into, the decision we made, and what changed as a result."
+        headline="The work, from brief to"
+        accent="the finished piece."
+        lede="Each project told the way it was made: what was asked, the idea behind it, and everything it became."
       />
 
-      {WORKS.map((w, i) => {
-        const flip = i % 2 === 1;
-        return (
-          <section
-            key={w.n}
-            className={`relative overflow-hidden border-t border-white/[0.07] py-16 md:py-24 ${
-              i % 2 ? "bg-[#0d0b18]" : "bg-[#09090f]"
-            }`}
-          >
-            <div className={`${SHELL} relative`}>
-              <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-                {/* Image. `order` flips it on large screens only; on a phone
-                    the picture always comes first, because it is the thing
-                    that makes you decide whether to read on. */}
-                <div className={flip ? "lg:order-2" : ""}>
-                  <div className="relative overflow-hidden rounded-xl border border-white/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={w.image}
-                      alt={`${w.name}, ${w.sector}`}
-                      loading={i === 0 ? "eager" : "lazy"}
-                      className="aspect-[4/3] w-full object-cover"
-                    />
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#09090f]/70 via-transparent to-transparent"
-                    />
-                  </div>
+      <Section>
+        <ul className="grid gap-8">
+          {CASES.map((c) => (
+            <li key={c.slug}>
+              <a
+                href={`/portfolio/${c.slug}/`}
+                className="group grid overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] transition-colors hover:border-cyan-300/50 lg:grid-cols-[1.35fr_1fr]"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden lg:aspect-auto lg:min-h-[420px]">
+                  <img
+                    src={c.cover}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
-
-                <div className={flip ? "lg:order-1" : ""}>
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-sm font-mono text-[#a78bfa]">{w.n}</span>
-                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
-                      {w.sector} &middot; {w.year}
-                    </span>
-                  </div>
-
-                  <h2 className="mt-4 text-[clamp(1.9rem,4vw,3rem)] font-light leading-[1.1] tracking-[-0.03em] text-white">
-                    {w.name}
-                  </h2>
-
-                  <p className="mt-4 max-w-xl text-lg font-light leading-[1.5] text-slate-200">
-                    {w.summary}
-                  </p>
-
-                  {/* The two long beats sit on their own surface so the block
-                      reads as a case study rather than as more page. */}
-                  <Panel className="mt-7 p-6">
-                    <dl className="space-y-5">
-                      <div>
-                        <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
-                          The situation
-                        </dt>
-                        <dd className="mt-2 text-[0.925rem] font-light leading-relaxed text-slate-400">
-                          {w.situation}
-                        </dd>
-                      </div>
-                      <div className="border-t border-white/[0.08] pt-5">
-                        <dt className="text-[11px] font-mono uppercase tracking-[0.18em] text-[#a78bfa]">
-                          What we did
-                        </dt>
-                        <dd className="mt-2 text-[0.925rem] font-light leading-relaxed text-slate-400">
-                          {w.approach}
-                        </dd>
-                      </div>
-                    </dl>
-                  </Panel>
-
-                  <div className="mt-5 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
-                      Made
-                    </span>
-                    {w.made.map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-md border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300"
-                      >
-                        {m}
-                      </span>
+                <div className="flex flex-col justify-end gap-4 p-7 md:p-10">
+                  <span className="w-fit rounded-full border border-white/15 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-slate-300">
+                    {c.kind}
+                  </span>
+                  <h2 className="text-[clamp(2rem,4vw,3rem)] font-light leading-none text-white">{c.title}</h2>
+                  <p className="text-[1rem] font-light leading-relaxed text-slate-300">{c.summary}</p>
+                  <ul className="flex flex-wrap gap-2" aria-label="Disciplines">
+                    {c.disciplines.map((d) => (
+                      <li key={d} className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-slate-300">
+                        {d}
+                      </li>
                     ))}
-                  </div>
-
-                  <Card interactive={false} className="mt-5 p-5">
-                    <p className="text-[11px] font-mono uppercase tracking-[0.18em] text-slate-400">
-                      What changed
-                    </p>
-                    <p className="mt-2 text-base font-light leading-relaxed text-white">
-                      {w.outcome}
-                    </p>
-                  </Card>
+                  </ul>
+                  <span className="mt-2 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-cyan-200">
+                    View case study
+                    <span aria-hidden className="transition-transform group-hover:translate-x-1">&rarr;</span>
+                  </span>
                 </div>
-              </div>
-            </div>
-          </section>
-        );
-      })}
-
-      <Statement attribution="How we work">
-        Every one of these started the same way: something important had to be
-        explained to people who would decide with it.
-      </Statement>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <CtaBand
-        headline="Send us the one that is bothering"
-        accent="you."
-        body="A deck, a report, a brand piece. We come back with a single page on what is working, what it is costing you, and what we would change. No cost, no pitch."
+        headline="See how we would handle"
+        accent="yours."
+        body="Send one thing you already have. We come back with a single page on what is working, what it is costing you, and what we would change. No cost, no pitch."
       />
     </Page>
   );

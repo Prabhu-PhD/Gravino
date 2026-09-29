@@ -298,13 +298,14 @@ export const ARUN_SECTIONS_HTML = String.raw`
   </section>
 
   <!-- SECTION: PORTFOLIO SHOWCASE (CINEMATIC FULL-BLEED SLIDER) -->
+  <script type="application/json" id="portfolioData">{{PORTFOLIO_DATA}}</script>
   <section id="portfolio" class="page-section relative w-full h-screen min-h-screen overflow-hidden bg-[#09090f] text-white flex flex-col justify-between pb-8 sm:pb-12 pt-8 sm:pt-10 scroll-mt-0 border-t border-b border-white/10" aria-label="Portfolio Showcase">
     <!-- Full-bleed horizontal accent line crossing screen edge-to-edge above title -->
     <div id="portfolioAccentLine" class="absolute left-0 right-0 w-full h-[1px] pointer-events-none z-[5] transition-all duration-300"></div>
 
     <!-- Active Background Layers for Smooth Cinematic Cross-fade -->
     <div class="portfolio-bg-stage absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      <div id="portfolioBgA" class="portfolio-bg-slide absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out will-change-transform scale-100 opacity-100" style="background-image: url('assets/portfolio-1.jpg');"></div>
+      <div id="portfolioBgA" class="portfolio-bg-slide absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out will-change-transform scale-100 opacity-100" style="background-image: url('{{PORTFOLIO_STAGE}}'); background-position: {{PORTFOLIO_STAGE_POS}};"></div>
       <div id="portfolioBgB" class="portfolio-bg-slide absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out will-change-transform scale-105 opacity-0"></div>
 
       <!-- Atmospheric Gradient Overlays for pristine legibility and depth -->
@@ -330,12 +331,22 @@ export const ARUN_SECTIONS_HTML = String.raw`
           
           <!-- Left: ONLY Title and Body text -->
           <div class="lg:col-span-6 xl:col-span-5 space-y-3 pb-1 relative z-10" id="portfolioTextContainer">
-            <h2 id="portfolioTitle" class="portfolio-anim-item text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15] pb-1 inline-block">
-              Aura <span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">Pay</span>
+            <span id="portfolioKind" class="portfolio-anim-item inline-block rounded-full border border-white/20 bg-black/40 px-2.5 py-0.5 font-mono text-[10.5px] uppercase tracking-wider text-slate-200">{{PORTFOLIO_KIND}}</span>
+            <h2 id="portfolioTitle" class="portfolio-anim-item text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15] pb-1 block">
+              {{PORTFOLIO_TITLE_HTML}}
             </h2>
             <p id="portfolioDesc" class="portfolio-anim-item text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-lg">
-              Zero-knowledge biometric authentication and ultra-low latency transaction clearing for sovereign wealth and high-volume banking systems.
+              {{PORTFOLIO_SUMMARY}}
             </p>
+            <!-- Added: the way into each case study. ui.js keeps its href and
+                 label in step with the project on screen. Styled as the site's
+                 primary action (Start a Project), because it is this
+                 section's one action. -->
+            <a id="portfolioReadMore" href="{{PORTFOLIO_HREF}}" aria-label="Read more: {{PORTFOLIO_TITLE_TEXT}} case study" class="portfolio-anim-item group mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-cyan-400/40 bg-black/75 px-5 py-2 font-mono text-[11px] uppercase tracking-wider text-cyan-200 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-black/95 hover:text-white">
+              <span aria-hidden class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span>Read more</span>
+              <span aria-hidden class="text-cyan-300 transition-transform group-hover:translate-x-0.5">&rarr;</span>
+            </a>
           </div>
 
           <!-- Right: Compact Uniform Thumbnails & Navigation Arrows -->

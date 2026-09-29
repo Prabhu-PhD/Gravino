@@ -22,8 +22,8 @@
  *   - the team (hidden at the client's request until they choose to show it)
  *   - years of experience (the "75+" figure is unconfirmed and conflicts
  *     with the team bios, which add to 65)
- *   - portfolio clients (currently placeholders; publishing them as data
- *     would teach search and AI engines four fictional clients as fact)
+ *   - portfolio clients' names (case studies are labelled by kind, e.g.
+ *     "Concept brand pitch", and the client is not named)
  *   - sameAs social profiles (none exist yet)
  * ======================================================================== */
 
@@ -47,6 +47,7 @@ export function pageMeta({
   title,
   description,
   index = true,
+  image,
 }: {
   /** The route as it is actually served, with its trailing slash. */
   path: string;
@@ -54,7 +55,10 @@ export function pageMeta({
   title: string;
   description: string;
   index?: boolean;
+  /** A page-specific share image (a case study's cover); defaults to the site's. */
+  image?: { url: string; width: number; height: number; alt: string };
 }): Metadata {
+  const shareImage = image ?? SHARE_IMAGE;
   return {
     title: { absolute: title },
     description,
@@ -67,9 +71,9 @@ export function pageMeta({
       url: path,
       title,
       description,
-      images: [SHARE_IMAGE],
+      images: [shareImage],
     },
-    twitter: { card: "summary_large_image", title, description, images: [SHARE_IMAGE.url] },
+    twitter: { card: "summary_large_image", title, description, images: [shareImage.url] },
   };
 }
 
@@ -142,5 +146,37 @@ export function servicesLd() {
         areaServed: MARKETS,
       },
     })),
+  };
+}
+
+/** Breadcrumbs of any depth: [["Home","/"],["Work","/portfolio/"],["Pivo","/portfolio/pivo/"]]. */
+export function breadcrumbTrailLd(trail: [string, string][]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map(([name, path], i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name,
+      item: abs(path),
+    })),
+  };
+}
+
+/** A case study as a CreativeWork by Gravino. States its kind honestly
+ *  (e.g. "Concept brand pitch") and does not name the client. */
+export function caseStudyLd(c: { slug: string; title: string; kind: string; summary: string; cover: string; disciplines: string[] }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": abs(`/portfolio/${c.slug}/#work`),
+    name: c.title,
+    genre: c.kind,
+    description: c.summary,
+    image: abs(c.cover),
+    keywords: c.disciplines.join(", "),
+    creator: { "@id": abs("/#organization") },
+    url: abs(`/portfolio/${c.slug}/`),
+    inLanguage: "en",
   };
 }

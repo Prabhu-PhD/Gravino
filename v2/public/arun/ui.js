@@ -156,32 +156,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const portfolioThumbsTrack = document.getElementById('portfolioThumbsTrack');
 
   if (portfolioSection && portfolioThumbsTrack) {
-    const portfolioProjects = [
-      {
-        id: 0,
-        title: 'Aura Pay',
-        desc: 'Zero-knowledge biometric authentication and ultra-low latency transaction clearing for sovereign wealth and high-volume banking systems.',
-        image: 'assets/portfolio-1.jpg'
-      },
-      {
-        id: 1,
-        title: 'Nexus AI',
-        desc: 'Autonomous generative synthesis and predictive decision infrastructure empowering executive boards with real-time operational telemetry.',
-        image: 'assets/portfolio-2.jpg'
-      },
-      {
-        id: 2,
-        title: 'Lumen Edu',
-        desc: 'Immersive spatial learning environments and unified curriculum delivery engineering next-generation cognitive retention at global scale.',
-        image: 'assets/portfolio-3.jpg'
-      },
-      {
-        id: 3,
-        title: 'Vanguard Bio',
-        desc: 'Precision oncology data visualizer and distributed genomic pipeline architecture transforming complex biomarker sequencing into clinical action.',
-        image: 'assets/portfolio-4.jpg'
-      }
-    ];
+    /* EDIT (Gravino): the project list is no longer hardcoded here. It was
+       four invented clients (Aura Pay, Nexus AI, Lumen Edu, Vanguard Bio).
+       The site now serialises its real case studies into #portfolioData,
+       from src/lib/work.ts, and this reads them. Each entry carries a
+       separate `thumb` (the 0.72 portrait card) and `image` (the landscape
+       stage), which his original used one image for; and an `href` for the
+       Read more link added under the description. */
+    let portfolioProjects = [];
+    try {
+      portfolioProjects = JSON.parse(document.getElementById('portfolioData').textContent || '[]')
+        .map((p, i) => Object.assign({ id: i }, p));
+    } catch (e) {
+      portfolioProjects = [];
+    }
 
     let currentProjectIdx = 0;
     let isTransitioning = false;
@@ -208,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.className = 'portfolio-thumb-card group bg-[#12121e] select-none shadow-xl';
         card.setAttribute('data-target-idx', proj.id);
         card.innerHTML = `
-          <img src="${proj.image}" alt="${proj.title}" class="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110 pointer-events-none">
+          <img src="${proj.thumb || proj.image}" alt="${proj.title}" class="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110 pointer-events-none">
           <div class="absolute inset-0 bg-black/15 group-hover:bg-transparent transition-colors pointer-events-none"></div>
         `;
 
@@ -232,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (incomingLayer && outgoingLayer) {
         incomingLayer.style.backgroundImage = `url('${targetProj.image}')`;
+        incomingLayer.style.backgroundPosition = targetProj.position || 'center';
         incomingLayer.style.transform = 'scale(1.06)';
         incomingLayer.style.opacity = '0';
 
@@ -255,6 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
           titleEl.innerHTML = `${firstWord} <span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">${restWords}</span>`;
         }
         if (descEl) descEl.textContent = targetProj.desc;
+        const kindEl = document.getElementById('portfolioKind');
+        if (kindEl) kindEl.textContent = targetProj.kind || '';
+        const moreEl = document.getElementById('portfolioReadMore');
+        if (moreEl && targetProj.href) {
+          moreEl.setAttribute('href', targetProj.href);
+          moreEl.setAttribute('aria-label', 'Read more: ' + targetProj.title + ' case study');
+        }
 
         animItems.forEach(item => {
           item.classList.remove('text-exit');
@@ -279,7 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updatePortfolioLine() {
       const line = document.getElementById('portfolioAccentLine');
-      const title = document.getElementById('portfolioTitle');
+      // EDIT (Gravino): measure from the kind label above the title when there
+      // is one, so the accent line clears it instead of running through it.
+      const title = document.getElementById('portfolioKind') || document.getElementById('portfolioTitle');
       const portfolio = document.getElementById('portfolio');
       if (!line || !title || !portfolio) return;
       const portfolioRect = portfolio.getBoundingClientRect();
@@ -306,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', (e) => {
       const rect = portfolioSection.getBoundingClientRect();
       const inView = rect.top < window.innerHeight && rect.bottom > 0;
-      if (inView) {
+      if (inView && portfolioProjects.length > 1) {
         if (e.key === 'ArrowRight') {
           const nextIdx = (currentProjectIdx + 1) % portfolioProjects.length;
           goToProject(nextIdx);
@@ -317,9 +315,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // EDIT (Gravino): with one project there is nothing to page to, so the
+    // thumbnails and arrows are hidden rather than shown as dead controls.
+    // They return on their own once a second case study is added.
+    if (portfolioProjects.length < 2) {
+      portfolioThumbsTrack.style.display = 'none';
+      if (prevBtn && prevBtn.parentElement) prevBtn.parentElement.style.display = 'none';
+    }
+
     renderThumbnails(0);
     requestAnimationFrame(updatePortfolioLine);
     window.addEventListener('resize', updatePortfolioLine);
+    // EDIT (Gravino): the line was placed once, on the first frame, and only
+    // re-placed on resize or load. If the section's layout settled after that
+    // (fonts swapping in, images arriving, the hero releasing), it stayed where
+    // it was: measured 41px into the section instead of 24px above the label.
+    // Re-place it whenever the section or its text block changes size, and
+    // once the web fonts are in.
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => updatePortfolioLine());
+      ro.observe(portfolioSection);
+      const textBlock = document.getElementById('portfolioTextContainer');
+      if (textBlock) ro.observe(textBlock);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(updatePortfolioLine);
     window.addEventListener('load', updatePortfolioLine);
 
     // =========================================================================

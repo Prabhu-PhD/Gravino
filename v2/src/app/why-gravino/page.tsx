@@ -2,7 +2,7 @@ import { pageMeta, breadcrumbLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, Head, SectionMark, Statement, CtaBand } from "@/components/page-shell";
 import { Reveal, RevealWords, ScrollSpine } from "@/components/story";
-import { EmbeddedMap } from "@/components/infographics";
+import { FitOrbit } from "@/components/liquid-orb/fit-orbit";
 import { EmbeddedMorph } from "@/components/embedded-morph/embedded-morph";
 import { d } from "@/lib/stagger";
 import { MODEL, EMBEDDED, ALONGSIDE } from "@/lib/site";
@@ -65,8 +65,10 @@ export default function WhyGravino() {
         </Head>
 
         <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-          <Reveal className="mx-auto w-full max-w-[460px]">
-            <EmbeddedMap />
+          {/* Gravino (the client's liquid orb) at the centre, the three
+              people below in orbit, all inside "your team" (2026-09-30). */}
+          <Reveal className="mx-auto mb-8 w-full max-w-[540px]">
+            <FitOrbit moons={ALONGSIDE.points} />
           </Reveal>
 
           <Reveal as="ul" className="space-y-4">

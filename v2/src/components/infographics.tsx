@@ -40,73 +40,9 @@ const svgBase = "block h-auto w-full overflow-visible [font-family:inherit]";
  * morphing particle panel in components/embedded-morph. They are in git
  * history if ever wanted back. */
 
-/* ---------------------------------------------------------------------------
- * Where we fit: Gravino drawn INSIDE the boundary of the client's team.
- * That is what "embedded" means, so it is the one diagram on the page that is
- * doing more than decorating a sentence.
- * ------------------------------------------------------------------------ */
-export function EmbeddedMap() {
-  const cx = 200;
-  const cy = 170;
-  /* Satellites sit 96 units from the centre with radius 40, so their outer
-   * edge is at 136, inside the boundary's 150. The first version put two of
-   * them at 131 + 38 = 169, poking out of "your team" -- which contradicted
-   * the one thing this diagram exists to say. */
-  const SAT_R = 40;
-  const at = (deg: number) => {
-    const a = (deg * Math.PI) / 180;
-    return { x: cx + 96 * Math.cos(a), y: cy + 96 * Math.sin(a) };
-  };
-  const sats = [
-    { label: ["Your", "leadership"], ...at(-90) },
-    { label: ["Your", "marketing", "team"], ...at(150) },
-    { label: ["Your", "agency"], ...at(30) },
-  ];
-  return (
-    <svg viewBox="0 0 400 330" className={svgBase} role="img" aria-label="Your leadership, your marketing team and your agency sit inside the boundary of your team, and Gravino sits inside that boundary with them, connected to all three.">
-      <defs>
-        <Grad id="em-g" />
-        <radialGradient id="em-glow">
-          <stop offset="0" stopColor={VIOLET} stopOpacity="0.5" />
-          <stop offset="1" stopColor={VIOLET} stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      {/* the boundary of the client's team */}
-      <circle className="st-draw" style={d(0)} pathLength={1} cx={cx} cy={cy} r="150" fill="rgba(123,63,228,0.05)" stroke="rgba(167,139,250,0.55)" strokeWidth="1.5" strokeDasharray="1" />
-      <text className="st-fade" style={d(2)} x={cx} y={cy + 146} fontSize="11" fill={VIOLET} textAnchor="middle" letterSpacing="2">
-        YOUR TEAM
-      </text>
-      {sats.map((s, i) => (
-        <g key={i}>
-          <path className="st-draw" style={d(i + 5)} pathLength={1} d={`M${cx} ${cy} L${s.x} ${s.y}`} stroke="rgba(96,165,250,0.4)" strokeWidth="1.5" fill="none" />
-          <path className="st-flow" pathLength={1} d={`M${cx} ${cy} L${s.x} ${s.y}`} stroke={SKY} strokeWidth="2.4" strokeLinecap="round" fill="none" />
-        </g>
-      ))}
-      {sats.map((s, i) => (
-        <g key={i + "n"} className="st-pop" style={d(i + 2)}>
-          <circle cx={s.x} cy={s.y} r={SAT_R} fill="#100c22" stroke="rgba(255,255,255,0.22)" />
-          {s.label.map((line, j) => (
-            <text
-              key={j}
-              x={s.x}
-              y={s.y + 4 + (j - (s.label.length - 1) / 2) * 12.5}
-              fontSize="10.5"
-              fill="white"
-              textAnchor="middle"
-            >
-              {line}
-            </text>
-          ))}
-        </g>
-      ))}
-      <circle className="st-breathe" cx={cx} cy={cy} r="54" fill="url(#em-glow)" />
-      <g className="st-pop" style={d(8)}>
-        <circle cx={cx} cy={cy} r="34" fill="#1a1036" stroke="url(#em-g)" strokeWidth="2.5" />
-        <text x={cx} y={cy + 4} fontSize="12.5" fill="white" textAnchor="middle" fontWeight="500">Gravino</text>
-      </g>
-    </svg>
-  );
-}
+/* EmbeddedMap ("where we fit") was removed on 2026-09-30: that section now
+ * uses components/liquid-orb/fit-orbit, the client's liquid orb as Gravino
+ * with the three people in orbit inside "your team". In git history. */
 
 /* ---------------------------------------------------------------------------
  * About: the balancing act as a beam. It tips, then settles level.

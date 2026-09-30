@@ -48,7 +48,9 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
 
   /* ---- the source's particle model, unchanged ---------------------------- */
   const N = 6500;
-  const palette = [new THREE.Color(0xffffff), new THREE.Color(0x4d8dff), new THREE.Color(0x9b55ff)];
+  // The site palette (lavender #a78bfa, blue #60a5fa) in place of the source's
+  // hotter #9b55ff / #4d8dff, so the particles belong to the page around them.
+  const palette = [new THREE.Color(0xffffff), new THREE.Color(0x60a5fa), new THREE.Color(0xa78bfa)];
   const pos = new Float32Array(N * 3);
   const col = new Float32Array(N * 3);
   const targets = Array.from({ length: 4 }, () => new Float32Array(N * 3));
@@ -271,7 +273,7 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
   const duration = 700;
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const defaultColors = new Float32Array(col);
-  const purple = new THREE.Color(0x9b55ff);
+  const purple = new THREE.Color(0xa78bfa);
   const PURPLE_RANGES = [[0, 2100], [5210, 5710], [3750, 5070], [4700, 6150]];
   function updateStateColors(state: number) {
     col.set(defaultColors);

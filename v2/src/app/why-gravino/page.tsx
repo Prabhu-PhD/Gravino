@@ -47,7 +47,11 @@ export default function WhyGravino() {
       {/* 01 -- what embedded means: the client's morphing particle panel
           (components/embedded-morph), which replaced four cards with a
           diagram each. One visual that transforms between the principles. */}
-      <EmbeddedMorph principles={EMBEDDED.points} />
+      <EmbeddedMorph
+        principles={EMBEDDED.points}
+        mark={<SectionMark n="01" label="What embedded means" />}
+        head={<Head accent="practice.">What that means in</Head>}
+      />
 
       <Statement attribution="The whole idea">
         <RevealWords text={EMBEDDED.statement} />

@@ -24,7 +24,8 @@ import { CelestialFigure } from "./celestial-figure";
  *    `Section` and `Head` do not accept one.
  * ======================================================================== */
 
-export const SHELL = "mx-auto max-w-[76rem] px-6 sm:px-10 md:px-14 lg:px-20";
+import { SHELL } from "@/lib/shell";
+export { SHELL };
 
 /** The brand-hue glow discs the cosmic sections sit on. */
 function Orbs() {

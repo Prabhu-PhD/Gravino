@@ -14,18 +14,20 @@
  * sit with the sections either side of it. So:
  *
  *   FRAME. Site section padding and the 76rem column; SectionMark and Head
- *     come from page-shell, passed in by the page; the visual sits on a
- *     rounded stage in the site's card border and raised ground.
- *   TYPE. Light-weight titles and slate body text, as in the site's cards;
- *     mono labels as in SectionMark.
+ *     come from page-shell, passed in by the page. No box round the visual
+ *     (the client, 2026-09-30): the particles sit on the section.
+ *   SIZE. The principle's description opens under its title in the list,
+ *     not under the visual, so the particles get the whole column.
+ *   TYPE. Titles at the size of the "How the work works" steps; slate body
+ *     text; mono labels as in SectionMark.
  *   COLOUR. Lavender #a78bfa and blue #60a5fa, particles included; the
  *     chosen principle takes the heading-accent gradient.
  *   HOVER. The file's hover (#f5f5f2 to #fff) was invisible. Inactive titles
  *     now sit at slate-300 and brighten to white, the number turning lavender.
+ *   TOUCH. Hold and drag turns the cloud 360 degrees (engine.ts).
  *   NO DASHES. "01 — Learning" became "01 / Learning", per the site rule.
- *   SEMANTICS. The principles are buttons with aria-pressed, and the caption
- *     under the visual is a polite live region, so a screen reader hears the
- *     principle it just chose.
+ *   SEMANTICS. The principles are buttons with aria-pressed, each followed
+ *     by the description it opens; closed descriptions are aria-hidden.
  *   LOADING. All text renders on the server; three.js and the engine load in
  *     the browser as their own chunk, only when this component mounts.
  * ======================================================================== */
@@ -74,37 +76,39 @@ export function EmbeddedMorph({
     engine.current?.choose(i);
   };
 
-  const p = principles[active];
-
   return (
     <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] py-16 md:py-20">
       <div className={`${SHELL} relative`}>
         {mark}
         {/* Heading above both columns, as in every other section. */}
         {head}
-        <div className="mt-10 grid items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
-          {/* ---- the principles ---------------------------------------------- */}
-          <div>
-            <div className="flex flex-col border-b border-white/10">
-              {principles.map((item, i) => {
-                const on = i === active;
-                return (
+        <div className="mt-10 grid items-center gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10">
+          {/* ---- the principles ----------------------------------------------
+              Titles at the size of the "How the work works" steps below. The
+              chosen principle opens to show what it means, which used to sit
+              under the visual; moving it here gives the particles the whole
+              column. */}
+          <ol className="border-b border-white/10">
+            {principles.map((item, i) => {
+              const on = i === active;
+              return (
+                <li key={item.title} className="border-t border-white/10">
                   <button
-                    key={item.title}
                     type="button"
                     aria-pressed={on}
+                    aria-controls={`embedded-body-${i}`}
                     onClick={() => choose(i)}
-                    className="group grid cursor-pointer grid-cols-[3rem_1fr] items-baseline border-t border-white/10 py-4 text-left md:py-5"
+                    className="group grid w-full cursor-pointer grid-cols-[3rem_1fr] items-baseline pt-5 text-left md:grid-cols-[4rem_1fr] md:pt-6"
                   >
                     <span
-                      className={`font-mono text-sm transition-colors duration-300 ${
+                      className={`font-mono text-sm transition-colors duration-300 md:text-base ${
                         on ? "text-[#a78bfa]" : "text-slate-400 group-hover:text-[#a78bfa]"
                       }`}
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span
-                      className={`text-[1.1rem] leading-snug transition-colors duration-300 md:text-[1.2rem] ${
+                      className={`text-[clamp(1.35rem,2.2vw,1.9rem)] leading-tight transition-colors duration-300 ${
                         on
                           ? "bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] bg-clip-text font-normal text-transparent"
                           : "font-light text-slate-300 group-hover:text-white"
@@ -113,38 +117,45 @@ export function EmbeddedMorph({
                       {item.title}
                     </span>
                   </button>
-                );
-              })}
-            </div>
-          </div>
+                  <div
+                    id={`embedded-body-${i}`}
+                    aria-hidden={!on}
+                    className={`grid transition-[grid-template-rows] duration-500 ease-out ${on ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                  >
+                    <div className="overflow-hidden">
+                      <p
+                        className={`ml-12 max-w-xl pt-3 text-[1rem] font-light leading-relaxed text-slate-400 transition-opacity duration-500 md:ml-16 ${
+                          on ? "opacity-100" : "opacity-0"
+                        }`}
+                      >
+                        {item.body}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="h-5 md:h-6" />
+                </li>
+              );
+            })}
+          </ol>
 
-          {/* ---- the visual: a stage in the site's card language --------------- */}
-          {/* The canvas takes the stage above a band reserved for the caption,
-              so no shape can run into the text at any width (the planet did,
-              at 1024px and 320px, when the canvas ran under the caption).
-              Heights measured: at xl the four shapes cover 0.172 / 0.095 /
-              0.069 / 0.112 of their boxes, against the file's full-screen
-              0.163 / 0.089 / 0.065 / 0.105, so the particles read as in the
-              file, only smaller. */}
-          <div className="relative h-[540px] overflow-hidden rounded-2xl border border-white/10 bg-[#0d0b18] sm:h-[560px] lg:h-[620px] xl:h-[680px]">
+          {/* ---- the visual ---------------------------------------------------
+              No frame: the particles sit on the section itself, and the canvas
+              runs past the column edges so a turned shape is never cut off at
+              a box. Hold and drag to turn it (engine.ts). */}
+          <div className="relative h-[440px] sm:h-[540px] lg:h-[660px] xl:h-[740px]">
             <div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[40%] h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(167,139,250,.10), transparent 60%)" }}
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[110%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{ background: "radial-gradient(closest-side, rgba(167,139,250,.10), transparent)" }}
             />
-            <div ref={canvas} aria-hidden className="absolute inset-x-0 top-0 bottom-[190px] sm:bottom-[160px] lg:bottom-[150px]" />
+            <div ref={canvas} aria-hidden className="absolute -inset-x-6 top-0 bottom-10 sm:-inset-x-10 lg:-left-10 lg:-right-20" />
 
-            <div aria-live="polite" className="absolute inset-x-5 bottom-14 text-center sm:inset-x-8 md:inset-x-12">
-              <div className="text-[1.1rem] font-normal text-white md:text-[1.2rem]">{p.title}</div>
-              <p className="mx-auto mt-2 max-w-md text-[0.925rem] font-light leading-relaxed text-slate-400">{p.body}</p>
-            </div>
-
-            <div className="absolute inset-x-6 bottom-5 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">
               <span className="flex items-center gap-2">
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-[#60a5fa] to-[#a78bfa] shadow-[0_0_10px_rgba(167,139,250,.6)]" />
-                <span className="hidden sm:inline">Choose a principle</span>
+                Drag to turn it
               </span>
-              <span>{STATE_LABELS[active]}</span>
+              <span aria-live="polite">{STATE_LABELS[active]}</span>
             </div>
           </div>
         </div>

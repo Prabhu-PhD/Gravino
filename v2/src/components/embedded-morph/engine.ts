@@ -23,6 +23,8 @@
  *   - Reduced motion: shapes switch without the transition and nothing moves
  *     on its own; a single frame is drawn per change.
  *   - performance.now() replaces the deprecated THREE.Clock.
+ *   - Added: hold and drag to turn the cloud 360 degrees, with momentum, and
+ *     a stronger mouse parallax (see "drag to turn" below).
  * ======================================================================== */
 
 import * as THREE from "three";
@@ -264,8 +266,6 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
     sizeAttenuation: true,
   });
   const cloud = new THREE.Points(geo, mat);
-  cloud.rotation.x = -0.08;
-  cloud.rotation.y = 0.22;
   scene.add(cloud);
 
   /* ---- state and colour ranges, as in the source ------------------------- */
@@ -290,6 +290,57 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
     mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
   };
   window.addEventListener("pointermove", onPointer, { passive: true });
+
+  /* ---- drag to turn (Gravino, 2026-09-30) -------------------------------- *
+   * Hold and drag turns the cloud freely, 360 degrees on any axis. The turn
+   * is kept as a quaternion applied on top of the source's own slow spin and
+   * parallax, so the cloud stays where it is left and carries on drifting.
+   * Each drag step rotates about the SCREEN's axes (premultiplied), which is
+   * what makes it feel like holding the object rather than steering angles.
+   * A release keeps some momentum and eases out.                            */
+  const held = new THREE.Quaternion();
+  const step = new THREE.Quaternion();
+  const AXIS_X = new THREE.Vector3(1, 0, 0);
+  const AXIS_Y = new THREE.Vector3(0, 1, 0);
+  const base = new THREE.Euler(-0.08, 0.22, 0);
+  const baseQ = new THREE.Quaternion();
+  const drag = { on: false, id: -1, x: 0, y: 0, vx: 0, vy: 0 };
+  const TURN = 0.0085; // radians per CSS pixel dragged
+  const turn = (dx: number, dy: number) => {
+    step.setFromAxisAngle(AXIS_Y, dx * TURN);
+    held.premultiply(step);
+    step.setFromAxisAngle(AXIS_X, dy * TURN);
+    held.premultiply(step);
+  };
+  const onDown = (e: PointerEvent) => {
+    if (e.button !== 0) return;
+    drag.on = true; drag.id = e.pointerId; drag.x = e.clientX; drag.y = e.clientY; drag.vx = drag.vy = 0;
+    try { container.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+    container.style.cursor = "grabbing";
+    kick();
+  };
+  const onMove = (e: PointerEvent) => {
+    if (!drag.on || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    drag.x = e.clientX; drag.y = e.clientY;
+    drag.vx = dx; drag.vy = dy;
+    turn(dx, dy);
+    kick();
+  };
+  const onUp = (e: PointerEvent) => {
+    if (e.pointerId !== drag.id) return;
+    drag.on = false;
+    if (still) drag.vx = drag.vy = 0;
+    container.style.cursor = "grab";
+    kick();
+  };
+  container.style.cursor = "grab";
+  // Phones: a sideways swipe turns the cloud, an up/down swipe still scrolls.
+  container.style.touchAction = "pan-y";
+  container.addEventListener("pointerdown", onDown);
+  container.addEventListener("pointermove", onMove);
+  container.addEventListener("pointerup", onUp);
+  container.addEventListener("pointercancel", onUp);
 
   function animateGears(t: number) {
     for (const g of gearMeta) {
@@ -345,9 +396,16 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
     }
     if (current === 0 && !transitioning) animateGears(t);
     geo.attributes.position.needsUpdate = true;
-    cloud.rotation.y += (0.22 + t * 0.075 + mouse.x * 0.13 - cloud.rotation.y) * 0.025;
-    cloud.rotation.x += (-0.08 + mouse.y * 0.09 - cloud.rotation.x) * 0.025;
-    cloud.rotation.z = Math.sin(t * 0.16) * 0.012;
+    // The source's spin and parallax, with the parallax raised (0.13 / 0.09
+    // to 0.32 / 0.22) so the cloud answers the mouse visibly.
+    base.y += (0.22 + t * 0.075 + mouse.x * 0.32 - base.y) * 0.025;
+    base.x += (-0.08 + mouse.y * 0.22 - base.x) * 0.025;
+    base.z = Math.sin(t * 0.16) * 0.012;
+    if (!drag.on && (Math.abs(drag.vx) > 0.01 || Math.abs(drag.vy) > 0.01)) {
+      turn(drag.vx, drag.vy);
+      drag.vx *= 0.93; drag.vy *= 0.93;
+    }
+    cloud.quaternion.multiplyQuaternions(held, baseQ.setFromEuler(base));
     cloud.scale.setScalar(0.6 + Math.sin(t * 0.8) * 0.003);
     renderer.render(scene, camera);
   }
@@ -407,6 +465,11 @@ export function mount(container: HTMLElement, opts: { still: boolean }): Morph {
       io.disconnect();
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
+      container.removeEventListener("pointerdown", onDown);
+      container.removeEventListener("pointermove", onMove);
+      container.removeEventListener("pointerup", onUp);
+      container.removeEventListener("pointercancel", onUp);
+      container.style.cursor = "";
       scene.clear();
       geo.dispose();
       mat.dispose();

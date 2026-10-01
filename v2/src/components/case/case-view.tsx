@@ -14,7 +14,7 @@ import { neighbours } from "@/lib/work";
 import { BriefSlider } from "./brief-slider";
 import { CaseToolbar } from "./case-toolbar";
 import { CosmicFooter } from "@/components/cosmic-chrome";
-import { TeardownModal } from "@/components/teardown-form";
+import { IntakeModal } from "@/components/intake-form";
 import { CtaBand } from "@/components/page-shell";
 
 export function CaseView({ study }: { study: CaseStudy }) {
@@ -76,12 +76,12 @@ export function CaseView({ study }: { study: CaseStudy }) {
         <CtaBand
           headline="See how we would handle"
           accent="yours."
-          body="Send one thing you already have. We come back with a single page on what is working, what it is costing you, and what we would change. No cost, no pitch."
+          body="Tell us about the deck, report, brand, film or campaign in front of you. One of the four of us comes back within a working day with questions, an approach and a clear next step."
         />
       </main>
 
       <CosmicFooter />
-      <TeardownModal />
+      <IntakeModal />
     </>
   );
 }

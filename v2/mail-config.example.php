@@ -1,6 +1,6 @@
 <?php
 /* ===========================================================================
- * Credentials for the teardown form. TEMPLATE ONLY.
+ * Credentials for the project intake form. TEMPLATE ONLY.
  * ---------------------------------------------------------------------------
  * HOW TO USE THIS
  *

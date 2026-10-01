@@ -62,55 +62,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Teardown / Start Project Modal
-  const teardownTriggers = document.querySelectorAll('.trigger-teardown');
-  const teardownModal = document.getElementById('teardownModal');
-  const closeTeardownBtn = document.getElementById('closeTeardownBtn');
-  const teardownForm = document.getElementById('teardownForm');
+  // Start a Project (intake) modal
+  const intakeTriggers = document.querySelectorAll('.trigger-intake');
+  const intakeModal = document.getElementById('intakeModal');
+  const closeIntakeBtn = document.getElementById('closeIntakeBtn');
+  const intakeForm = document.getElementById('intakeForm');
   const formStateInitial = document.getElementById('formStateInitial');
   const formStateSuccess = document.getElementById('formStateSuccess');
 
-  const openTeardownModal = () => {
-    if (!teardownModal) return;
-    teardownModal.classList.add('active');
+  const openIntakeModal = () => {
+    if (!intakeModal) return;
+    intakeModal.classList.add('active');
     document.body.style.overflow = 'hidden';
     if (formStateInitial) formStateInitial.classList.remove('hidden');
     if (formStateSuccess) formStateSuccess.classList.add('hidden');
   };
 
-  const closeTeardownModal = () => {
-    if (!teardownModal) return;
-    teardownModal.classList.remove('active');
+  const closeIntakeModal = () => {
+    if (!intakeModal) return;
+    intakeModal.classList.remove('active');
     document.body.style.overflow = '';
   };
 
-  teardownTriggers.forEach(btn => {
+  intakeTriggers.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      openTeardownModal();
+      openIntakeModal();
     });
   });
 
-  if (closeTeardownBtn) {
-    closeTeardownBtn.addEventListener('click', closeTeardownModal);
+  if (closeIntakeBtn) {
+    closeIntakeBtn.addEventListener('click', closeIntakeModal);
   }
 
-  if (teardownModal) {
-    teardownModal.addEventListener('click', (e) => {
-      if (e.target === teardownModal) {
-        closeTeardownModal();
+  if (intakeModal) {
+    intakeModal.addEventListener('click', (e) => {
+      if (e.target === intakeModal) {
+        closeIntakeModal();
       }
     });
   }
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && teardownModal && teardownModal.classList.contains('active')) {
-      closeTeardownModal();
+    if (e.key === 'Escape' && intakeModal && intakeModal.classList.contains('active')) {
+      closeIntakeModal();
     }
   });
 
-  if (teardownForm) {
-    teardownForm.addEventListener('submit', (e) => {
+  if (intakeForm) {
+    intakeForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (formStateInitial && formStateSuccess) {
         formStateInitial.classList.add('hidden');
@@ -191,8 +191,19 @@ document.addEventListener('DOMContentLoaded', () => {
         otherProjects.push(portfolioProjects[nextIdx]);
       }
 
+      /* EDIT (Gravino): with a single case study there are no "other"
+         projects, and the strip used to vanish (the client, 2026-10-01: keep
+         it). So the one project shows its own card, which opens its case
+         study instead of switching the stage. */
+      const single = portfolioProjects.length === 1;
+      if (single) otherProjects.push(portfolioProjects[0]);
+
       otherProjects.forEach((proj) => {
-        const card = document.createElement('div');
+        const card = document.createElement(single && proj.href ? 'a' : 'div');
+        if (single && proj.href) {
+          card.setAttribute('href', proj.href);
+          card.setAttribute('aria-label', 'Open the ' + proj.title + ' case study');
+        }
         card.className = 'portfolio-thumb-card group bg-[#12121e] select-none shadow-xl';
         card.setAttribute('data-target-idx', proj.id);
         card.innerHTML = `
@@ -200,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="absolute inset-0 bg-black/15 group-hover:bg-transparent transition-colors pointer-events-none"></div>
         `;
 
-        card.addEventListener('click', () => {
+        if (!single) card.addEventListener('click', () => {
           if (!isTransitioning && proj.id !== currentProjectIdx) {
             goToProject(proj.id);
           }
@@ -316,12 +327,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // EDIT (Gravino): with one project there is nothing to page to, so the
-    // thumbnails and arrows are hidden rather than shown as dead controls.
-    // They return on their own once a second case study is added.
+    // arrows are hidden rather than shown as dead controls; the strip stays,
+    // showing that project's card (renderThumbnails). The arrows return on
+    // their own once a second case study is added.
     if (portfolioProjects.length < 2) {
-      portfolioThumbsTrack.style.display = 'none';
       if (prevBtn && prevBtn.parentElement) prevBtn.parentElement.style.display = 'none';
     }
+    if (portfolioProjects.length === 0) portfolioThumbsTrack.style.display = 'none';
 
     renderThumbnails(0);
     requestAnimationFrame(updatePortfolioLine);

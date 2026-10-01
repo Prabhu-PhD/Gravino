@@ -1,9 +1,9 @@
 /* ===========================================================================
  * Arun's downstream sections, verbatim.
  * ---------------------------------------------------------------------------
- * From lines 456-891 of his index4.html: what-we-cover, portfolio, teardown,
- * The footer moved out to cosmic-chrome.tsx and the teardown modal to
- * teardown-form.tsx, so every page renders the same one of each.
+ * From lines 456-891 of his index4.html: what-we-cover, portfolio, the CTA,
+ * The footer moved out to cosmic-chrome.tsx and the project intake modal to
+ * intake-form.tsx, so every page renders the same one of each.
  *
  * His proof-of-work section ("Credibility At Scale") was removed at the
  * client's request. It was also the last light-on-white section on the page.
@@ -384,17 +384,18 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
 
 
-  <!-- SECTION: START WITH A LOOK (CTA) -->
-  <section id="teardown" class="page-section py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10 bg-gradient-to-b from-[#09090f] via-[#13172e] to-[#050507] relative overflow-hidden scroll-mt-20">
+  <!-- SECTION: START A PROJECT (CTA). Was the free one-page review offer
+       until 2026-10-01; now it asks for the project itself. -->
+  <section id="start-a-project" class="page-section py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10 bg-gradient-to-b from-[#09090f] via-[#13172e] to-[#050507] relative overflow-hidden scroll-mt-20">
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#7b3fe4]/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#20c4f4]/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="max-w-7xl mx-auto relative z-10">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         <div class="lg:col-span-7 space-y-6">
-          <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">No Pitch Attached</span>
-          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Start with a look, <br><span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">not a commitment.</span></h2>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">Send us your current investor deck, report, or brand piece. We'll send back a one-page teardown: what's working, what's costing you, and what we'd change: at no cost, with no pitch attached. It's the fastest way to see how we think.</p>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-400 leading-relaxed">How we start: tell us what's on your plate; we come back with scope, approach, and a clear quote after a short conversation. Your files and full copyright transfer to you on completion. What you share stays confidential.</p>
+          <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">Start a Project</span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Tell us what you are <br><span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">working on.</span></h2>
+          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">An investor deck, an annual or ESG report, a brand, a film or a campaign. Tell us what it is, when it is due and roughly what you have in mind, and one of the four of us comes back within a working day.</p>
+          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-400 leading-relaxed">How we start: a short conversation, then scope, approach and a clear quote, fixed before any work begins. Your files and full copyright transfer to you on completion. What you share stays confidential.</p>
           <div class="pt-4 text-base sm:text-lg font-light text-white flex flex-wrap items-center gap-6 border-t border-white/15">
             <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#20c4f4]"></span>Clarity</span>
             <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#7b3fe4]"></span>Strategy</span>
@@ -403,10 +404,10 @@ export const ARUN_SECTIONS_HTML = String.raw`
         </div>
         <div class="lg:col-span-5 flex justify-center lg:justify-end">
           <div class="w-full max-w-md space-y-5 bg-black/10 backdrop-blur-sm rounded-3xl p-6 sm:p-8 lg:p-9 shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative">
-            <span class="text-xs font-mono uppercase tracking-wider text-[#20c4f4] font-semibold block">Confidential Review</span>
-            <h3 class="text-xl font-semibold text-white">Request a Free Teardown</h3>
-            <p class="text-xs text-slate-300 leading-relaxed font-light">Receive an actionable review of your current deck, report, or brand piece within 24 hours.</p>
-            <button class="trigger-teardown btn-gravino w-full text-center py-3.5"><span>Start a Project &rarr;</span></button>
+            <span class="text-xs font-mono uppercase tracking-wider text-[#20c4f4] font-semibold block">Project Intake</span>
+            <h3 class="text-xl font-semibold text-white">Start a Project</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-light">Two minutes of details: the service, the timeline, a budget range and a few lines about the work. We reply within a working day.</p>
+            <button class="trigger-intake btn-gravino w-full text-center py-3.5"><span>Start a Project &rarr;</span></button>
             <div class="text-[11px] font-mono text-slate-400 text-center pt-2 flex items-center justify-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               100% Confidential &middot; Full NDA Available

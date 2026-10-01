@@ -135,7 +135,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
             ))}
           </nav>
 
-          {/* Opens the teardown modal on every page now. It used to be a
+          {/* Opens the project intake modal on every page now. It used to be a
               link to /contact off the home page, which is not what the
               button says it does. The modal is rendered site-wide. */}
           {/* Styled after the old "Planetary Orbit" toggle, which the client
@@ -143,7 +143,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
               glass, cyan edge, mono capitals, a live dot. Padding is a step
               up from the original (px-3.5 py-1.5) so the primary action
               keeps a comfortable tap target. */}
-          <button className="trigger-teardown group flex items-center gap-2 px-4 py-2 min-h-11 md:min-h-0 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer">
+          <button className="trigger-intake group flex items-center gap-2 whitespace-nowrap px-4 max-[380px]:gap-1.5 max-[380px]:px-3 py-2 min-h-11 md:min-h-0 rounded-full bg-black/75 hover:bg-black/95 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md transition-all duration-300 shadow-xl text-[11px] font-mono tracking-wider uppercase text-cyan-200 hover:text-white cursor-pointer">
             <span aria-hidden className="w-2 h-2 rounded-full bg-cyan-400 group-hover:scale-125 transition-transform animate-pulse" />
             <span>Start a Project</span>
             <span aria-hidden className="text-cyan-300 text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
@@ -187,9 +187,9 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
                 {item.label}
               </a>
             ))}
-            <button className="trigger-teardown group w-full mt-3 flex items-center justify-center gap-2.5 py-3 px-4 rounded-full bg-black/75 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md shadow-xl font-mono text-xs uppercase tracking-wider text-cyan-200 hover:text-white transition-all duration-300">
+            <button className="trigger-intake group w-full mt-3 flex items-center justify-center gap-2.5 py-3 px-4 rounded-full bg-black/75 border border-cyan-400/40 hover:border-cyan-300 backdrop-blur-md shadow-xl font-mono text-xs uppercase tracking-wider text-cyan-200 hover:text-white transition-all duration-300">
               <span aria-hidden className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span>Start a Project / Free Teardown</span>
+              <span>Start a Project</span>
               <span aria-hidden className="text-cyan-300">&rarr;</span>
             </button>
           </div>

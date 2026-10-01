@@ -1,6 +1,6 @@
 <?php
 /* ===========================================================================
- * Teardown form endpoint: Resend over HTTPS.
+ * Project intake form endpoint: Resend over HTTPS.
  * ---------------------------------------------------------------------------
  * WHY NOT SMTP, AND WHY NOT mail().
  *
@@ -158,20 +158,27 @@ if ($field('website') !== '') {
     exit;
 }
 
-$name    = $field('name');
-$email   = $field('email');
-$phone   = $field('phone');
-$company = $field('company');
-$asset   = $field('asset');
-$notes   = $field('notes');
+$name     = $field('name');
+$email    = $field('email');
+$phone    = $field('phone');
+$company  = $field('company');
+$service  = $field('service');
+$timeline = $field('timeline');
+$budget   = $field('budget');
+$source   = $field('source');
+$details  = $field('details');
 
 if ($name === '' || $email === '' || $phone === '') {
     fail('Please give us your name, email and phone number.');
 }
+if ($service === '' || $timeline === '' || $details === '') {
+    fail('Please tell us the service, the timeline and a little about the project.');
+}
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     fail('That email address does not look right.');
 }
-if (mb_strlen($name) > 120 || mb_strlen($company) > 160 || mb_strlen($notes) > 4000) {
+if (mb_strlen($name) > 120 || mb_strlen($company) > 160 || mb_strlen($details) > 4000
+    || mb_strlen($service) > 80 || mb_strlen($timeline) > 80 || mb_strlen($budget) > 80 || mb_strlen($source) > 80) {
     fail('That is longer than we can accept.');
 }
 /* Newlines must not reach a header even through an API, because Reply-To is
@@ -188,17 +195,21 @@ if ($cfg['api_key'] === '') {
 }
 
 $body = implode("\n", [
-    'Name:     ' . $name,
-    'Email:    ' . $email,
-    'Phone:    ' . $phone,
-    'Company:  ' . ($company !== '' ? $company : 'not given'),
-    'Review:   ' . ($asset !== '' ? $asset : 'not specified'),
+    'Name:      ' . $name,
+    'Email:     ' . $email,
+    'Phone:     ' . $phone,
+    'Company:   ' . ($company !== '' ? $company : 'not given'),
     '',
-    'Notes / link:',
-    $notes !== '' ? $notes : 'none given',
+    'Service:   ' . $service,
+    'Timeline:  ' . $timeline,
+    'Budget:    ' . ($budget !== '' ? $budget : 'not given'),
+    'Found via: ' . ($source !== '' ? $source : 'not given'),
+    '',
+    'Project details:',
+    $details,
     '',
     '---',
-    'Sent from the teardown form on gravino.in',
+    'Sent from the project intake form on gravino.in',
     'IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
     'Time: ' . gmdate('Y-m-d H:i:s') . ' UTC',
 ]);
@@ -209,7 +220,7 @@ $safeName = str_replace(['"', '<', '>'], '', $name);
     'from'     => $cfg['from'],
     'to'       => [$cfg['to']],
     'reply_to' => $safeName !== '' ? sprintf('%s <%s>', $safeName, $email) : $email,
-    'subject'  => 'Teardown request: ' . ($company !== '' ? $company : $name),
+    'subject'  => 'Project enquiry: ' . ($company !== '' ? $company : $name),
     'text'     => $body,
 ]);
 

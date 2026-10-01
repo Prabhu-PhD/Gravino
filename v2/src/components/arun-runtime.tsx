@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
  * index4.html loads these as four plain <script> tags in this exact sequence:
  *
  *   three.min.js      r128, defines window.THREE
- *   ui.js             portfolio slider, teardown modal, smooth scroll
+ *   ui.js             portfolio slider, intake modal, smooth scroll
  *   capabilities.js   the inline <script> from his head, lifted out verbatim
  *   app4.js           the 3D hero engine
  *
@@ -28,13 +28,17 @@ import { useEffect, useRef } from "react";
 
 /* EDITS IN ui.js (search it for "EDIT (Gravino)"): the portfolio slider reads
    its projects from #portfolioData (src/lib/work.ts) instead of four
-   hardcoded placeholder clients, drives the added Read more link, and hides
-   its thumbnails and arrows when there is only one project. Earlier: the portfolio's second
+   hardcoded placeholder clients, drives the added Read more link, and with
+   only one project hides the arrows but keeps that project's thumbnail,
+   which then opens its case study. Earlier: the portfolio's second
    image reference moved from .png to .jpg. That file was a photograph saved
    as a 949KB PNG; it is 41KB as a JPEG. It had been handled by a Next
    rewrite so his file could stay byte-identical, but `output: export` does
    not support rewrites, and coupling a content path to an Apache .htaccess
-   rule is worse than changing one filename in a JS file. app4.js,
+   rule is worse than changing one filename in a JS file.
+   EDITS IN app4.js (2026-10-01): the free review offer became a project
+   intake, so its trigger class is now .trigger-intake and the section it
+   scrolls to is #start-a-project. Three lines; nothing else in it changed.
    capabilities.js and three.min.js remain byte-identical. */
 /* VERSIONED URLS. These four files keep fixed names (no content hash), and
    .htaccess lets browsers cache JavaScript for a week. So an edit to ui.js

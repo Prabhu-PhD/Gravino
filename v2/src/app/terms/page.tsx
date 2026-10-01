@@ -7,7 +7,7 @@ export const metadata = pageMeta({
   path: "/terms/",
   title: "Terms & Disclaimer | Gravino",
   description:
-    "Terms of use for the Gravino website, and the terms attached to a free teardown.",
+    "Terms of use for the Gravino website, and what sending us a project enquiry does and does not commit you to.",
 });
 
 /* NOT LEGAL ADVICE, AND NOT YET REVIEWED BY A LAWYER. See the note in
@@ -19,12 +19,12 @@ const SECTIONS: [string, string[]][] = [
     "The content here is published in good faith and for general information about what Gravino does. It is not an offer, a quotation or a contract.",
     "The text, imagery, layout and code of this site belong to Gravino. Please do not reproduce them as your own.",
   ]],
-  ["The free teardown", [
-    "A teardown is a written opinion on material you send us. It is offered at no cost and with no obligation on either side, and no pitch is attached to it.",
-    "It is our reading, not a guarantee of any commercial outcome. Decisions you take on the back of it remain yours.",
+  ["Project enquiries", [
+    "Sending a project enquiry through this site creates no obligation on either side. It is the start of a conversation, not an order.",
+    "Anything we suggest in reply is based on what you have told us, and is not binding until scope and price are agreed in writing.",
   ]],
   ["What you send us", [
-    "Material you send for review stays confidential and is seen only by the team. We are happy to sign your NDA before you send anything.",
+    "Material you send us stays confidential and is seen only by the team. We are happy to sign your NDA before you send anything.",
     "Please only send material you have the right to share. If something is under someone else's confidentiality obligation, get their clearance first.",
   ]],
   ["Commissioned work", [
@@ -47,7 +47,7 @@ export default function Terms() {
         eyebrow="Terms & Disclaimer"
         headline="The terms, in plain"
         accent="English."
-        lede="What this site is, what a free teardown is and is not, and what happens to your material."
+        lede="What this site is, what a project enquiry commits you to, and what happens to your material."
       />
 
       <Section>

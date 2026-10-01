@@ -158,7 +158,7 @@ re-checking after any cPanel change.
 
 ```bash
 curl -sI https://gravino.in/ | head -3
-curl -sI https://gravino.in/about/ | head -3
+curl -sI https://gravino.in/why-gravino/ | head -3
 curl -s  https://gravino.in/robots.txt
 curl -sI https://gravino.in/_next/static/ -o /dev/null -w '%{http_code}\n'
 ```
@@ -170,9 +170,9 @@ purpose).
 In a browser, confirm:
 
 - the home page reaches the planet and the hero releases on scroll
-- `/about/`, `/services/`, `/contact/`, `/privacy/` and `/terms/` all load dark
+- `/why-gravino/`, `/services/`, `/portfolio/`, `/contact/`, `/privacy/` and `/terms/` all load dark
 - the footer links reach those pages, and the legal links work
-- **the teardown form actually sends**, and the mail arrives at
+- **the project intake form actually sends**, and the mail arrives at
   `create@gravino.in`. This is the single most important check: it is the one
   path that has never been executed anywhere
 - `http://gravino.in` and `https://www.gravino.in` both land on

@@ -1,5 +1,5 @@
 import { CosmicNav, CosmicFooter } from "./cosmic-chrome";
-import { TeardownModal } from "./teardown-form";
+import { IntakeModal } from "./intake-form";
 import { CelestialFigure } from "./celestial-figure";
 
 /* ===========================================================================
@@ -347,7 +347,7 @@ export function CtaBand({
             {/* Same look as the header's Start a Project (black glass, cyan
                 edge, mono capitals, live dot), a size up because here it is
                 the section's one action rather than a header control. */}
-            <button className="trigger-teardown group flex items-center gap-2.5 rounded-full border border-cyan-400/40 bg-black/75 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan-200 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-black/95 hover:text-white">
+            <button className="trigger-intake group flex items-center gap-2.5 rounded-full border border-cyan-400/40 bg-black/75 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan-200 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-black/95 hover:text-white">
               <span aria-hidden className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse transition-transform group-hover:scale-125" />
               <span>Start a project</span>
               <span aria-hidden className="text-cyan-300 transition-transform group-hover:translate-x-0.5">&rarr;</span>
@@ -373,7 +373,7 @@ export function Page({ children }: { children: React.ReactNode }) {
       </main>
       <CosmicFooter />
       {/* Site wide, so "Start a Project" has somewhere to open. */}
-      <TeardownModal />
+      <IntakeModal />
     </>
   );
 }

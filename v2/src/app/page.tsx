@@ -4,7 +4,7 @@ import { GravityHero } from "@/components/gravity-hero";
 import { ArunSections } from "@/components/arun-sections";
 import { ArunRuntime } from "@/components/arun-runtime";
 import { CosmicFooter } from "@/components/cosmic-chrome";
-import { TeardownModal } from "@/components/teardown-form";
+import { IntakeModal } from "@/components/intake-form";
 import "./arun.css";
 
 /* The home page: Arun's cosmic build, running his own engine and markup.
@@ -32,7 +32,7 @@ export default function Home() {
       <JsonLd data={websiteLd()} />
       <GravityHero />
       <ArunSections />
-      <TeardownModal />
+      <IntakeModal />
       <CosmicFooter />
       <ArunRuntime />
     </div>

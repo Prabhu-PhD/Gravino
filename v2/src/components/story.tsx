@@ -131,11 +131,13 @@ export function CountUp({
 }
 
 /**
- * The spine of a vertical storyline: a line that fills as the reader scrolls
- * through its container. Purely decorative, so it is aria-hidden and simply
- * renders full when JavaScript or motion is off.
+ * The spine of a storyline: a line that fills as the reader scrolls through
+ * its container. Vertical by default; `axis="x"` draws it across, for steps
+ * laid out side by side, filling as the row rises through the lower part of
+ * the screen. Purely decorative, so it is aria-hidden and simply renders full
+ * when JavaScript or motion is off.
  */
-export function ScrollSpine({ className = "" }: { className?: string }) {
+export function ScrollSpine({ className = "", axis = "y" }: { className?: string; axis?: "x" | "y" }) {
   const ref = useRef<HTMLDivElement>(null);
   const [p, setP] = useState(1);
 
@@ -149,10 +151,13 @@ export function ScrollSpine({ className = "" }: { className?: string }) {
       raf = 0;
       const r = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      // 0 when the top of the storyline reaches 70% down the viewport, 1 when
-      // its bottom reaches the same line.
-      const line = vh * 0.7;
-      const next = (line - r.top) / Math.max(1, r.height);
+      // Vertical: 0 when the top of the storyline reaches 70% down the
+      // viewport, 1 when its bottom reaches the same line. Across: 0 when the
+      // row's top reaches 90% down, 1 when it reaches 45%.
+      const next =
+        axis === "x"
+          ? (vh * 0.9 - r.top) / (vh * 0.45)
+          : (vh * 0.7 - r.top) / Math.max(1, r.height);
       setP(Math.max(0, Math.min(1, next)));
     };
     const onScroll = () => {
@@ -166,7 +171,18 @@ export function ScrollSpine({ className = "" }: { className?: string }) {
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [axis]);
+
+  if (axis === "x")
+    return (
+      <div ref={ref} aria-hidden className={`pointer-events-none absolute ${className}`}>
+        <div className="h-px w-full bg-white/10" />
+        <div
+          className="absolute left-0 top-0 h-px bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]"
+          style={{ width: `${p * 100}%` }}
+        />
+      </div>
+    );
 
   return (
     <div ref={ref} aria-hidden className={`pointer-events-none absolute ${className}`}>

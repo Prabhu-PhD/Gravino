@@ -55,7 +55,7 @@ export function CaseToolbar({
     const onKey = (e: KeyboardEvent) => {
       // Esc belongs to the project form while it is open.
       if (e.key !== "Escape") return;
-      if (document.querySelector("#teardownModal.active")) return;
+      if (document.querySelector("#intakeModal.active")) return;
       close();
     };
     document.addEventListener("keydown", onKey);

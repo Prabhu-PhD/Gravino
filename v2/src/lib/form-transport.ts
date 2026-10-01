@@ -1,5 +1,5 @@
 /* ===========================================================================
- * Where the teardown form posts.
+ * Where the project intake form posts.
  * ---------------------------------------------------------------------------
  *   NEXT_PUBLIC_WEB3FORMS_KEY set    -> Web3Forms, straight from the browser
  *   not set (default)                -> /send.php on our own server
@@ -48,7 +48,7 @@ export function buildPayload(fields: Record<string, FormDataEntryValue>) {
   return {
     ...fields,
     access_key: WEB3FORMS_KEY,
-    subject: `Teardown request: ${company || name}`,
+    subject: `Project enquiry: ${company || name}`,
     from_name: "Gravino Website",
     // Their honeypot field name, so their filtering sees ours too.
     botcheck: fields.website ?? "",

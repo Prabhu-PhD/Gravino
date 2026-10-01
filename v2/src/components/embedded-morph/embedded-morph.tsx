@@ -24,7 +24,9 @@
  *     chosen principle takes the heading-accent gradient.
  *   HOVER. The file's hover (#f5f5f2 to #fff) was invisible. Inactive titles
  *     now sit at slate-300 and brighten to white, the number turning lavender.
- *   TOUCH. Hold and drag turns the cloud 360 degrees (engine.ts).
+ *   TOUCH. Hold and drag turns the cloud 360 degrees (engine.ts). It is no
+ *     longer captioned: "Drag to turn it" and the "01 / Learning" state
+ *     label were removed, with the glow behind the particles (2026-10-01).
  *   NO DASHES. "01 — Learning" became "01 / Learning", per the site rule.
  *   SEMANTICS. The principles are buttons with aria-pressed, each followed
  *     by the description it opens; closed descriptions are aria-hidden.
@@ -37,8 +39,6 @@ import type { Morph } from "./engine";
 import { SHELL } from "@/lib/shell";
 
 export type Principle = { title: string; body: string };
-
-const STATE_LABELS = ["01 / Learning", "02 / Clock", "03 / Planet", "04 / Scale"];
 
 export function EmbeddedMorph({
   principles,
@@ -77,25 +77,22 @@ export function EmbeddedMorph({
   };
 
   return (
-    /* Below lg the section is exactly one screen tall (the client,
-       2026-10-01): a column whose visual takes what the text leaves, with the
-       top padding clearing the fixed header. Nothing in it changes height
-       when a principle is chosen, so nothing moves: the description shows in
-       a fixed band under the list instead of opening inside it. A minimum
-       rather than a fixed height: on a phone too short to hold it all
-       (320x568, measured) the section grows and scrolls instead of clipping
-       its own text, with the visual held at its 200px floor. */
-    <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] max-lg:flex max-lg:min-h-[100svh] max-lg:flex-col max-lg:pt-[5.75rem] max-lg:pb-4 lg:py-20">
-      <div className={`${SHELL} relative max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col`}>
+    /* Below lg the visual sits ABOVE the list at a fixed size, and the chosen
+       principle's description shows in a fixed band under the list, so
+       choosing a principle moves nothing (the client, 2026-10-01). This
+       replaced a one-screen-tall layout in which the particles took only what
+       the text left: on a real phone that was about 160px, below the fold,
+       and it shrank further as the descriptions changed (measured at
+       360x640). */
+    <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] py-16 md:py-20">
+      <div className={`${SHELL} relative`}>
         {mark}
         {/* Heading above both columns, as in every other section. */}
         {head}
-        <div className="mt-5 max-lg:flex max-lg:min-h-0 max-lg:flex-1 max-lg:flex-col lg:mt-10 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-10">
+        <div className="mt-6 flex flex-col lg:mt-10 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-10">
           {/* ---- the principles ----------------------------------------------
-              Titles at the size of the "How the work works" steps below. The
-              chosen principle opens to show what it means, which used to sit
-              under the visual; moving it here gives the particles the whole
-              column. */}
+              Titles at the size of the "How the work works" steps below. On
+              desktop the chosen principle opens to show what it means. */}
           <div>
           <ol className="border-b border-white/10">
             {principles.map((item, i) => {
@@ -107,7 +104,7 @@ export function EmbeddedMorph({
                     aria-pressed={on}
                     aria-controls={`embedded-body-${i}`}
                     onClick={() => choose(i)}
-                    className="group grid w-full cursor-pointer grid-cols-[3rem_1fr] items-baseline pt-2.5 text-left md:grid-cols-[4rem_1fr] lg:pt-6"
+                    className="group grid min-h-11 w-full cursor-pointer grid-cols-[3rem_1fr] items-baseline pt-3 text-left md:grid-cols-[4rem_1fr] lg:pt-6"
                   >
                     <span
                       className={`font-mono text-sm transition-colors duration-300 md:text-base ${
@@ -141,38 +138,28 @@ export function EmbeddedMorph({
                       </p>
                     </div>
                   </div>
-                  <div className="h-2.5 lg:h-6" />
+                  <div className="h-3 lg:h-6" />
                 </li>
               );
             })}
           </ol>
           {/* Phones and tablets: the chosen principle's description, in a band
-              tall enough for the longest of the four, so the visual below
-              never changes size when a principle is chosen. */}
-          <p aria-live="polite" className="mt-3 min-h-[6.1rem] text-[0.925rem] max-[359px]:min-h-[7.6rem] font-light leading-relaxed text-slate-400 sm:min-h-[3.4rem] lg:hidden">
+              tall enough for the longest of the four, so the page below never
+              moves when a principle is chosen. */}
+          <p aria-live="polite" className="mt-4 min-h-[6.6rem] text-[0.95rem] font-light leading-relaxed text-slate-400 max-[359px]:min-h-[8rem] sm:min-h-[4.8rem] lg:hidden">
             {principles[active].body}
           </p>
           </div>
 
           {/* ---- the visual ---------------------------------------------------
-              No frame: the particles sit on the section itself, and the canvas
-              runs past the column edges so a turned shape is never cut off at
-              a box. Hold and drag to turn it (engine.ts). */}
-          <div className="relative max-lg:mt-2 max-lg:min-h-[200px] max-lg:flex-1 lg:h-[660px] xl:h-[740px]">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[110%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: "radial-gradient(closest-side, rgba(167,139,250,.10), transparent)" }}
-            />
-            <div ref={canvas} aria-hidden className="absolute -inset-x-6 top-0 bottom-10 sm:-inset-x-10 lg:-left-10 lg:-right-20" />
-
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">
-              <span className="flex items-center gap-2">
-                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-[#60a5fa] to-[#a78bfa] shadow-[0_0_10px_rgba(167,139,250,.6)]" />
-                Drag to turn it
-              </span>
-              <span aria-live="polite">{STATE_LABELS[active]}</span>
-            </div>
+              No frame and no glow (the client, 2026-10-01): the particles sit
+              on the section itself. Below lg it comes first, at a fixed,
+              near-square size, because the camera frames the shapes by
+              height: a square canvas shows each one whole at every phone
+              width. The canvas runs past the column edges so a turned shape
+              is never cut off. Hold and drag still turns it (engine.ts). */}
+          <div className="relative max-lg:order-first max-lg:mb-4 max-lg:h-[min(92vw,26rem)] lg:h-[660px] xl:h-[740px]">
+            <div ref={canvas} aria-hidden className="absolute -inset-x-6 inset-y-0 sm:-inset-x-10 lg:-left-10 lg:-right-20" />
           </div>
         </div>
       </div>

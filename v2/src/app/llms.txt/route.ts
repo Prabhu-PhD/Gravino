@@ -39,7 +39,7 @@ export function GET() {
     `- Location: ${SITE.location}.`,
     `- Markets: ${MARKETS.join(", ")}.`,
     `- Contact: ${SITE.email}, or the form at ${url("/contact/")}.`,
-    "- Free offer: send one existing deck, report or brand piece and receive a one-page teardown within 24 hours: what is working, what it is costing you, and what would change. No cost, no pitch.",
+    "- Starting a project: the form at /contact/ asks for the service, timeline, budget range and project details; Gravino replies within a working day with questions, an approach and a next step.",
     "- Engagements: a defined project when the scope is clear, or a retainer when the work is continuous.",
     "- Ownership: files and full copyright transfer to the client on completion.",
     "- Confidentiality: material a client shares stays confidential.",
@@ -68,12 +68,12 @@ export function GET() {
     `- [What we cover](${url("/services/")}): the ten disciplines in four groups, with what each produces.`,
     `- [Portfolio](${url("/portfolio/")}): case studies, each told from the brief to the finished work.`,
     ...CASES.map((c) => `- [${c.title}](${url(`/portfolio/${c.slug}/`)}): ${c.kind}. ${c.summary}`),
-    `- [Contact](${url("/contact/")}): request the free one-page teardown or start a project.`,
+    `- [Contact](${url("/contact/")}): start a project through the project intake form.`,
     "",
     "## Optional",
     "",
     `- [Privacy Policy](${url("/privacy/")}): what the website collects and how to have it removed.`,
-    `- [Terms & Disclaimer](${url("/terms/")}): terms of use, and the terms attached to a free teardown.`,
+    `- [Terms & Disclaimer](${url("/terms/")}): terms of use, and what a project enquiry commits you to.`,
     "",
   );
 

@@ -31,7 +31,7 @@
 
      Values are taken from Arun's own sections: #09090f is his page base,
      #0f0c1d the middle of his radial section wash, #050507 and #13172e the
-     ends of his teardown gradient. */
+     ends of his CTA section gradient. */
   --color-ink: #050507;
   --color-ink-soft: #13172e;
   --color-ink-line: #2a2545;
@@ -417,10 +417,10 @@ table {
 }
 
 /* ---------------------------------------------------------------------------
-   The teardown modal
+   The project intake modal
    ---------------------------------------------------------------------------
    Same story as the header: the markup is rendered on every page by
-   teardown-form.tsx, but these rules lived only in arun.css, which only the
+   intake-form.tsx, but these rules lived only in arun.css, which only the
    home page imports. So "Start a Project" off the home page had nowhere to
    open to, and went to /contact instead. Arun's values, copied not moved.
    ------------------------------------------------------------------------ */

@@ -226,7 +226,7 @@ export default function About() {
       <CtaBand
         headline="See whether the standard"
         accent="holds up."
-        body="Send one thing you already have. We come back with a single page on what is working, what it is costing you, and what we would change. No cost, no pitch."
+        body="Tell us about the deck, report, brand, film or campaign in front of you. One of the four of us comes back within a working day with questions, an approach and a clear next step."
       />
     </Page>
   );

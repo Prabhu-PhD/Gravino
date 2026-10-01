@@ -20,7 +20,7 @@ export const metadata = pageMeta({
 
 const SECTIONS: [string, string[]][] = [
   ["What we collect", [
-    "If you submit the form on this site, we receive the name, email address and phone number you enter, plus the company name, the category you select and any note or link you add.",
+    "If you submit the form on this site, we receive the name, email address and phone number you enter, plus the company name, the service, timeline, budget range and source you select, and the project details you write.",
     "The server also records the IP address the submission came from and the time it arrived, which is standard for a web form and helps us identify automated abuse.",
   ]],
   ["What we do not do", [
@@ -28,10 +28,10 @@ const SECTIONS: [string, string[]][] = [
     "We do not sell, rent or share what you send us with anyone outside Gravino.",
   ]],
   ["Why we hold it", [
-    "Solely to answer you. A submission is a request for a teardown or a conversation, and the details are what let us reply and, if it goes further, to quote for work.",
+    "Solely to answer you. A submission is a project enquiry, and the details are what let us reply and, if it goes further, to quote for work.",
   ]],
   ["Where it goes", [
-    `Submissions are emailed to ${SITE.email} and held in that mailbox. Any material you send us for review is treated as confidential and is not shown to anyone outside the team.`,
+    `Submissions are emailed to ${SITE.email} and held in that mailbox. Anything you send us about your project is treated as confidential and is not shown to anyone outside the team.`,
   ]],
   ["How long we keep it", [
     "Enquiry emails are kept while the conversation is live and for a reasonable period after, so we can pick up a thread you return to. Ask us to delete yours and we will.",

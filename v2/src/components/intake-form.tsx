@@ -9,11 +9,17 @@ import {
 } from "@/lib/form-transport";
 
 /* ===========================================================================
- * The teardown form. ONE implementation, rendered in two places: inside the
- * modal the home page opens, and inline on /contact.
+ * The project intake form. ONE implementation, rendered in two places: inside
+ * the modal every "Start a Project" button opens, and inline on /contact.
+ *
+ * It replaced the free one-page teardown offer (the client, 2026-10-01): the
+ * site now asks for a project, not for a deck to review. The fields are what
+ * a first reply needs to be useful: who, what kind of work, by when, roughly
+ * what budget, and how they heard of us.
  * ---------------------------------------------------------------------------
- * It posts to whatever form-transport.ts selects, which is authenticated SMTP
- * to Titan. It does not open the visitor's mail client.
+ * It posts to whatever form-transport.ts selects: by default send.php on our
+ * own server, which mails it on through Resend. It does not open the
+ * visitor's mail client.
  *
  * THREE THINGS FIXED AFTER REVIEW, all the same underlying fault: the form
  * was built to look like a form rather than to be used.
@@ -24,7 +30,7 @@ import {
  *    compete with grey text that also looks like input, and on an agency's
  *    own site it reads as a template nobody edited. Gone. The labels say what
  *    each field is, which is their job. The ONE placeholder left is on the
- *    notes field, where the question is genuinely open-ended.
+ *    project details field, where the question is genuinely open-ended.
  *
  * 2. ROUNDING. rounded-xl on every field and rounded-full on the button, in a
  *    design language whose own panels sit much tighter. Pulled back so the
@@ -38,13 +44,25 @@ import {
  *    taller than the screen.
  * ======================================================================== */
 
-const ASSETS = [
-  "Investor pitch deck",
-  "Annual or ESG report",
+/* The options. Values are what arrives in the email, so they are written
+   to be read there as well as on the form. No dashes in ranges: "to". */
+const SERVICES = [
+  "Investor or board deck",
+  "Annual, ESG or impact report",
   "Brand identity",
-  "Launch film or video",
+  "Film or motion",
+  "Campaign or digital marketing",
   "Something else",
 ];
+const TIMELINES = ["Within 2 weeks", "Within a month", "1 to 3 months", "Flexible"];
+const BUDGETS = [
+  "Under ₹2 lakh (under $2,500)",
+  "₹2 to 5 lakh ($2,500 to $6,000)",
+  "₹5 to 15 lakh ($6,000 to $18,000)",
+  "Over ₹15 lakh (over $18,000)",
+  "Not sure yet",
+];
+const SOURCES = ["Referral", "LinkedIn", "Search", "Other"];
 
 type State = "idle" | "sending" | "sent" | "error";
 
@@ -114,7 +132,61 @@ function Field({
   );
 }
 
-export function TeardownForm({ compact = false }: { compact?: boolean }) {
+function Select({
+  label,
+  name,
+  options,
+  required = false,
+}: {
+  label: string;
+  name: string;
+  options: readonly string[];
+  required?: boolean;
+}) {
+  /* No option is preselected: a default would be a choice the visitor never
+     made, and it would arrive in the email looking like one. Required
+     selects start on an empty, disabled prompt so the browser asks for an
+     answer; optional ones can be left on it. The prompt is grey, like a
+     placeholder, until something is chosen. */
+  const [value, setValue] = useState("");
+  return (
+    <label className="block">
+      <Label optional={!required}>{label}</Label>
+      <div className="relative">
+        <select
+          name={name}
+          required={required}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          // Swapped rather than added: FIELD_CLASS's text-white would win over
+          // an added grey, since both are single utilities of equal weight.
+          className={`${FIELD_CLASS.replace("text-white", value === "" ? "text-slate-400" : "text-white")} cursor-pointer appearance-none pr-10`}
+        >
+          <option value="" disabled={required} className="bg-[#0d0b18] text-slate-400">
+            Choose one
+          </option>
+          {options.map((o) => (
+            <option key={o} value={o} className="bg-[#0d0b18] text-white">
+              {o}
+            </option>
+          ))}
+        </select>
+        <svg
+          aria-hidden
+          viewBox="0 0 20 20"
+          className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-slate-500"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
+          <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </label>
+  );
+}
+
+export function IntakeForm({ compact = false }: { compact?: boolean }) {
   const [state, setState] = useState<State>("idle");
   const [error, setError] = useState("");
 
@@ -175,51 +247,31 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
         </label>
       </div>
 
-      <Field label="Your name" name="name" required autoComplete="name" />
-
-      {/* Email and phone share a row at every width: both are short, and
-          stacking them was most of the height problem on a phone. */}
+      {/* Short fields share a row at every width; the two long choices
+          (service, budget) get the full width so their options read whole.
+          Six rows, so the button is still in reach on a phone. */}
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Your name" name="name" required autoComplete="name" />
+        <Field label="Company" name="company" autoComplete="organization" />
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Email" name="email" type="email" required autoComplete="email" />
         <Field label="Phone" name="phone" type="tel" required autoComplete="tel" />
       </div>
-
-      <div className={compact ? "space-y-3.5" : "grid gap-3 sm:grid-cols-2"}>
-        <Field label="Company" name="company" autoComplete="organization" />
-        <label className="block">
-          <Label mark={false}>What should we look at</Label>
-          <div className="relative">
-            <select
-              name="asset"
-              defaultValue={ASSETS[0]}
-              className={`${FIELD_CLASS} cursor-pointer appearance-none pr-10`}
-            >
-              {ASSETS.map((a) => (
-                <option key={a} value={a} className="bg-[#0d0b18]">
-                  {a}
-                </option>
-              ))}
-            </select>
-            <svg
-              aria-hidden
-              viewBox="0 0 20 20"
-              className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-slate-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-        </label>
+      <Select label="Service" name="service" options={SERVICES} required />
+      <Select label="Budget" name="budget" options={BUDGETS} />
+      <div className="grid grid-cols-2 items-end gap-3">
+        <Select label="Timeline" name="timeline" options={TIMELINES} required />
+        <Select label="Found us" name="source" options={SOURCES} />
       </div>
 
       <label className="block">
-        <Label optional>Anything else</Label>
+        <Label>Project details</Label>
         <textarea
-          name="notes"
-          rows={2}
-          placeholder="Paste a link, or tell us what is bothering you about it."
+          name="details"
+          required
+          rows={compact ? 3 : 4}
+          placeholder="What is it, who is it for, and what has to be true when it is done?"
           className={`${FIELD_CLASS} resize-y`}
         />
       </label>
@@ -238,7 +290,7 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
         disabled={state === "sending"}
         className="group flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgba(123,63,228,0.8)] transition-all duration-200 hover:shadow-[0_14px_36px_-10px_rgba(123,63,228,0.95)] disabled:opacity-60"
       >
-        {state === "sending" ? "Sending" : "Send it over"}
+        {state === "sending" ? "Sending" : "Send project details"}
         <span
           aria-hidden
           className={
@@ -254,7 +306,7 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
       <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[11px] leading-relaxed text-slate-400">
         <span>Confidential</span>
         <span aria-hidden className="text-slate-700">&middot;</span>
-        <span>No pitch attached</span>
+        <span>Reply within a working day</span>
         <span aria-hidden className="text-slate-700">&middot;</span>
         <span>Copyright transfers to you</span>
       </p>
@@ -262,7 +314,7 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/* The teardown modal, rendered on EVERY page.
+/* The project intake modal, rendered on EVERY page.
  *
  * It used to live only on the home page, where Arun's ui.js opened it by
  * class. Everywhere else "Start a Project" was a link to /contact, which is
@@ -278,9 +330,9 @@ export function TeardownForm({ compact = false }: { compact?: boolean }) {
  * restoring focus. A modal you can only leave by finding the small x is a
  * trap on a phone.
  */
-export function TeardownModal() {
+export function IntakeModal() {
   useEffect(() => {
-    const modal = document.getElementById("teardownModal");
+    const modal = document.getElementById("intakeModal");
     if (!modal) return;
 
     /* Closed, the overlay is still in the DOM (it is shown by a class), so
@@ -323,11 +375,11 @@ export function TeardownModal() {
     };
 
     const triggers = Array.from(
-      document.querySelectorAll<HTMLElement>(".trigger-teardown"),
+      document.querySelectorAll<HTMLElement>(".trigger-intake"),
     );
     triggers.forEach((t) => t.addEventListener("click", open));
 
-    document.getElementById("closeTeardownBtn")?.addEventListener("click", close);
+    document.getElementById("closeIntakeBtn")?.addEventListener("click", close);
 
     // Clicking the backdrop, but not the panel itself.
     const onBackdrop = (e: MouseEvent) => {
@@ -373,18 +425,18 @@ export function TeardownModal() {
 
   return (
     <div
-      id="teardownModal"
+      id="intakeModal"
       className="modal-overlay fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
     >
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="teardownModalTitle"
+        aria-labelledby="intakeModalTitle"
         className="modal-content relative my-auto w-full max-w-lg rounded-2xl border border-[#a7b6f2]/25 bg-[#111129] p-5 shadow-2xl sm:p-7"
       >
         {/* 44px: the one control everyone on a phone needs to hit. */}
         <button
-          id="closeTeardownBtn"
+          id="closeIntakeBtn"
           className="absolute top-3 right-3 grid h-11 w-11 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
           aria-label="Close"
         >
@@ -394,17 +446,17 @@ export function TeardownModal() {
         </button>
 
         <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#20c4f4]">
-          No cost, no pitch
+          Start a project
         </p>
-        <h3 id="teardownModalTitle" className="mt-1.5 text-xl font-light text-white">
-          Get your one-page teardown
+        <h3 id="intakeModalTitle" className="mt-1.5 text-xl font-light text-white">
+          Tell us what you are working on
         </h3>
         <p className="mt-1.5 mb-5 text-sm leading-relaxed text-slate-300">
-          Send a deck, a report or a brand piece. We send back what is working,
-          what it is costing you, and what we would change.
+          A few details and we come back within a working day with questions,
+          an approach and a clear next step.
         </p>
 
-        <TeardownForm compact />
+        <IntakeForm compact />
       </div>
     </div>
   );

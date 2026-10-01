@@ -42,7 +42,7 @@ const svgBase = "block h-auto w-full overflow-visible [font-family:inherit]";
 
 /* EmbeddedMap ("where we fit") was removed on 2026-09-30: that section now
  * uses components/liquid-orb/fit-orbit, the client's liquid orb as Gravino
- * with the three people in orbit inside "your team". In git history. */
+ * with the three people revolving round it. In git history. */
 
 /* ---------------------------------------------------------------------------
  * About: the balancing act as a beam. It tips, then settles level.

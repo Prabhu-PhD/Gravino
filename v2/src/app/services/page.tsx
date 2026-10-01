@@ -120,7 +120,7 @@ export default function Services() {
       <CtaBand
         headline="Not sure which of these you"
         accent="need?"
-        body="Send us what you already have: a deck, a report, a brand piece. We come back with a one-page read on what is working, what is not, and which of the ten actually applies."
+        body="Tell us what you are working on and when it is due. We come back within a working day with which of the ten applies, how we would approach it, and a clear next step."
       />
     </Page>
   );

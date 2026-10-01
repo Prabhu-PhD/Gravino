@@ -798,13 +798,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Teardown buttons: unlock hero and smooth scroll to partner or contact
-  document.querySelectorAll('.trigger-teardown').forEach((btn) => {
+  // Start a Project buttons: unlock hero and smooth scroll to partner or contact
+  document.querySelectorAll('.trigger-intake').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       isTransitioningDownstream = true;
       unlockHero();
-      const contactSection = document.getElementById('teardown') || document.getElementById('contact') || document.getElementById('what-we-cover');
+      const contactSection = document.getElementById('start-a-project') || document.getElementById('contact') || document.getElementById('what-we-cover');
       if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth' });
       }

@@ -427,18 +427,17 @@ export const SECTORS = [
 ] as const;
 
 /* ---------------------------------------------------------------------------
- * The offer
+ * Starting a project. This was the free one-page review offer until
+ * 2026-10-01, when the client replaced it with a straight project intake.
  * ------------------------------------------------------------------------ */
 
-export const TEARDOWN = {
-  label: "No cost, no pitch",
-  headline: "Start with a look, not a commitment.",
-  body: "Send a deck. We'll send back one page: what's working, what's costing you, what we'd change.",
-  cta: { label: "Send us a deck", href: "/contact" },
+export const INTAKE = {
+  label: "Start a project",
+  cta: { label: "Start a project", href: "/contact/" },
   terms: [
     "Scope fixed before work begins, with a clear quote after a short conversation.",
     "Your files and full copyright transfer to you on completion.",
-    "What you share stays confidential.",
+    "What you share stays confidential, with an NDA if you want one.",
   ],
 } as const;
 

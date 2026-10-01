@@ -244,7 +244,14 @@
   .cs-ask-body { font-size: 17px; }
   .cs-story-heading { font-size: 36px; line-height: 1; }
   .cs-story-body { font-size: 16px; }
-  .cs-arrow { display: none; } /* swipe on phones, as in Arun's */
+  /* Arrows on phones too (the client, 2026-10-01): in the bottom corners,
+     level with the indicators, so they never sit over the slide's text. The
+     pause button moves to the top right to make room. */
+  .cs-arrow { top: auto; bottom: 0.875rem; transform: none; }
+  .cs-arrow:hover { transform: none; }
+  .cs-arrow-prev { left: 0.75rem; }
+  .cs-arrow-next { right: 0.75rem; }
+  .cs-pause { top: 0.9rem; bottom: auto; }
   .cs-reveal-head { padding: 3rem 1.5rem 1.5rem; }
   .cs-reveal-intro { font-size: 17px; }
   .cs-moon { width: 180px; height: 180px; top: 90px; left: 20%; }

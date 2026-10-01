@@ -73,7 +73,11 @@ export function CelestialFigure() {
       aria-hidden
       /* Bleeds past the shell's right edge so it reads as a figure the page is
        * cropping, not a boxed illustration parked in a column. */
-      className="pointer-events-none absolute -right-28 top-1/2 hidden h-[34rem] w-[30rem] -translate-y-1/2 lg:block xl:-right-20 xl:h-[40rem] xl:w-[36rem]"
+      /* 30% larger (the client, 2026-10-01): 34x30rem to 44x39, and 40x36 to
+       * 52x47 at xl. The left edge stays where it was (the right offset grows
+       * by the added width), so the crescent stays clear of the headline and
+       * the extra size crops off the right of the viewport. */
+      className="pointer-events-none absolute -right-[16rem] top-1/2 hidden h-[44rem] w-[39rem] -translate-y-1/2 lg:block xl:-right-[16rem] xl:h-[52rem] xl:w-[47rem]"
       style={{
         maskImage: MASK_LAYERS,
         WebkitMaskImage: MASK_LAYERS,

@@ -92,6 +92,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
             <!-- 01. BUSINESS COMMUNICATION -->
             <div id="cap-1" class="cap-content-panel is-active space-y-6">
+              <span class="cap-mobile-label">01 / Business Communication</span>
               <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
                 Make Every Business<br>Conversation Count.
               </h3>
@@ -142,6 +143,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
             <!-- 02. BRAND & IDENTITY -->
             <div id="cap-2" class="cap-content-panel space-y-6">
+              <span class="cap-mobile-label">02 / Brand &amp; Identity</span>
               <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
                 Build a Brand<br>People Recognise.
               </h3>
@@ -192,6 +194,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
             <!-- 03. MARKETING & GROWTH -->
             <div id="cap-3" class="cap-content-panel space-y-6">
+              <span class="cap-mobile-label">03 / Marketing &amp; Growth</span>
               <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
                 Turn Attention<br>into Pipeline.
               </h3>
@@ -242,6 +245,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
             <!-- 04. EXPERIENCE & ENGAGEMENT -->
             <div id="cap-4" class="cap-content-panel space-y-6">
+              <span class="cap-mobile-label">04 / Experience &amp; Engagement</span>
               <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
                 Make Every Interaction<br>Memorable.
               </h3>

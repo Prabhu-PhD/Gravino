@@ -77,17 +77,26 @@ export function EmbeddedMorph({
   };
 
   return (
-    <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] py-16 md:py-20">
-      <div className={`${SHELL} relative`}>
+    /* Below lg the section is exactly one screen tall (the client,
+       2026-10-01): a column whose visual takes what the text leaves, with the
+       top padding clearing the fixed header. Nothing in it changes height
+       when a principle is chosen, so nothing moves: the description shows in
+       a fixed band under the list instead of opening inside it. A minimum
+       rather than a fixed height: on a phone too short to hold it all
+       (320x568, measured) the section grows and scrolls instead of clipping
+       its own text, with the visual held at its 200px floor. */
+    <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] max-lg:flex max-lg:min-h-[100svh] max-lg:flex-col max-lg:pt-[5.75rem] max-lg:pb-4 lg:py-20">
+      <div className={`${SHELL} relative max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col`}>
         {mark}
         {/* Heading above both columns, as in every other section. */}
         {head}
-        <div className="mt-10 grid items-center gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10">
+        <div className="mt-5 max-lg:flex max-lg:min-h-0 max-lg:flex-1 max-lg:flex-col lg:mt-10 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-10">
           {/* ---- the principles ----------------------------------------------
               Titles at the size of the "How the work works" steps below. The
               chosen principle opens to show what it means, which used to sit
               under the visual; moving it here gives the particles the whole
               column. */}
+          <div>
           <ol className="border-b border-white/10">
             {principles.map((item, i) => {
               const on = i === active;
@@ -98,7 +107,7 @@ export function EmbeddedMorph({
                     aria-pressed={on}
                     aria-controls={`embedded-body-${i}`}
                     onClick={() => choose(i)}
-                    className="group grid w-full cursor-pointer grid-cols-[3rem_1fr] items-baseline pt-5 text-left md:grid-cols-[4rem_1fr] md:pt-6"
+                    className="group grid w-full cursor-pointer grid-cols-[3rem_1fr] items-baseline pt-2.5 text-left md:grid-cols-[4rem_1fr] lg:pt-6"
                   >
                     <span
                       className={`font-mono text-sm transition-colors duration-300 md:text-base ${
@@ -108,7 +117,7 @@ export function EmbeddedMorph({
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span
-                      className={`text-[clamp(1.35rem,2.2vw,1.9rem)] leading-tight transition-colors duration-300 ${
+                      className={`text-[1.15rem] leading-tight transition-colors duration-300 sm:text-[1.3rem] lg:text-[clamp(1.35rem,2.2vw,1.9rem)] ${
                         on
                           ? "bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] bg-clip-text font-normal text-transparent"
                           : "font-light text-slate-300 group-hover:text-white"
@@ -120,7 +129,7 @@ export function EmbeddedMorph({
                   <div
                     id={`embedded-body-${i}`}
                     aria-hidden={!on}
-                    className={`grid transition-[grid-template-rows] duration-500 ease-out ${on ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                    className={`grid transition-[grid-template-rows] duration-500 ease-out max-lg:hidden ${on ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
                     <div className="overflow-hidden">
                       <p
@@ -132,17 +141,24 @@ export function EmbeddedMorph({
                       </p>
                     </div>
                   </div>
-                  <div className="h-5 md:h-6" />
+                  <div className="h-2.5 lg:h-6" />
                 </li>
               );
             })}
           </ol>
+          {/* Phones and tablets: the chosen principle's description, in a band
+              tall enough for the longest of the four, so the visual below
+              never changes size when a principle is chosen. */}
+          <p aria-live="polite" className="mt-3 min-h-[6.1rem] text-[0.925rem] max-[359px]:min-h-[7.6rem] font-light leading-relaxed text-slate-400 sm:min-h-[3.4rem] lg:hidden">
+            {principles[active].body}
+          </p>
+          </div>
 
           {/* ---- the visual ---------------------------------------------------
               No frame: the particles sit on the section itself, and the canvas
               runs past the column edges so a turned shape is never cut off at
               a box. Hold and drag to turn it (engine.ts). */}
-          <div className="relative h-[440px] sm:h-[540px] lg:h-[660px] xl:h-[740px]">
+          <div className="relative max-lg:mt-2 max-lg:min-h-[200px] max-lg:flex-1 lg:h-[660px] xl:h-[740px]">
             <div
               aria-hidden
               className="pointer-events-none absolute left-1/2 top-1/2 h-[110%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full"

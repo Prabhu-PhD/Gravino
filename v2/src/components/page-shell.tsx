@@ -69,7 +69,7 @@ export function PageHead({
     <section
       className={`relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-20 ${
         // Room for the figure, which is taller than this head would otherwise be.
-        figure ? "lg:min-h-[34rem] xl:min-h-[40rem]" : ""
+        figure ? "lg:min-h-[44rem] xl:min-h-[52rem]" : ""
       }`}
       style={{
         background:

@@ -3,11 +3,13 @@
 /* ===========================================================================
  * The brief, told as a slider: Arun's hero from the Pivo page.
  * ---------------------------------------------------------------------------
- * His behaviour, kept: 6s autoplay, fade between slides, the previous arrow
- * hidden on the first slide, bar indicators, swipe on touch, and his portrait
- * images on phones.
+ * His behaviour, kept: 6s autoplay, fade between slides, bar indicators,
+ * swipe on touch, and his portrait images on phones.
  *
  * Changed, and why:
+ *   - Both arrows, always, on every screen (the client, 2026-10-01). His hid
+ *     the previous arrow on the first slide and both arrows on phones; now
+ *     previous wraps to the last slide, as next already wrapped to the first.
  *   - Arrow keys work when the slider has focus, not on the whole document.
  *     His listener was on `document`, which inside a larger site would steal
  *     the arrow keys from everything else on the page.
@@ -47,7 +49,7 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
 
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") { e.preventDefault(); go(i + 1); }
-    else if (e.key === "ArrowLeft" && i > 0) { e.preventDefault(); go(i - 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); go(i - 1); }
   };
 
   return (
@@ -68,7 +70,7 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
       onTouchEnd={(e) => {
         const dx = e.changedTouches[0].screenX - touchX.current;
         if (dx < -50) go(i + 1);
-        else if (dx > 50 && i > 0) go(i - 1);
+        else if (dx > 50) go(i - 1);
       }}
     >
       {slides.map((s, k) => {
@@ -131,7 +133,7 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
         );
       })}
 
-      <button type="button" className="cs-arrow cs-arrow-prev" hidden={i === 0} onClick={() => go(i - 1)} aria-label="Previous slide">
+      <button type="button" className="cs-arrow cs-arrow-prev" onClick={() => go(i - 1)} aria-label="Previous slide">
         <Chevron dir="left" />
       </button>
       <button type="button" className="cs-arrow cs-arrow-next" onClick={() => go(i + 1)} aria-label="Next slide">

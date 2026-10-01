@@ -139,12 +139,18 @@ export function CelestialBody({ className }: { className?: string }) {
     disposables.push(renderer);
 
     /* ---- the occluding core -------------------------------------------- */
-    /* Opaque black, so the far side of the ring is hidden behind the planet.
-     * On this dark ground it reads as a silhouette rather than as a black
-     * disc, which is the intent. */
+    /* Black, so the far side of the ring is hidden behind the planet. On this
+     * dark ground it reads as a silhouette rather than as a black disc.
+     *
+     * 15% transparent (the client, 2026-10-01): the page's gradient shows
+     * faintly through the body. Only the body: the ring, the surface dust and
+     * the atmosphere keep their full strength. It still writes depth and is
+     * drawn first (renderOrder -1), so the far side of the ring stays hidden
+     * and everything in front of it renders over it unchanged. */
     const baseGeo = new THREE.SphereGeometry(PLANET_RADIUS, 64, 64);
-    const baseMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const baseMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.85 });
     const baseSphere = new THREE.Mesh(baseGeo, baseMat);
+    baseSphere.renderOrder = -1;
     baseSphere.position.x = PLANET_X_OFFSET;
     scene.add(baseSphere);
     disposables.push(baseGeo, baseMat);

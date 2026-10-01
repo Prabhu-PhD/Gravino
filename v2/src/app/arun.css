@@ -774,3 +774,78 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* --- Capabilities below lg: every panel, no tabs, background held ------------
+   The client, 2026-10-01: on phones and tablets the four tabs go, all four
+   capabilities are shown one after another, and the section's background
+   (its gradient, the two glow orbs and the particle ring) stays put while
+   the content scrolls over it, until the section ends.
+
+   Holding the background: the layers become position:fixed, and the
+   section's clip-path clips them to the section's own box, so they show only
+   while the section is on screen and never over the sections either side.
+   (clip-path clips fixed descendants; overflow does not.) iOS ignores
+   background-attachment:fixed, which is why this is not that.
+
+   Each panel gets a small "01 / Business Communication" label
+   (.cap-mobile-label, in the markup), since without the tabs nothing else
+   says which capability a panel is. Hidden from lg up. */
+.cap-mobile-label {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  #what-we-cover {
+    clip-path: inset(0);
+    background: #000 !important;
+  }
+  #what-we-cover::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);
+  }
+  #what-we-cover > .rounded-full {
+    position: fixed !important;
+  }
+  #sec2-ring-container {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+  }
+
+  /* The tabs, and the column that held them. */
+  #what-we-cover div:has(> #totem-numbers) {
+    display: none !important;
+  }
+
+  /* Every panel, in order, in the flow. */
+  #what-we-cover .cap-panel-stage {
+    min-height: 0 !important;
+  }
+  #what-we-cover .cap-content-panel {
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+  #what-we-cover .cap-content-panel + .cap-content-panel {
+    margin-top: 3.5rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  #what-we-cover .cap-content-panel * {
+    animation: none !important;
+  }
+  .cap-mobile-label {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #a78bfa;
+  }
+}

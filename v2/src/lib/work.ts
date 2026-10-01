@@ -114,8 +114,11 @@ export const CASES: CaseStudy[] = [
     summary:
       "A Russian-inspired premium beer brand for the Indian market: the story, the identity, the packaging and the launch campaign.",
     disciplines: ["Brand identity", "Packaging", "Campaign"],
+    // Thumbnail: the product (Arun's Pivo_Thumb). Stage: the Russian culture
+    // illustration, not the product (the client, 2026-10-01); the same art as
+    // the cover, so the case study has it cached.
     thumb: `${PIVO}/thumb.webp`,
-    stage: { src: `${PIVO}/hero.webp`, position: "62% center" },
+    stage: { src: `${PIVO}/cover.webp`, position: "center" },
     cover: `${PIVO}/cover.webp`,
     theme: {
       display: { family: "Pivo Russian", src: `${PIVO}/fonts/russian.ttf` },

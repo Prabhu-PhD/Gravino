@@ -124,6 +124,22 @@ export function GravityHero() {
                 <p className="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-sm sm:max-w-md">
                   From business communication and brand identity to marketing and experiences, Gravino brings every discipline together under one connected team.
                 </p>
+                {/* Mobile (< md): the four disciplines as a plain list under the
+                    body (the client, 2026-10-01), not four boxes. Each keeps its
+                    dot colour from the captions over the planet. */}
+                <ul className="md:hidden pt-2 max-w-lg space-y-2 pointer-events-auto">
+                  {[
+                    ["Business Communication", "bg-white"],
+                    ["Brand & Identity", "bg-[#24c1ff]"],
+                    ["Marketing & Growth", "bg-[#cc4ec7]"],
+                    ["Experience & Engagement", "bg-[#7642cf]"],
+                  ].map(([label, dot]) => (
+                    <li key={label} className="flex items-center gap-3 text-sm font-light text-slate-200">
+                      <span aria-hidden className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${dot}`} />
+                      {label}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               {/* 4 Caption Boxes OVER THE PLANET: 2 on the left, 2 on the right (Black fill with transparency, generous padding) */}
@@ -150,26 +166,6 @@ export function GravityHero() {
                 <div id="caption-box-4" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-purple-400/35 hover:border-purple-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "72%", top: "68%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#7642cf] shadow-[0_0_8px_#7642cf] flex-shrink-0"></span>
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Experience &amp; Engagement</span>
-                </div>
-              </div>
-
-              {/* Mobile (< md): 2x2 grid below text with black transparency fill */}
-              <div className="md:hidden pt-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-lg pointer-events-auto">
-                <div className="flex items-center gap-3 bg-black/85 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-white"></span>
-                  <span className="text-xs sm:text-sm font-medium text-white block">Business Communication</span>
-                </div>
-                <div className="flex items-center gap-3 bg-black/85 backdrop-blur-md border border-cyan-400/30 rounded-xl px-4 py-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#24c1ff]"></span>
-                  <span className="text-xs sm:text-sm font-medium text-white block">Brand &amp; Identity</span>
-                </div>
-                <div className="flex items-center gap-3 bg-black/85 backdrop-blur-md border border-pink-400/30 rounded-xl px-4 py-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#cc4ec7]"></span>
-                  <span className="text-xs sm:text-sm font-medium text-white block">Marketing &amp; Growth</span>
-                </div>
-                <div className="flex items-center gap-3 bg-black/85 backdrop-blur-md border border-purple-400/30 rounded-xl px-4 py-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#7642cf]"></span>
-                  <span className="text-xs sm:text-sm font-medium text-white block">Experience &amp; Engagement</span>
                 </div>
               </div>
 

@@ -61,7 +61,65 @@ function config(): array {
         'from'     => $pick('GRAVINO_MAIL_FROM', 'from', 'Gravino Website <onboarding@resend.dev>'),
         'to'       => $pick('GRAVINO_MAIL_TO', 'to', 'create@gravino.in'),
         'selftest' => $pick('GRAVINO_SELFTEST_TOKEN', 'selftest_token'),
+        /* The confirmation email to the visitor. 'auto' (the default) sends
+           it only once `from` is no longer Resend's shared sender: until
+           gravino.in is verified in Resend, Resend delivers only to the
+           account's own inbox, so a confirmation to a visitor would bounce.
+           Verifying the domain and changing `from` switches it on by itself.
+           'on' or 'off' overrides. */
+        'confirm'  => $pick('GRAVINO_CONFIRM', 'confirm', 'auto'),
     ];
+}
+
+/* ---------------------------------------------------------------------------
+ * RATE LIMIT. The honeypot stops naive bots; this stops a script, or one
+ * impatient person, filling the inbox. Per sender address: at most 3
+ * enquiries in 10 minutes and 10 in a day.
+ *
+ * Stored as a SHA-256 of the IP (never the IP itself), one small file per
+ * address, in a folder beside the config file ABOVE public_html, so it can
+ * never be fetched over HTTP. Entries older than a day are dropped as they
+ * are read, and files untouched for a day are swept now and then.
+ *
+ * Fails open: if the folder cannot be written, the enquiry goes through and
+ * the problem is logged. Losing a lead is worse than letting a spammer by.
+ * ------------------------------------------------------------------------ */
+function rate_limited(string $ip): bool {
+    $dir = __DIR__ . '/../gravino-ratelimit';
+    if (!is_dir($dir) && !@mkdir($dir, 0700) && !is_dir($dir)) {
+        error_log('send.php: rate-limit folder not writable: ' . $dir);
+        return false;
+    }
+    $file = $dir . '/' . hash('sha256', 'gravino|' . $ip) . '.json';
+    $h = @fopen($file, 'c+');
+    if ($h === false) {
+        error_log('send.php: rate-limit file not writable');
+        return false;
+    }
+    flock($h, LOCK_EX);
+    $now = time();
+    $seen = json_decode(stream_get_contents($h) ?: '[]', true);
+    $seen = array_values(array_filter(is_array($seen) ? $seen : [], static fn($t) => is_int($t) && $t > $now - 86400));
+    $recent = count(array_filter($seen, static fn($t) => $t > $now - 600));
+    $limited = $recent >= 3 || count($seen) >= 10;
+    if (!$limited) {
+        $seen[] = $now;
+    }
+    ftruncate($h, 0);
+    rewind($h);
+    fwrite($h, json_encode($seen));
+    flock($h, LOCK_UN);
+    fclose($h);
+
+    // Now and then, sweep files nobody has touched for a day.
+    if (random_int(1, 50) === 1) {
+        foreach (glob($dir . '/*.json') ?: [] as $f) {
+            if (@filemtime($f) < $now - 86400) {
+                @unlink($f);
+            }
+        }
+    }
+    return $limited;
 }
 
 function fail(string $message, int $code = 400): void {
@@ -194,6 +252,10 @@ if ($cfg['api_key'] === '') {
     fail('The form is not configured yet. Please email create@gravino.in directly.', 500);
 }
 
+if (rate_limited((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'))) {
+    fail('We have already received a few enquiries from you. Please try again later, or email create@gravino.in directly.', 429);
+}
+
 $body = implode("\n", [
     'Name:      ' . $name,
     'Email:     ' . $email,
@@ -235,6 +297,47 @@ if ($err !== '' || $status < 200 || $status >= 300) {
         is_array($resBody) ? json_encode($resBody) : 'null'
     ));
     fail('We could not send that just now. Please email create@gravino.in directly.', 502);
+}
+
+/* The enquiry has reached us. Now the visitor's confirmation, best effort:
+   whatever happens to it, they have already succeeded, so a failure here is
+   logged and never shown to them. Reply-To is our inbox, so a reply to the
+   confirmation reaches the team. */
+$confirm = strtolower($cfg['confirm']);
+$sharedSender = stripos($cfg['from'], '@resend.dev') !== false;
+if ($confirm === 'on' || ($confirm === 'auto' && !$sharedSender)) {
+    $first = trim(explode(' ', $name)[0] ?? '');
+    $note = implode("\n", [
+        'Hi ' . ($first !== '' ? $first : 'there') . ',',
+        '',
+        'Thank you for telling us about your project. It has reached us, and one of the four of us will read it and reply within a working day, usually with a few questions and a time to talk it through.',
+        '',
+        'What you sent:',
+        '  Service:   ' . $service,
+        '  Timeline:  ' . $timeline,
+        '  Budget:    ' . ($budget !== '' ? $budget : 'not given'),
+        '',
+        'If there is anything to add in the meantime, a deck, a link or a deadline that moved, just reply to this email.',
+        '',
+        'Gravino',
+        'create@gravino.in',
+        'https://gravino.in',
+    ]);
+    [$cStatus, $cBody, $cErr] = resend_post($cfg['api_key'], [
+        'from'     => $cfg['from'],
+        'to'       => [$email],
+        'reply_to' => $cfg['to'],
+        'subject'  => 'We have your project details | Gravino',
+        'text'     => $note,
+    ]);
+    if ($cErr !== '' || $cStatus < 200 || $cStatus >= 300) {
+        error_log(sprintf(
+            'send.php confirmation failure: http=%d curl=%s body=%s',
+            $cStatus,
+            $cErr,
+            is_array($cBody) ? json_encode($cBody) : 'null'
+        ));
+    }
 }
 
 echo json_encode(['ok' => true]);

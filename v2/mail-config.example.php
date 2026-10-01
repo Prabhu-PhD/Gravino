@@ -57,4 +57,11 @@ return [
      * nothing. Without a match the endpoint returns 404, so the check is
      * invisible to anyone else. Leave empty to disable it. */
     'selftest_token' => 'CHANGE-ME-TO-SOMETHING-LONG-AND-RANDOM',
+
+    /* The "we have your project details" email to the visitor.
+     *   'auto'  sends it once `from` above is your own verified address, and
+     *           not while it is Resend's shared sender (Resend would only
+     *           deliver it to your own account's inbox). The default.
+     *   'on'    always.   'off'   never. */
+    'confirm' => 'auto',
 ];

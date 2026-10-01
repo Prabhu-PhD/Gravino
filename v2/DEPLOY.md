@@ -147,6 +147,22 @@ records it gives you at GoDaddy, then change `from` in the config file. Do
 not change it before verifying, or the SPF `-all` and DMARC `p=quarantine`
 on your domain will quarantine the mail.
 
+Doing this also switches on the **confirmation email** to the visitor ("We
+have your project details", with their service, timeline and budget, and
+`Reply-To` set to `create@gravino.in`). It stays off while `from` is
+Resend's shared sender, because Resend only delivers that sender's mail to
+your own account's inbox. `confirm` in the config file overrides: `'on'`,
+`'off'`, or the default `'auto'`. A failed confirmation is logged and never
+fails the enquiry.
+
+### Spam protection
+
+Besides the hidden honeypot field, `send.php` allows at most **3 enquiries in
+10 minutes and 10 a day** from one address. It keeps only a SHA-256 of the
+IP, in `/home/gravinoi/gravino-ratelimit/` beside the config file (created on
+first use, above `public_html`), and drops entries after a day. If that
+folder cannot be created, the form still works and the error is logged.
+
 ### cPanel mail routing
 
 Email Routing for gravino.in must be set to **Remote Mail Exchanger**. It was

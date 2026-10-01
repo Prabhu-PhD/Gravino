@@ -22,6 +22,7 @@ const SECTIONS: [string, string[]][] = [
   ["What we collect", [
     "If you submit the form on this site, we receive the name, email address and phone number you enter, plus the company name, the service, timeline, budget range and source you select, and the project details you write.",
     "The server also records the IP address the submission came from and the time it arrived, which is standard for a web form and helps us identify automated abuse.",
+    "To stop the form being flooded, the server keeps a scrambled (hashed) form of that IP address with the times of recent submissions, never the address itself, and deletes it after a day.",
   ]],
   ["What we do not do", [
     "This site sets no cookies, runs no analytics, and loads no advertising or tracking scripts. There is no visitor profiling and no third-party pixel of any kind.",
@@ -32,6 +33,7 @@ const SECTIONS: [string, string[]][] = [
   ]],
   ["Where it goes", [
     `Submissions are emailed to ${SITE.email} and held in that mailbox. Anything you send us about your project is treated as confidential and is not shown to anyone outside the team.`,
+    "The email is delivered through Resend, an email delivery service acting on our behalf. We may also send you one confirmation email that your enquiry arrived, through the same service, to the address you gave.",
   ]],
   ["How long we keep it", [
     "Enquiry emails are kept while the conversation is live and for a reasonable period after, so we can pick up a thread you return to. Ask us to delete yours and we will.",

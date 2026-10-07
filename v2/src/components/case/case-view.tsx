@@ -17,6 +17,11 @@ import { CosmicFooter } from "@/components/cosmic-chrome";
 import { IntakeModal } from "@/components/intake-form";
 import { CtaBand } from "@/components/page-shell";
 
+/** The @font-face format() hint for a font file. */
+function fontFormat(src: string) {
+  return src.endsWith(".woff2") ? "woff2" : src.endsWith(".woff") ? "woff" : "truetype";
+}
+
 /** The CSS value for a case font: its next/font variable, or its name. */
 function familyValue(f: CaseFont) {
   return f.cssVar ? `var(${f.cssVar})` : `"${f.family}"`;
@@ -33,7 +38,9 @@ export function CaseView({ study }: { study: CaseStudy }) {
       <style>
         {[t.display, t.body]
           .filter((f) => f.src)
-          .map((f) => `@font-face { font-family: "${f.family}"; src: url("${f.src}") format("truetype"); font-display: swap; }`)
+          // Display and body may share one file; declare each family once.
+          .filter((f, k, all) => all.findIndex((g) => g.family === f.family) === k)
+          .map((f) => `@font-face { font-family: "${f.family}"; src: url("${f.src}") format("${fontFormat(f.src!)}"); font-weight: 100 900; font-display: swap; }`)
           .join(" ")}
       </style>
 
@@ -134,7 +141,10 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
           // so the row reads as bands on a wide screen, not a strip.
           style={{ background: `linear-gradient(90deg, ${first} 50%, ${last} 50%)` }}
         >
-          <div className="cs-col cs-palette" style={{ ["--cs-swatches" as string]: s.swatches.length } as React.CSSProperties}>
+          <div
+            className="cs-col cs-palette"
+            style={{ ["--cs-swatch-cols" as string]: s.swatches.map((w) => `${w.width ?? 1}fr`).join(" ") } as React.CSSProperties}
+          >
             {s.swatches.map((w) => (
               <div key={w.name} className="cs-swatch" style={{ background: w.color, color: w.ink }}>
                 <h3>{w.name}</h3>
@@ -203,12 +213,20 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
 
     case "gallery":
       return (
-        <section className="cs-band" style={{ background: s.ground }} aria-label="Campaign">
+        <section className="cs-band" style={{ background: s.ground }} aria-label={s.label ?? "Campaign"}>
           <div className="cs-col cs-gallery">
-            <div className="cs-gallery-grid">
+            {s.intro ? (
+              <p className="cs-gallery-intro" style={s.introColor ? { color: s.introColor } : undefined}>
+                {s.intro}
+              </p>
+            ) : null}
+            <div
+              className={`cs-gallery-grid ${s.shadow === false ? "cs-gallery-flat" : ""}`}
+              style={{ ["--cs-gallery-cols" as string]: s.columns ?? 2 } as React.CSSProperties}
+            >
               {s.items.map((g) => (
                 <figure key={g.src}>
-                  <img src={g.src} alt={g.alt} width={1000} height={1148} loading="lazy" decoding="async" />
+                  <img src={g.src} alt={g.alt} width={g.width ?? 1000} height={g.height ?? 1148} loading="lazy" decoding="async" />
                 </figure>
               ))}
             </div>
@@ -305,6 +323,48 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
               loading="lazy"
               decoding="async"
             />
+          </div>
+        </section>
+      );
+
+    case "statement":
+      return (
+        <section className="cs-band" style={{ background: s.ground }} aria-label="Positioning">
+          <div className="cs-col cs-statement">
+            <p style={{ color: s.ink }}>
+              {s.text.map((line, j) => (
+                <span key={j}>{line}</span>
+              ))}
+            </p>
+            {s.logo ? (
+              <img
+                src={s.logo.src}
+                alt={s.logo.alt}
+                width={s.logo.width}
+                height={s.logo.height}
+                style={{ width: s.logoWidth ?? 160 }}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : null}
+          </div>
+        </section>
+      );
+
+    case "imagery":
+      return (
+        <section className="cs-band" style={{ background: s.ground }} aria-label="Image style">
+          <div className={`cs-col cs-imagery ${s.mark ? "" : "cs-imagery-full"}`}>
+            {s.mark ? (
+              <div className="cs-imagery-mark">
+                <img src={s.mark.src} alt={s.mark.alt} width={s.mark.width} height={s.mark.height} loading="lazy" decoding="async" />
+              </div>
+            ) : null}
+            <div className="cs-imagery-grid">
+              {s.items.map((g) => (
+                <img key={g.src} src={g.src} alt={g.alt} width={g.width} height={g.height} loading="lazy" decoding="async" />
+              ))}
+            </div>
           </div>
         </section>
       );

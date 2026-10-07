@@ -117,6 +117,8 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
             className={[
               "cs-slide cs-slide-story",
               s.side === "left" ? "cs-slide-left" : "",
+              s.valign === "top" ? "cs-slide-top" : "",
+              s.overlay ? "cs-slide-overlay" : "",
               s.shade === true ? "cs-slide-shade" : "",
               typeof s.shade === "string" ? "cs-slide-tint" : "",
               active ? "is-active" : "",
@@ -126,13 +128,15 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
                 backgroundImage: `url('${s.image}')`,
                 ["--cs-mobile-bg" as string]: `url('${s.mobileImage}')`,
                 ...(typeof s.shade === "string" ? { ["--cs-tint" as string]: s.shade } : {}),
+                ...(s.overlay ? { ["--cs-overlay" as string]: s.overlay } : {}),
+                ...(s.headingScale ? { ["--cs-heading-scale" as string]: s.headingScale } : {}),
               } as React.CSSProperties
             }
           >
             <span className="sr-only">{s.alt}</span>
             <div className="cs-story">
               {s.heading ? (
-                <h2 className="cs-story-heading">
+                <h2 className="cs-story-heading" style={s.headingColor ? { color: s.headingColor } : undefined}>
                   {s.heading.map((line, j) => (
                     <span key={j}>
                       {line}

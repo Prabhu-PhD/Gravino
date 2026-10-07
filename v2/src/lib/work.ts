@@ -54,9 +54,10 @@ export type CaseTheme = {
    * How the brand speaks in type. Omitted, it is Pivo's: the client ask in the
    * reading face, labels in plain sentence case. "display" is The Grid's:
    * the ask and section titles in the display face, uppercase, with small
-   * tracked uppercase labels in `secondary`.
+   * tracked uppercase labels in `secondary`. "plain" is Zylo's: sentence-case
+   * story headings in a semibold display face, no uppercase anywhere.
    */
-  voice?: "display";
+  voice?: "display" | "plain";
   /** Label colour under the "display" voice. Defaults to the accent. */
   secondary?: string;
 };
@@ -83,6 +84,14 @@ export type BriefSlide =
       mobileImage: string;
       /** Which side the text sits on. Pivo's is the right. */
       side?: "left" | "right";
+      /** Text at the top of the slide instead of the bottom (desktop only). */
+      valign?: "top";
+      /** A CSS background laid over the whole image, e.g. a colour wash. */
+      overlay?: string;
+      /** Heading colour for this slide, if not the theme accent. */
+      headingColor?: string;
+      /** Heading size relative to the voice's own, e.g. 0.75. */
+      headingScale?: number;
       /**
        * Darken behind the text, for images too busy to read over. A colour
        * tints the fade in that colour instead of black.
@@ -108,7 +117,8 @@ export type Section =
     }
   | {
       type: "palette";
-      swatches: { name: string; meaning: string; color: string; ink: string }[];
+      /** `width` is a relative share of the row (default 1). */
+      swatches: { name: string; meaning: string; color: string; ink: string; width?: number }[];
       /** Print each colour's hex value under its meaning. */
       showHex?: boolean;
     }
@@ -126,7 +136,20 @@ export type Section =
       shadow?: boolean;
       items: { src: string; alt: string; width: number; caption: string[] }[];
     }
-  | { type: "gallery"; ground: string; items: { src: string; alt: string }[] }
+  | {
+      type: "gallery";
+      ground: string;
+      /** Names the section for screen readers. Defaults to "Campaign". */
+      label?: string;
+      /** A line above the images. */
+      intro?: string;
+      introColor?: string;
+      /** Defaults to 2. */
+      columns?: number;
+      /** False for flat artwork on a light ground. */
+      shadow?: boolean;
+      items: { src: string; alt: string; width?: number; height?: number }[];
+    }
   | { type: "scene"; image: { src: string; alt: string } }
   /* Added for The Grid (2026-10-07). Each is generic: a project uses the ones
      its story needs, in any order. */
@@ -178,6 +201,24 @@ export type Section =
       maxWidth?: number;
     }
   | {
+      /** A centred positioning line, with the mark beneath it. */
+      type: "statement";
+      text: string[];
+      logo?: Picture;
+      /** Displayed logo width in px. */
+      logoWidth?: number;
+      ground: string;
+      ink: string;
+    }
+  | {
+      /** The image style: a brand mark beside a grid of photographs. */
+      type: "imagery";
+      /** CSS background, so glows are allowed. */
+      ground: string;
+      mark?: Picture;
+      items: Picture[];
+    }
+  | {
       /** The sign-off: the mark and the line, once more. */
       type: "closing";
       logo: Picture;
@@ -208,6 +249,7 @@ export type CaseStudy = {
 
 const PIVO = "/work/pivo";
 const GRID = "/work/the-grid";
+const ZYLO = "/work/zylo";
 
 export const CASES: CaseStudy[] = [
   {
@@ -527,6 +569,142 @@ export const CASES: CaseStudy[] = [
         line: "No Fumes. Just Zooms.",
         ground: "radial-gradient(ellipse at 70% 30%, #0f6a5e 0%, #064c47 40%, #032f2e 100%)",
         horizon: "rgba(204, 219, 41, 0.75)",
+      },
+    ],
+  },
+
+  /* Zylo, from Zylo_Folder.zip (2026-10-06): the designer's Illustrator
+     package, built here from its PDF (Zylo.pdf, a 1080px artboard). A concept
+     brand pitch (the client, 2026-10-07). Copy and images are as delivered,
+     at the client's instruction, including two flagged in review: social post
+     1 reads "Intelliegence", and the brief's third photograph is a stock
+     image whose file name records a watermark removal
+     ("wmremove-transformed…"). Replace those files when corrected ones
+     arrive; nothing else needs to change. */
+  {
+    slug: "zylo",
+    title: "Zylo",
+    kind: "Concept brand pitch",
+    summary:
+      "A brand for the next generation of intelligent manufacturing: the positioning, the identity, an image style, social posts and a presentation system.",
+    disciplines: ["Brand strategy", "Brand identity", "Social media", "Presentation"],
+    thumb: `${ZYLO}/thumb.webp`,
+    // The CNC needle, at 35% so a phone's narrow strip of it keeps the needle.
+    stage: { src: `${ZYLO}/stage.webp`, position: "35% center" },
+    cover: `${ZYLO}/cover.webp`,
+    theme: {
+      // Inter, as packaged with the artwork (OFL): subset to Latin, weights
+      // 300 to 700, 36 KB.
+      display: { family: "Zylo Inter", src: `${ZYLO}/fonts/inter.woff2` },
+      body: { family: "Zylo Inter", src: `${ZYLO}/fonts/inter.woff2` },
+      ground: "#292b3a",
+      accent: "#fc6429",
+      glow: "#d0e6fd",
+      voice: "plain",
+      secondary: "#d0e6fd",
+    },
+    sections: [
+      {
+        type: "brief",
+        slides: [
+          {
+            kind: "ask",
+            ground: "#3b17ff",
+            title: ["Technology is everywhere.", "Intelligence isn’t."],
+            label: "The Client Ask",
+            body: "The brief was to make a brand with the next generation of intelligent manufacturing with a distinctive identity, image style, social media and presentation slides.",
+          },
+          {
+            kind: "story",
+            heading: ["We started with", "the industry"],
+            paragraphs: [
+              "The opportunity was to move the brand beyond being “just another manufacturing company” and establish a distinctive point of view in a rapidly evolving industry.",
+            ],
+            image: `${ZYLO}/story-industry.webp`,
+            mobileImage: `${ZYLO}/story-industry-mobile.webp`,
+            valign: "top",
+            alt: "A CNC needle descending onto a stack of wafers.",
+          },
+          {
+            kind: "story",
+            heading: ["People don’t want", "more technology"],
+            paragraphs: [
+              "They want technology that understands the problem, makes decisions clearer, removes complexity and improves performance.",
+            ],
+            image: `${ZYLO}/story-people.webp`,
+            mobileImage: `${ZYLO}/story-people-mobile.webp`,
+            valign: "top",
+            headingColor: "#ffffff",
+            // Measured on the PDF: this heading is 0.75 the size of slide 2's
+            // (294px wide against 359px), which keeps it to two lines.
+            headingScale: 0.75,
+            overlay: "linear-gradient(90deg, rgba(59, 23, 255, 0.28) 0%, rgba(59, 23, 255, 0.42) 55%, rgba(30, 20, 110, 0.62) 100%)",
+            alt: "Two engineers reviewing a car model on twin monitors.",
+          },
+        ],
+      },
+      {
+        type: "statement",
+        text: [
+          "Brand strategy from technology to intelligence.",
+          "We positioned ZYLO as the intelligence layer connecting technology with modern manufacturing.",
+        ],
+        logo: { src: `${ZYLO}/logo-black.webp`, alt: "Zylo: Think Next", width: 600, height: 763 },
+        logoWidth: 132,
+        ground: "#ffffff",
+        ink: "#3b17ff",
+      },
+      {
+        type: "palette",
+        swatches: [
+          { name: "Ocean Blue", meaning: "Brings a sense of trust, intelligence and forward thinking.", color: "#3b17ff", ink: "#ffffff", width: 2.3 },
+          // Charcoal, not the artwork's white: white on this orange is 3.0:1.
+          { name: "Sunset Orange", meaning: "Adds energy, creativity and momentum.", color: "#fc6429", ink: "#292b3a" },
+          { name: "Charcoal Grey", meaning: "Represents strength, precision and reliability.", color: "#292b3a", ink: "#ffffff" },
+          { name: "Cool White", meaning: "Brings clarity, simplicity and openness.", color: "#d0e6fd", ink: "#292b3a" },
+        ],
+      },
+      {
+        type: "imagery",
+        ground:
+          "radial-gradient(ellipse 30% 45% at 40% 100%, rgba(252, 100, 41, 0.55), transparent 70%), radial-gradient(ellipse 35% 70% at 100% 100%, rgba(59, 23, 255, 0.95), transparent 70%), #292b3a",
+        mark: { src: `${ZYLO}/z-mark.webp`, alt: "", width: 640, height: 555 },
+        items: [
+          { src: `${ZYLO}/image-1.webp`, alt: "A robotic arm placing a glowing chip, with the Zylo mark.", width: 700, height: 563 },
+          { src: `${ZYLO}/image-2.webp`, alt: "Brushed steel ribbons in motion, with the Zylo mark.", width: 700, height: 563 },
+          // The PDF's order: bearing bottom-left, engineer bottom-right.
+          { src: `${ZYLO}/image-4.webp`, alt: "Gloved hands holding a bearing on a production line, with the Zylo mark.", width: 700, height: 563 },
+          { src: `${ZYLO}/image-3.webp`, alt: "An engineer in a hard hat on a call at a laptop, with the Zylo mark.", width: 700, height: 563 },
+        ],
+      },
+      {
+        type: "gallery",
+        label: "Social media",
+        intro: "Built to capture attention and spark curiosity, using bold visuals and concise messaging to bring the brand story to life.",
+        introColor: "#1a1a1a",
+        ground: "#ffffff",
+        columns: 3,
+        shadow: false,
+        items: [
+          { src: `${ZYLO}/post-1.webp`, alt: "Social post: Intelligence for what’s next.", width: 1000, height: 1250 },
+          { src: `${ZYLO}/post-2.webp`, alt: "Social post: Built for a smarter tomorrow, with a robotic gripper.", width: 1000, height: 1250 },
+          { src: `${ZYLO}/post-3.webp`, alt: "Social post: The future is built. Powered by AI. Driven by precision.", width: 1000, height: 1250 },
+        ],
+      },
+      {
+        type: "gallery",
+        label: "Presentation",
+        ground: "linear-gradient(to bottom, #ffffff 0, #ffffff 160px, #d1d3d4 160px)",
+        columns: 2,
+        shadow: false,
+        items: [
+          { src: `${ZYLO}/slide-1.webp`, alt: "Presentation cover: Think Next, with a robotic arm.", width: 1200, height: 675 },
+          { src: `${ZYLO}/slide-2.webp`, alt: "Slide: Who we are. We build what’s next.", width: 1200, height: 675 },
+          { src: `${ZYLO}/slide-3.webp`, alt: "Slide: What we do. Intelligence built into industry, in six services.", width: 1200, height: 675 },
+          { src: `${ZYLO}/slide-4.webp`, alt: "Slide: Our approach. From complexity to clarity.", width: 1200, height: 675 },
+          { src: `${ZYLO}/slide-5.webp`, alt: "Slide: The impact, in three figures.", width: 1200, height: 675 },
+          { src: `${ZYLO}/slide-6.webp`, alt: "Closing slide: Think Next.", width: 1200, height: 675 },
+        ],
       },
     ],
   },

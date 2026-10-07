@@ -199,7 +199,7 @@
 .cs-reveal-land { position: relative; z-index: 2; width: 100%; height: auto; display: block; }
 
 /* ---- 3. palette ------------------------------------------------------------ */
-.cs-palette { display: grid; grid-template-columns: repeat(var(--cs-swatches, 4), 1fr); }
+.cs-palette { display: grid; grid-template-columns: var(--cs-swatch-cols, repeat(4, 1fr)); }
 .cs-swatch { padding: 4rem 1.8rem 3rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 340px; }
 .cs-swatch h3 { font-size: 22px; font-weight: normal; margin-bottom: 0.8rem; }
 .cs-swatch p { font-size: 15px; line-height: 1.45; opacity: 0.9; }
@@ -220,8 +220,8 @@
 .cs-products-flat .cs-product-img img { filter: none; }
 
 /* ---- 6. campaign gallery --------------------------------------------------- */
-.cs-gallery { padding: 4.5rem 3.5rem; display: flex; justify-content: center; }
-.cs-gallery-grid { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+.cs-gallery { padding: 4.5rem 3.5rem; display: flex; flex-direction: column; align-items: center; }
+.cs-gallery-grid { width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(var(--cs-gallery-cols, 2), 1fr); gap: 2.5rem; }
 .cs-gallery-grid figure { box-shadow: 0 12px 35px rgba(0, 0, 0, 0.16); border-radius: 2px; overflow: hidden; }
 .cs-gallery-grid img { width: 100%; height: auto; display: block; }
 
@@ -284,7 +284,7 @@
   margin-bottom: 0.6rem;
 }
 .cs-root[data-voice="display"] .cs-swatch p { font-size: 13.5px; }
-.cs-root[data-voice="display"] .cs-arrow {
+.cs-root[data-voice] .cs-arrow {
   background: color-mix(in srgb, var(--cs-ground) 65%, transparent);
   border-color: color-mix(in srgb, var(--cs-secondary) 50%, transparent);
 }
@@ -364,6 +364,56 @@
 .cs-frame-shadow { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18); }
 .cs-frame-rounded { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-radius: 6px; }
 
+/* ===========================================================================
+ * Added for Zylo (2026-10-07), from its PDF artboard (1080px).
+ * ======================================================================== */
+
+/* ---- story slides: text at the top, a wash over the image ---------------- */
+.cs-slide-top { align-items: flex-start; padding-top: 5.5rem; }
+.cs-slide-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--cs-overlay);
+}
+
+/* ---- the "plain" voice: sentence case, semibold display headings -------- */
+.cs-root[data-voice="plain"] .cs-ask-title { font-size: 36px; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 2.2rem; }
+.cs-root[data-voice="plain"] .cs-ask-label { font-size: 22px; font-weight: 500; }
+.cs-root[data-voice="plain"] .cs-ask-body { font-size: 20px; font-weight: 300; max-width: 640px; }
+.cs-root[data-voice="plain"] .cs-story { max-width: 390px; }
+.cs-root[data-voice="plain"] .cs-story-heading {
+  font-size: calc(50px * var(--cs-heading-scale, 1));
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+.cs-root[data-voice="plain"] .cs-story-body { font-size: 16px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45); }
+.cs-root[data-voice="plain"] .cs-swatch h3 { font-size: 20px; }
+.cs-root[data-voice="plain"] .cs-swatch p { font-size: 14px; }
+
+/* ---- positioning statement ------------------------------------------------- */
+.cs-statement { padding: 8rem 2rem 3.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cs-statement p { font-size: 24px; line-height: 1.2; max-width: 660px; }
+.cs-statement p span { display: block; }
+.cs-statement img { height: auto; margin-top: 2.6rem; }
+
+/* ---- image style: a mark beside a grid of photographs --------------------- */
+.cs-imagery { display: grid; grid-template-columns: 377fr 655fr; align-items: center; padding: 41px 48px 42px 0; }
+.cs-imagery-full { grid-template-columns: 1fr; padding-left: 48px; }
+.cs-imagery-mark img { width: 288px; height: auto; margin: 0 auto; display: block; }
+.cs-imagery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.cs-imagery-grid img { width: 100%; height: auto; display: block; }
+
+/* ---- gallery additions: an intro line, flat artwork ----------------------- */
+.cs-gallery-intro { font-size: 18px; line-height: 1.45; text-align: center; max-width: 680px; margin-bottom: 2.5rem; }
+.cs-gallery-flat { max-width: none; gap: 1.25rem 1.6rem; }
+.cs-gallery-flat figure { box-shadow: none; border-radius: 0; }
+
 /* ---- closing sign-off ------------------------------------------------------ */
 .cs-closing {
   padding: 5rem 3rem;
@@ -418,6 +468,19 @@
   .cs-product-caption { font-size: 18px; }
   .cs-gallery { padding: 3rem 1.25rem; }
   .cs-gallery-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+  /* Zylo's sections. */
+  .cs-root[data-voice="plain"] .cs-ask-title { font-size: 26px; margin-bottom: 1.6rem; }
+  .cs-root[data-voice="plain"] .cs-ask-label { font-size: 19px; }
+  .cs-root[data-voice="plain"] .cs-ask-body { font-size: 16px; }
+  .cs-root[data-voice="plain"] .cs-story { max-width: 100%; }
+  .cs-root[data-voice="plain"] .cs-story-heading { font-size: calc(34px * var(--cs-heading-scale, 1)); }
+  .cs-statement { padding: 4rem 1.5rem 3rem; }
+  .cs-statement p { font-size: 19px; }
+  .cs-imagery { grid-template-columns: 1fr; padding: 2.5rem 1.25rem; }
+  .cs-imagery-mark img { width: 150px; margin-bottom: 2rem; }
+  .cs-imagery-grid { gap: 8px; }
+  .cs-gallery-intro { font-size: 16px; margin-bottom: 2rem; }
 
   /* The Grid's sections, after the designer's own phone layout. */
   .cs-slide-tint::before, .cs-slide-left.cs-slide-tint { --cs-tint-dir: to top; }

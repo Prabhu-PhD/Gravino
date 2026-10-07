@@ -363,7 +363,13 @@ export const ARUN_SECTIONS_HTML = String.raw`
           <!-- Right: Compact Uniform Thumbnails & Navigation Arrows -->
           <div class="lg:col-span-6 xl:col-span-7 flex flex-col items-start lg:items-end gap-3 pb-1 relative z-20">
             <!-- Floating Thumbnails Strip (Uniform size, no text) -->
-            <div id="portfolioThumbsTrack" class="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth">
+            <!-- The strip scrolls sideways, and a sideways scroller clips
+                 vertically too, so a hovered card (lifted 6px, scaled 1.03,
+                 25px cyan glow, 45px drop shadow) was cut off at the top.
+                 Padding gives it that room; the matching negative margins
+                 keep the strip exactly where it was (net 8px / 1px, as the
+                 old py-2 px-1). -->
+            <div id="portfolioThumbsTrack" class="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar pt-[36px] pb-[46px] px-[28px] -mt-[28px] -mb-[38px] -mx-[27px] scroll-smooth">
               <!-- Dynamically populated by ui.js -->
             </div>
 

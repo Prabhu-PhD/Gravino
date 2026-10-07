@@ -321,9 +321,16 @@ body {
   scroll-snap-align: start;
 }
 
+/* EDIT (Gravino, 2026-10-07): exactly one screen from lg up only. Below lg it
+   may grow, because the section now pads 112px to clear the fixed header and
+   a short phone (667px tall, measured) would otherwise clip the arrows. */
 #portfolio {
-  height: 100vh;
   min-height: 100vh;
+}
+@media (min-width: 1024px) {
+  #portfolio {
+    height: 100vh;
+  }
 }
 
 

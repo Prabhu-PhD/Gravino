@@ -277,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       currentProjectIdx = nextIdx;
       renderThumbnails(currentProjectIdx);
+      // After the new text is in (a longer title or description can move it).
       setTimeout(updatePortfolioLine, 260);
 
       setTimeout(() => {
@@ -284,17 +285,32 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 750);
     }
 
+    /* EDIT (Gravino, 2026-10-07): the line now runs BENEATH the project
+       title, centred in the gap between the title and its description (the
+       client). It used to sit 24px above the kind label.
+
+       Positions come from offsetTop, not getBoundingClientRect, because
+       offsets ignore transforms. The text slides 16px on every switch and
+       the line used to be placed at 260ms, mid-slide, so it picked up the
+       animation offset (measured: 7px above the label instead of 24px). */
+    function layoutTop(el, root) {
+      let y = 0;
+      while (el && el !== root) {
+        y += el.offsetTop;
+        el = el.offsetParent;
+      }
+      return y;
+    }
+
     function updatePortfolioLine() {
       const line = document.getElementById('portfolioAccentLine');
-      // EDIT (Gravino): measure from the kind label above the title when there
-      // is one, so the accent line clears it instead of running through it.
-      const title = document.getElementById('portfolioKind') || document.getElementById('portfolioTitle');
+      const title = document.getElementById('portfolioTitle');
+      const desc = document.getElementById('portfolioDesc');
       const portfolio = document.getElementById('portfolio');
       if (!line || !title || !portfolio) return;
-      const portfolioRect = portfolio.getBoundingClientRect();
-      const titleRect = title.getBoundingClientRect();
-      const offsetTop = titleRect.top - portfolioRect.top - 24; // elevated 24px cleanly above title
-      line.style.top = `${Math.max(0, offsetTop)}px`;
+      const titleBottom = layoutTop(title, portfolio) + title.offsetHeight;
+      const gap = desc ? layoutTop(desc, portfolio) - titleBottom : 16;
+      line.style.top = `${Math.round(titleBottom + gap / 2)}px`;
     }
 
     if (prevBtn) {
@@ -334,6 +350,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (prevBtn && prevBtn.parentElement) prevBtn.parentElement.style.display = 'none';
     }
     if (portfolioProjects.length === 0) portfolioThumbsTrack.style.display = 'none';
+
+    /* EDIT (Gravino, 2026-10-07): fetch every project's stage and thumbnail
+       up front. Without this the next stage image was first requested at the
+       moment of switching, so the 0.7s cross-fade could fade into an empty
+       layer, and a thumbnail card could show blank until its file arrived.
+       They are small (the stages are ~35-280 KB webp) and few. */
+    portfolioProjects.forEach((p) => {
+      [p.image, p.thumb].forEach((src) => {
+        if (src) {
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = src;
+        }
+      });
+    });
 
     renderThumbnails(0);
     requestAnimationFrame(updatePortfolioLine);

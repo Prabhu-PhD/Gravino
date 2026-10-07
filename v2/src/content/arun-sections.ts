@@ -303,8 +303,13 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
   <!-- SECTION: PORTFOLIO SHOWCASE (CINEMATIC FULL-BLEED SLIDER) -->
   <script type="application/json" id="portfolioData">{{PORTFOLIO_DATA}}</script>
-  <section id="portfolio" class="page-section relative w-full h-screen min-h-screen overflow-hidden bg-[#09090f] text-white flex flex-col justify-between pb-8 sm:pb-12 pt-8 sm:pt-10 scroll-mt-0 border-t border-b border-white/10" aria-label="Portfolio Showcase">
-    <!-- Full-bleed horizontal accent line crossing screen edge-to-edge above title -->
+  <!-- pt-28 (was pt-8 / sm:pt-10): the section snaps to the top of the
+       viewport, under the fixed header (73px desktop, 89px phone, measured),
+       which covered the WORK eyebrow. 112px clears it on both. Below lg the
+       section may grow past one screen (min-h-screen, not h-screen), so the
+       extra top room cannot push the arrows out of a short phone's view. -->
+  <section id="portfolio" class="page-section relative w-full min-h-screen lg:h-screen overflow-hidden bg-[#09090f] text-white flex flex-col justify-between pb-8 sm:pb-12 pt-28 scroll-mt-0 border-t border-b border-white/10" aria-label="Portfolio Showcase">
+    <!-- Full-bleed horizontal accent line crossing screen edge-to-edge beneath the title -->
     <div id="portfolioAccentLine" class="absolute left-0 right-0 w-full h-[1px] pointer-events-none z-[5] transition-all duration-300"></div>
 
     <!-- Active Background Layers for Smooth Cinematic Cross-fade -->
@@ -336,7 +341,9 @@ export const ARUN_SECTIONS_HTML = String.raw`
           <!-- Left: ONLY Title and Body text -->
           <div class="lg:col-span-6 xl:col-span-5 space-y-3 pb-1 relative z-10" id="portfolioTextContainer">
             <span id="portfolioKind" class="portfolio-anim-item inline-block rounded-full border border-white/20 bg-black/40 px-2.5 py-0.5 font-mono text-[10.5px] uppercase tracking-wider text-slate-200">{{PORTFOLIO_KIND}}</span>
-            <h2 id="portfolioTitle" class="portfolio-anim-item text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15] pb-1 block">
+            <!-- mb-5 (over space-y-3's 12px) opens room for the accent line,
+                 which ui.js centres in the gap beneath the title. -->
+            <h2 id="portfolioTitle" class="portfolio-anim-item text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15] pb-1 mb-5 block">
               {{PORTFOLIO_TITLE_HTML}}
             </h2>
             <p id="portfolioDesc" class="portfolio-anim-item text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-lg">

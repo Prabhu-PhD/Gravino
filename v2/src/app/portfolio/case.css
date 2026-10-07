@@ -199,10 +199,11 @@
 .cs-reveal-land { position: relative; z-index: 2; width: 100%; height: auto; display: block; }
 
 /* ---- 3. palette ------------------------------------------------------------ */
-.cs-palette { display: grid; grid-template-columns: repeat(4, 1fr); }
+.cs-palette { display: grid; grid-template-columns: repeat(var(--cs-swatches, 4), 1fr); }
 .cs-swatch { padding: 4rem 1.8rem 3rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 340px; }
 .cs-swatch h3 { font-size: 22px; font-weight: normal; margin-bottom: 0.8rem; }
 .cs-swatch p { font-size: 15px; line-height: 1.45; opacity: 0.9; }
+.cs-swatch-hex { margin-top: 1rem; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
 
 /* ---- 4. artwork ------------------------------------------------------------ */
 .cs-artwork { padding: 4rem 3rem; display: flex; justify-content: center; }
@@ -211,11 +212,12 @@
 
 /* ---- 5. products ----------------------------------------------------------- */
 .cs-products { padding: 5rem 3.5rem 6.5rem; }
-.cs-products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: end; }
+.cs-products-grid { display: grid; grid-template-columns: repeat(var(--cs-products, 2), 1fr); gap: 3.5rem; align-items: end; }
 .cs-product { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cs-product-img { width: 100%; min-height: 480px; display: flex; justify-content: center; align-items: flex-end; }
 .cs-product-img img { max-width: 100%; height: auto; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45)); }
 .cs-product-caption { margin-top: 2rem; font-size: 20px; line-height: 1.45; }
+.cs-products-flat .cs-product-img img { filter: none; }
 
 /* ---- 6. campaign gallery --------------------------------------------------- */
 .cs-gallery { padding: 4.5rem 3.5rem; display: flex; justify-content: center; }
@@ -225,6 +227,155 @@
 
 /* ---- 7. scene -------------------------------------------------------------- */
 .cs-scene img { width: 100%; height: auto; display: block; }
+
+/* ===========================================================================
+ * Added for The Grid (2026-10-07). Ported from the designer's styles.css for
+ * that page (same 1080px canvas); generic, so any project can use them.
+ * ======================================================================== */
+
+/* ---- slider additions: a logo on the ask, highlighted words, left text --- */
+.cs-slide-ask.cs-horizon .cs-ask { position: relative; z-index: 2; }
+.cs-ask-logo { width: 210px; height: auto; margin: 0 auto 1.6rem; display: block; }
+.cs-ask-title em { font-style: normal; color: var(--cs-accent); }
+.cs-slide-left { justify-content: flex-start; }
+.cs-slide-tint::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    var(--cs-tint-dir, to left),
+    color-mix(in srgb, var(--cs-tint) 90%, transparent) 0%,
+    color-mix(in srgb, var(--cs-tint) 60%, transparent) 40%,
+    color-mix(in srgb, var(--cs-tint) 15%, transparent) 68%,
+    transparent 85%
+  );
+}
+.cs-slide-left.cs-slide-tint { --cs-tint-dir: to right; }
+
+/* ---- the "display" voice: titles in the display face, tracked labels ---- */
+.cs-root[data-voice="display"] .cs-ask-title {
+  font-family: var(--cs-display), sans-serif;
+  font-size: 44px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin-bottom: 1.6rem;
+}
+.cs-root[data-voice="display"] .cs-ask-label {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cs-secondary);
+  margin-bottom: 0.8rem;
+}
+.cs-root[data-voice="display"] .cs-ask-body { font-size: 21px; max-width: 720px; }
+/* Wider than Pivo's 460: Orbitron is a wide face, and "Karting, the way it"
+   measures 496px at 40px, which left "IT" alone on a line. */
+.cs-root[data-voice="display"] .cs-story { max-width: 520px; }
+.cs-root[data-voice="display"] .cs-story-heading { font-size: 40px; line-height: 1.05; letter-spacing: 0.01em; }
+.cs-root[data-voice="display"] .cs-story-body { line-height: 1.45; }
+.cs-root[data-voice="display"] .cs-swatch h3 {
+  font-family: var(--cs-display), sans-serif;
+  font-size: 19px;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.cs-root[data-voice="display"] .cs-swatch p { font-size: 13.5px; }
+.cs-root[data-voice="display"] .cs-arrow {
+  background: color-mix(in srgb, var(--cs-ground) 65%, transparent);
+  border-color: color-mix(in srgb, var(--cs-secondary) 50%, transparent);
+}
+/* The accent is a light colour here, so the chevron goes dark on hover. */
+.cs-root[data-voice="display"] .cs-arrow:hover { color: #111; }
+
+/* ---- labels: small, tracked, uppercase ----------------------------------- */
+.cs-label {
+  font-family: var(--cs-body), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cs-secondary);
+  margin-bottom: 0.4rem;
+}
+.cs-label-rule { display: flex; align-items: center; gap: 1rem; }
+.cs-label-rule::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.6; }
+.cs-label-center { text-align: center; letter-spacing: 0.25em; margin-bottom: 3.5rem; }
+
+/* ---- a soft light rising from a band's bottom edge ----------------------- */
+.cs-horizon { overflow: hidden; }
+.cs-horizon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 90px;
+  background: radial-gradient(ellipse at 50% 100%, var(--cs-horizon), transparent 70%);
+  pointer-events: none;
+}
+
+/* ---- naming ---------------------------------------------------------------- */
+.cs-naming { padding: 5rem 4rem 6rem; }
+.cs-naming-item + .cs-naming-item { margin-top: 3.2rem; }
+.cs-naming-title {
+  font-family: var(--cs-display), sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 0.8rem 0 1rem;
+}
+.cs-naming-body { font-size: 19px; line-height: 1.5; color: rgba(255, 255, 255, 0.85); max-width: 820px; }
+
+/* ---- logo, and the logo on its grounds ----------------------------------- */
+.cs-logo { padding: 5rem 4rem 4.5rem; text-align: center; }
+.cs-logo-label { font-size: 22px; font-weight: 700; margin-bottom: 2.5rem; }
+.cs-logo-mark { width: 520px; max-width: 100%; height: auto; margin: 0 auto 2.5rem; display: block; }
+.cs-logo-body { font-size: 18px; line-height: 1.55; max-width: 760px; margin: 0 auto; }
+.cs-logo-variants { display: grid; grid-template-columns: 1fr 1fr; }
+.cs-logo-variant { min-height: 300px; display: flex; align-items: center; justify-content: center; }
+.cs-logo-variant img { width: 300px; height: auto; }
+.cs-logo-variant img.cs-logo-plate { width: 348px; padding: 1.2rem 1.6rem; background: rgba(35, 31, 32, 0.55); }
+
+/* ---- typography ------------------------------------------------------------ */
+.cs-type { padding: 5rem 4rem; }
+.cs-type .cs-label { margin-bottom: 2rem; }
+.cs-type-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 2rem;
+  align-items: baseline;
+  padding: 1.6rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.cs-type-name { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cs-secondary); }
+.cs-type-display { font-family: var(--cs-display), sans-serif; font-size: 52px; line-height: 1.05; text-transform: uppercase; color: var(--cs-accent); }
+.cs-type-sub { font-size: 28px; font-weight: 600; }
+.cs-type-body { font-size: 17px; line-height: 1.55; color: rgba(255, 255, 255, 0.85); }
+
+/* ---- a single piece of the system ---------------------------------------- */
+.cs-feature { padding: 4.5rem 3.5rem; text-align: center; }
+.cs-feature-caption { font-size: 20px; margin-bottom: 2rem; }
+.cs-feature img { width: 100%; height: auto; margin: 0 auto; display: block; }
+.cs-frame-shadow { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18); }
+.cs-frame-rounded { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-radius: 6px; }
+
+/* ---- closing sign-off ------------------------------------------------------ */
+.cs-closing {
+  padding: 5rem 3rem;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.cs-closing img { width: 260px; height: auto; margin-bottom: 1.2rem; }
+.cs-closing p { font-family: var(--cs-display), sans-serif; font-size: 30px; text-transform: uppercase; color: var(--cs-accent); }
 
 /* ---- below 1080: the slider scales at 16:9, as in Arun's ------------------- */
 @media (max-width: 1080px) {
@@ -267,6 +418,28 @@
   .cs-product-caption { font-size: 18px; }
   .cs-gallery { padding: 3rem 1.25rem; }
   .cs-gallery-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+  /* The Grid's sections, after the designer's own phone layout. */
+  .cs-slide-tint::before, .cs-slide-left.cs-slide-tint { --cs-tint-dir: to top; }
+  .cs-ask-logo { width: 160px; }
+  .cs-root[data-voice="display"] .cs-ask-title { font-size: 26px; }
+  .cs-root[data-voice="display"] .cs-ask-body { font-size: 16px; }
+  .cs-root[data-voice="display"] .cs-story-heading { font-size: 28px; }
+  .cs-naming, .cs-type, .cs-logo { padding: 3rem 1.5rem; }
+  .cs-naming-title { font-size: 28px; }
+  .cs-logo-mark { width: 90%; }
+  .cs-logo-variants { grid-template-columns: 1fr; }
+  .cs-logo-variant { min-height: 200px; }
+  .cs-logo-variant img { width: 220px; }
+  .cs-logo-variant img.cs-logo-plate { width: 268px; }
+  .cs-type-row { grid-template-columns: 1fr; gap: 0.5rem; }
+  .cs-type-display { font-size: 30px; }
+  .cs-feature { padding: 3rem 1.2rem; }
+  .cs-feature-caption { font-size: 17px; }
+  .cs-label-center { margin-bottom: 2rem; }
+  .cs-closing { padding: 4rem 1.5rem; min-height: 260px; }
+  .cs-closing img { width: 200px; }
+  .cs-closing p { font-size: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

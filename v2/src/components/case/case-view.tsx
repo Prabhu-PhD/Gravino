@@ -9,13 +9,18 @@
  * each section's colour runs full-width behind it.
  * ======================================================================== */
 
-import type { CaseStudy, Section } from "@/lib/work";
+import type { CaseFont, CaseStudy, Section } from "@/lib/work";
 import { neighbours } from "@/lib/work";
 import { BriefSlider } from "./brief-slider";
 import { CaseToolbar } from "./case-toolbar";
 import { CosmicFooter } from "@/components/cosmic-chrome";
 import { IntakeModal } from "@/components/intake-form";
 import { CtaBand } from "@/components/page-shell";
+
+/** The CSS value for a case font: its next/font variable, or its name. */
+function familyValue(f: CaseFont) {
+  return f.cssVar ? `var(${f.cssVar})` : `"${f.family}"`;
+}
 
 export function CaseView({ study }: { study: CaseStudy }) {
   const { prev, next, index, total } = neighbours(study.slug);
@@ -45,11 +50,13 @@ export function CaseView({ study }: { study: CaseStudy }) {
         id="main"
         tabIndex={-1}
         className="cs-root outline-none"
+        data-voice={t.voice}
         style={
           {
-            ["--cs-display" as string]: `"${t.display.family}"`,
-            ["--cs-body" as string]: `"${t.body.family}"`,
+            ["--cs-display" as string]: familyValue(t.display),
+            ["--cs-body" as string]: familyValue(t.body),
             ["--cs-accent" as string]: t.accent,
+            ["--cs-secondary" as string]: t.secondary ?? t.accent,
             ["--cs-glow" as string]: t.glow,
             ["--cs-ground" as string]: t.ground,
           } as React.CSSProperties
@@ -127,11 +134,12 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
           // so the row reads as bands on a wide screen, not a strip.
           style={{ background: `linear-gradient(90deg, ${first} 50%, ${last} 50%)` }}
         >
-          <div className="cs-col cs-palette">
+          <div className="cs-col cs-palette" style={{ ["--cs-swatches" as string]: s.swatches.length } as React.CSSProperties}>
             {s.swatches.map((w) => (
               <div key={w.name} className="cs-swatch" style={{ background: w.color, color: w.ink }}>
                 <h3>{w.name}</h3>
                 <p>{w.meaning}</p>
+                {s.showHex ? <span className="cs-swatch-hex">{w.color.toUpperCase()}</span> : null}
               </div>
             ))}
           </div>
@@ -154,11 +162,19 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
       return (
         <section
           className="cs-band"
-          aria-label="Packaging"
+          aria-label={s.label ?? "Packaging"}
           style={{ background: `linear-gradient(to bottom, ${s.split[0]} 0%, ${s.split[0]} 28%, ${s.split[1]} 28%, ${s.split[1]} 100%)` }}
         >
           <div className="cs-col cs-products">
-            <div className="cs-products-grid">
+            {s.label ? (
+              <h2 className="cs-label cs-label-center" style={{ color: s.ink }}>
+                {s.label}
+              </h2>
+            ) : null}
+            <div
+              className={`cs-products-grid ${s.shadow === false ? "cs-products-flat" : ""}`}
+              style={{ ["--cs-products" as string]: s.items.length } as React.CSSProperties}
+            >
               {s.items.map((p) => (
                 <figure key={p.src} className="cs-product">
                   <div className="cs-product-img">
@@ -208,5 +224,104 @@ function SectionBlock({ section: s, title }: { section: Section; title: string }
           </div>
         </section>
       );
+
+    case "naming":
+      return (
+        <section className="cs-band cs-horizon" style={horizon(s.ground, s.horizon)} aria-label="The name">
+          <div className="cs-col cs-naming">
+            {s.items.map((n) => (
+              <div key={n.label} className="cs-naming-item">
+                <p className="cs-label cs-label-rule">{n.label}</p>
+                <h2 className="cs-naming-title">{n.title}</h2>
+                <p className="cs-naming-body">{n.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+
+    case "logo":
+      return (
+        <section className="cs-band" aria-label={s.label}>
+          <div className="cs-band" style={{ background: s.ground, color: s.ink }}>
+            <div className="cs-col cs-logo">
+              <h2 className="cs-logo-label" style={{ color: s.labelColor ?? s.ink }}>
+                {s.label}
+              </h2>
+              <img className="cs-logo-mark" src={s.logo.src} alt={s.logo.alt} width={s.logo.width} height={s.logo.height} loading="lazy" decoding="async" />
+              <p className="cs-logo-body">{s.body}</p>
+            </div>
+          </div>
+          {/* Full-width, unlike the column: each tile IS a ground, so a tile
+              the colour of the page ground would vanish inside a column. */}
+          <div className="cs-logo-variants">
+            {s.variants.map((v, k) => (
+              <div key={k} className="cs-logo-variant" style={{ background: v.ground }}>
+                <img
+                  className={v.plate ? "cs-logo-plate" : undefined}
+                  src={v.logo.src}
+                  alt={v.logo.alt}
+                  width={v.logo.width}
+                  height={v.logo.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+
+    case "typography":
+      return (
+        <section className="cs-band" style={{ background: s.ground }} aria-label={s.label}>
+          <div className="cs-col cs-type">
+            <h2 className="cs-label cs-label-rule">{s.label}</h2>
+            {s.rows.map((r) => (
+              <div key={r.label} className="cs-type-row">
+                <p className="cs-type-name">{r.label}</p>
+                <p className={`cs-type-${r.style}`}>{r.sample}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+
+    case "feature":
+      return (
+        <section className="cs-band" style={{ background: s.ground, color: s.ink }} aria-label={s.label}>
+          <div className="cs-col cs-feature">
+            <h2 className="cs-label" style={s.labelColor ? { color: s.labelColor } : undefined}>
+              {s.label}
+            </h2>
+            {s.caption ? <p className="cs-feature-caption">{s.caption}</p> : null}
+            <img
+              className={s.frame ? `cs-frame-${s.frame}` : undefined}
+              style={s.maxWidth ? { maxWidth: s.maxWidth } : undefined}
+              src={s.image.src}
+              alt={s.image.alt}
+              width={s.image.width}
+              height={s.image.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </section>
+      );
+
+    case "closing":
+      return (
+        <section className="cs-band cs-horizon" style={horizon(s.ground, s.horizon)} aria-label="Sign-off">
+          <div className="cs-col cs-closing">
+            <img src={s.logo.src} alt={s.logo.alt} width={s.logo.width} height={s.logo.height} loading="lazy" decoding="async" />
+            <p>{s.line}</p>
+          </div>
+        </section>
+      );
   }
+}
+
+/** A ground, plus the colour of the light rising from its bottom edge. */
+function horizon(ground: string, light?: string) {
+  return { background: ground, ["--cs-horizon" as string]: light ?? "transparent" } as React.CSSProperties;
 }

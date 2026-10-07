@@ -83,12 +83,23 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
         };
         if (s.kind === "ask") {
           return (
-            <div key={k} {...common} className={`cs-slide cs-slide-ask ${active ? "is-active" : ""}`}>
+            <div
+              key={k}
+              {...common}
+              className={`cs-slide cs-slide-ask ${s.horizon ? "cs-horizon" : ""} ${active ? "is-active" : ""}`}
+              style={
+                {
+                  ...(s.ground ? { background: s.ground } : {}),
+                  ...(s.horizon ? { ["--cs-horizon" as string]: s.horizon } : {}),
+                } as React.CSSProperties
+              }
+            >
               <div className="cs-ask">
+                {s.logo ? <img className="cs-ask-logo" src={s.logo.src} alt={s.logo.alt} /> : null}
                 <h1 className="cs-ask-title">
                   {s.title.map((line, j) => (
                     <span key={j}>
-                      {line}
+                      <Emphasis text={line} />
                       {j < s.title.length - 1 ? <br /> : null}
                     </span>
                   ))}
@@ -103,11 +114,18 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
           <div
             key={k}
             {...common}
-            className={`cs-slide cs-slide-story ${s.shade ? "cs-slide-shade" : ""} ${active ? "is-active" : ""}`}
+            className={[
+              "cs-slide cs-slide-story",
+              s.side === "left" ? "cs-slide-left" : "",
+              s.shade === true ? "cs-slide-shade" : "",
+              typeof s.shade === "string" ? "cs-slide-tint" : "",
+              active ? "is-active" : "",
+            ].join(" ")}
             style={
               {
                 backgroundImage: `url('${s.image}')`,
                 ["--cs-mobile-bg" as string]: `url('${s.mobileImage}')`,
+                ...(typeof s.shade === "string" ? { ["--cs-tint" as string]: s.shade } : {}),
               } as React.CSSProperties
             }
           >
@@ -168,6 +186,17 @@ export function BriefSlider({ slides, title }: { slides: BriefSlide[]; title: st
         )}
       </button>
     </section>
+  );
+}
+
+/** Renders `*words*` in the accent colour; everything else as plain text. */
+function Emphasis({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\*[^*]+\*)/).map((part, k) =>
+        part.startsWith("*") && part.endsWith("*") ? <em key={k}>{part.slice(1, -1)}</em> : part,
+      )}
+    </>
   );
 }
 

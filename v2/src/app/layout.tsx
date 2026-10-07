@@ -9,10 +9,12 @@ import { SITE_URL } from "@/lib/site-url";
    Hagrid, is a commercial licence this project does not hold, and a
    near-miss substitute for a display face reads worse than committing to the
    brand face we actually have. Hierarchy comes from weight and scale.
-   Self-hosted by next/font — no third-party request at runtime. */
+   Self-hosted by next/font — no third-party request at runtime.
+   600 is there for The Grid's case study, whose type specimen names DM Sans
+   Semibold; without it the browser silently substitutes 700. */
 const dm = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-dm",
   display: "swap",
 });

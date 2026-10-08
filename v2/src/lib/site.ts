@@ -15,6 +15,11 @@ export const SITE = {
   domain: "gravino.in",
   /** The campaign line. */
   tagline: "Where Balance Meets Value",
+  /** The logo, with a version stamp. .htaccess lets browsers cache images
+   *  for 30 days, so a changed logo under the same URL reached returning
+   *  visitors up to a month late (2026-10-08: the "Value Has Gravity." line
+   *  was cut from it). Bump the stamp whenever the file changes. */
+  logo: "/arun/logo.png?v=2026-10-08",
   email: "create@gravino.in", // Confirmed by the client.
   whatsapp: "", // TODO(confirm): real number
   location: "Chennai, India",

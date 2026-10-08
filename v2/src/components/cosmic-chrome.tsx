@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { SITE } from "@/lib/site";
 
 /* ===========================================================================
  * The site chrome — ONE nav and ONE footer, used by every page.
@@ -116,7 +117,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
           aria-label={home ? "Back to top" : "Gravino, home"}
         >
           <img
-            src="/arun/logo.png"
+            src={SITE.logo}
             alt="Gravino"
             className="h-9 sm:h-10 md:h-11 w-auto object-contain transition-opacity duration-200 group-hover:opacity-85"
           />
@@ -169,7 +170,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
         <div className="p-6 bg-[#111118]/95 border-b border-white/10 -translate-y-full transition-transform duration-300">
           <div className="flex items-center justify-between pb-4 border-b border-white/10">
             <a href="/" className="flex items-center">
-              <img src="/arun/logo.png" alt="Gravino" className="h-7 w-auto object-contain" />
+              <img src={SITE.logo} alt="Gravino" className="h-7 w-auto object-contain" />
             </a>
             <button id="closeMobileMenuBtn" className="text-slate-400 hover:text-white p-2" aria-label="Close menu">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,7 +239,7 @@ export function CosmicFooter() {
                 there was no link under it. */}
             <a href="/" aria-label="Gravino, home" className="inline-block">
               <img
-                src="/assets/logo.png"
+                src={SITE.logo}
                 alt="Gravino"
                 className="h-8 w-auto object-contain transition-opacity hover:opacity-85"
               />

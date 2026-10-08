@@ -21,6 +21,7 @@
  * ======================================================================== */
 
 import { useEffect } from "react";
+import { SITE } from "@/lib/site";
 
 type Link = { href: string; title: string } | null;
 
@@ -68,7 +69,7 @@ export function CaseToolbar({
     <header className="sticky top-0 z-40 border-b border-white/10 bg-black/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-3 px-4 sm:px-6">
         <a href="/" aria-label="Gravino, home" className="shrink-0 rounded-md">
-          <img src="/arun/logo.png" alt="" className="h-8 w-auto" />
+          <img src={SITE.logo} alt="" className="h-8 w-auto" />
         </a>
 
         <nav aria-label="Breadcrumb" className="min-w-0 flex-1">

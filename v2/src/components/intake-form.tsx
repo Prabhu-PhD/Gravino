@@ -51,8 +51,8 @@ import {
  * ======================================================================== */
 
 /* The options. `value` is what arrives in the email, so it is written to be
-   read there; `label` (and `hint`) is what the pill shows, kept short so a
-   row of pills scans. No dashes in ranges: "to". */
+   read there; `label` (and `hint`) is what the dropdown shows, kept short so it
+   scans. No dashes in ranges: "to". */
 type Option = { value: string; label?: string; hint?: string };
 
 const SERVICES: Option[] = [
@@ -63,18 +63,14 @@ const SERVICES: Option[] = [
   { value: "Campaign or digital marketing" },
   { value: "Something else" },
 ];
+/* Short labels: the timeline box is half width, and "Within a month" cut
+   off to "Within a m..." on a 390px phone (measured). The full value still
+   goes to the email. */
 const TIMELINES: Option[] = [
-  { value: "Within 2 weeks" },
-  { value: "Within a month" },
+  { value: "Within 2 weeks", label: "2 weeks" },
+  { value: "Within a month", label: "1 month" },
   { value: "1 to 3 months" },
   { value: "Flexible" },
-];
-const BUDGETS: Option[] = [
-  { value: "Under ₹2 lakh (under $2,500)", label: "Under ₹2 lakh", hint: "under $2,500" },
-  { value: "₹2 to 5 lakh ($2,500 to $6,000)", label: "₹2 to 5 lakh", hint: "$2.5k to 6k" },
-  { value: "₹5 to 15 lakh ($6,000 to $18,000)", label: "₹5 to 15 lakh", hint: "$6k to 18k" },
-  { value: "Over ₹15 lakh (over $18,000)", label: "Over ₹15 lakh", hint: "over $18k" },
-  { value: "Not sure yet" },
 ];
 const SOURCES: Option[] = [
   { value: "Referral" },
@@ -182,88 +178,332 @@ function Field({
   );
 }
 
-/* Pills: every option visible, one tap to choose (the client, 2026-10-08,
-   over dropdowns that hid the budget ranges until opened). Underneath they
-   are ordinary radio buttons in a fieldset, so arrow keys, screen readers
-   and form data all behave as a radio group does. Optional groups can be
-   cleared by tapping the chosen pill again. */
-function Pills({
-  legend,
+/* DROPDOWNS, DESIGNED (the client, 2026-10-08: the pills made the form "so
+   long" that people would not fill it; back to dropdowns, but beautiful).
+   A native <select> cannot be styled when open (the option list is drawn by
+   the operating system), so this is a listbox of our own: a field-styled
+   button, and a dark panel that matches the card, with a check on the chosen
+   option. Keyboard: arrows, Home/End, Enter/Space, Escape, Tab, and typing a
+   letter jumps to it. The value travels in a hidden input, so FormData and
+   send.php see exactly what they saw before. It opens upward when there is
+   not room below (the modal is short on a phone). */
+function Choice({
+  label,
   name,
   options,
   required = false,
   error,
+  onPick,
 }: {
-  legend: string;
+  label: string;
   name: string;
   options: Option[];
   required?: boolean;
   error?: string;
+  onPick?: (name: string) => void;
 }) {
+  const prefix = useContext(IdPrefix);
+  const id = `${prefix}-${name}`;
   const [value, setValue] = useState("");
-  const errId = `${useContext(IdPrefix)}-${name}-error`;
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const [up, setUp] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  const selected = options.find((o) => o.value === value);
+
+  const show = () => {
+    const r = button.current?.getBoundingClientRect();
+    const need = Math.min(options.length * 44 + 16, 300);
+    setUp(!!r && window.innerHeight - r.bottom < need && r.top > window.innerHeight - r.bottom);
+    setActive(Math.max(0, options.findIndex((o) => o.value === value)));
+    setOpen(true);
+  };
+  const hide = (refocus = true) => {
+    setOpen(false);
+    if (refocus) button.current?.focus();
+  };
+  const choose = (i: number) => {
+    setValue(options[i].value);
+    onPick?.(name);
+    hide();
+  };
+
+  // The list takes focus when it opens, and keeps the active option in view.
+  useEffect(() => {
+    if (open) list.current?.focus();
+  }, [open]);
+  useEffect(() => {
+    if (open) document.getElementById(`${id}-opt-${active}`)?.scrollIntoView({ block: "nearest" });
+  }, [open, active, id]);
+
+  // A click anywhere else closes it.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) hide(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [open]);
+
+  const onListKey = (e: React.KeyboardEvent) => {
+    const last = options.length - 1;
+    if (e.key === "ArrowDown") setActive((a) => Math.min(last, a + 1));
+    else if (e.key === "ArrowUp") setActive((a) => Math.max(0, a - 1));
+    else if (e.key === "Home") setActive(0);
+    else if (e.key === "End") setActive(last);
+    else if (e.key === "Enter" || e.key === " ") choose(active);
+    else if (e.key === "Escape") {
+      /* Escape closes this list, not the dialog. React listens at the
+         document itself (the App Router hydrates the whole document), the
+         same node the dialog's Escape listeners sit on, so stopPropagation
+         alone does not reach them (measured: the modal closed). Marking the
+         event handled is what both of those listeners now check. */
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+      hide();
+      return;
+    } else if (e.key === "Tab") {
+      hide(false);
+      return;
+    } else if (e.key.length === 1 && /\S/.test(e.key)) {
+      const k = e.key.toLowerCase();
+      const order = [...options.keys()].map((n) => (active + 1 + n) % options.length);
+      const hit = order.find((n) => (options[n].label ?? options[n].value).toLowerCase().startsWith(k));
+      if (hit !== undefined) setActive(hit);
+    } else return;
+    e.preventDefault();
+  };
+
   return (
-    <fieldset
-      aria-required={required || undefined}
-      aria-invalid={error ? true : undefined}
-      aria-describedby={error ? errId : undefined}
-      data-pills={name}
-    >
-      <Label as="legend" optional={!required}>
-        {legend}
-      </Label>
-      <div className="flex flex-wrap gap-2">
-        {options.map((o) => {
-          const checked = value === o.value;
-          return (
-            <label key={o.value} className="cursor-pointer">
-              <input
-                type="radio"
-                name={name}
-                value={o.value}
-                checked={checked}
-                onChange={() => setValue(o.value)}
-                onClick={() => {
-                  if (!required && checked) setValue("");
-                }}
-                className="peer sr-only"
-              />
-              <span
-                className={
-                  "inline-flex items-baseline gap-1.5 rounded-full border px-3.5 py-[7px] text-[13px] leading-snug transition-colors duration-150 " +
-                  "peer-focus-visible:ring-2 peer-focus-visible:ring-[#a78bfa]/60 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-offset-[#111129] " +
-                  (checked
-                    ? "border-[#a78bfa]/70 bg-[#7b3fe4]/25 text-white"
-                    : error
-                      ? "border-red-400/40 bg-white/[0.03] text-slate-300 hover:border-white/30 hover:text-white"
-                      : "border-white/12 bg-white/[0.03] text-slate-300 hover:border-white/30 hover:text-white")
-                }
+    <div ref={wrap} className="relative" data-choice={name}>
+      <span id={`${id}-label`}>
+        <Label optional={!required}>{label}</Label>
+      </span>
+      <input type="hidden" name={name} value={value} />
+      <button
+        ref={button}
+        type="button"
+        id={`${id}-button`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-labelledby={`${id}-label ${id}-button`}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
+        onClick={() => (open ? hide() : show())}
+        onKeyDown={(e) => {
+          if (!open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+            e.preventDefault();
+            show();
+          }
+        }}
+        className={`${FIELD_CLASS} flex cursor-pointer items-center justify-between gap-3 text-left ${open ? "border-[#a78bfa]/55 bg-black/25" : ""}`}
+      >
+        <span className={`truncate ${selected ? "text-white" : "text-slate-400"}`}>
+          {selected ? selected.label ?? selected.value : "Choose one"}
+        </span>
+        <svg
+          aria-hidden
+          viewBox="0 0 20 20"
+          className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 ${open ? "rotate-180 text-[#c4b5fd]" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
+          <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open ? (
+        <ul
+          ref={list}
+          role="listbox"
+          tabIndex={-1}
+          aria-labelledby={`${id}-label`}
+          aria-activedescendant={`${id}-opt-${active}`}
+          onKeyDown={onListKey}
+          className={`absolute right-0 left-0 z-30 max-h-[300px] overflow-auto rounded-xl border border-white/12 bg-[#17173a] p-1.5 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(167,139,250,0.06)] outline-none ${up ? "bottom-full mb-1.5" : "top-full mt-1.5"}`}
+        >
+          {options.map((o, i) => {
+            const isSel = o.value === value;
+            return (
+              <li
+                key={o.value}
+                id={`${id}-opt-${i}`}
+                role="option"
+                aria-selected={isSel}
+                onMouseEnter={() => setActive(i)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => choose(i)}
+                className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-[14px] transition-colors duration-100 ${
+                  i === active ? "bg-white/[0.07] text-white" : isSel ? "text-white" : "text-slate-300"
+                }`}
               >
-                {checked ? (
-                  <svg aria-hidden viewBox="0 0 16 16" className="h-3 w-3 shrink-0 self-center text-[#c4b5fd]" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <span className="flex items-baseline gap-2">
+                  {o.label ?? o.value}
+                  {o.hint ? <span className="text-[12px] text-slate-500">{o.hint}</span> : null}
+                </span>
+                {isSel ? (
+                  <svg aria-hidden viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 text-[#c4b5fd]" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M3.5 8.5l3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 ) : null}
-                <span>{o.label ?? o.value}</span>
-                {o.hint ? <span className={checked ? "text-[11.5px] text-violet-200/80" : "text-[11.5px] text-slate-500"}>{o.hint}</span> : null}
-              </span>
-            </label>
-          );
-        })}
-      </div>
-      <ErrorText id={errId} message={error} />
-    </fieldset>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+      <ErrorText id={`${id}-error`} message={error} />
+    </div>
   );
 }
 
-/** A small heading that splits the form into the two things it asks about. */
+/* BUDGET AS A SLIDER (the client, 2026-10-08): "a gentle snap, but let the
+   user choose their rates independently". So it is CONTINUOUS, in rupees,
+   with a soft pull towards the old band edges (₹2, 5 and 15 lakh) only when
+   the thumb is already within a whisker of one.
+
+   The track is logarithmic from ₹50,000 to ₹30 lakh: linear, the first
+   ₹5 lakh (where most first projects sit) would be a sliver at the left.
+   Values round to steps a person would say: ₹10k under ₹2 lakh, ₹25k to
+   ₹10 lakh, ₹1 lakh above. The top stop means "₹30 lakh or more".
+
+   It starts UNSET (dimmed thumb, "Not set"): budget is optional, and an
+   untouched slider sends nothing. Dragging, clicking the track or any arrow
+   key sets it; "Clear" unsets it. A native range input underneath, so it is
+   keyboard and screen-reader accessible as it stands. */
+const BUDGET_MIN = 50_000;
+const BUDGET_MAX = 3_000_000;
+const SLIDER_STEPS = 1000;
+const SNAPS = [200_000, 500_000, 1_500_000];
+const SNAP_REACH = 18; // slider steps (1.8% of the track) either side
+const INR_PER_USD = 83; // matches the old bands: ₹5 lakh ~ $6,000
+
+const posToInr = (pos: number) => BUDGET_MIN * Math.pow(BUDGET_MAX / BUDGET_MIN, pos / SLIDER_STEPS);
+const inrToPos = (inr: number) => Math.round((Math.log(inr / BUDGET_MIN) / Math.log(BUDGET_MAX / BUDGET_MIN)) * SLIDER_STEPS);
+
+function roundInr(inr: number) {
+  const step = inr < 200_000 ? 10_000 : inr < 1_000_000 ? 25_000 : 100_000;
+  return Math.min(BUDGET_MAX, Math.max(BUDGET_MIN, Math.round(inr / step) * step));
+}
+
+/** Slider position -> rupees, with the gentle snap. */
+function budgetAt(pos: number) {
+  for (const s of SNAPS) if (Math.abs(pos - inrToPos(s)) <= SNAP_REACH) return s;
+  return roundInr(posToInr(pos));
+}
+
+/** "₹3.5 lakh", "₹75,000", "₹30 lakh+" */
+function inrLabel(inr: number) {
+  if (inr >= BUDGET_MAX) return "₹30 lakh+";
+  if (inr >= 100_000) return `₹${Number((inr / 100_000).toFixed(2))} lakh`;
+  return `₹${inr.toLocaleString("en-IN")}`;
+}
+
+/** "about $4,200" (rounded to $100), for international visitors. */
+function usdLabel(inr: number) {
+  const usd = Math.round(inr / INR_PER_USD / 100) * 100;
+  return `about $${usd.toLocaleString("en-US")}${inr >= BUDGET_MAX ? "+" : ""}`;
+}
+
+function BudgetSlider({ name }: { name: string }) {
+  const prefix = useContext(IdPrefix);
+  const id = `${prefix}-${name}`;
+  const [pos, setPos] = useState<number | null>(null);
+  const inr = pos === null ? null : budgetAt(pos);
+  // The thumb sits where the (possibly snapped) value is, so a snap is felt.
+  const shown = inr === null ? 0 : inrToPos(inr);
+  const set = (p: number) => setPos(Math.max(0, Math.min(SLIDER_STEPS, p)));
+  // What arrives in the email and the success screen.
+  const value =
+    inr === null ? "" : inr >= BUDGET_MAX ? `₹30 lakh or more (${usdLabel(inr)})` : `About ${inrLabel(inr)} (${usdLabel(inr)})`;
+
+  return (
+    <div data-choice={name}>
+      <div className="flex items-baseline justify-between gap-3">
+        <label htmlFor={`${id}-range`}>
+          <Label optional>Budget</Label>
+        </label>
+        <span className="mb-1.5 flex items-baseline gap-2 text-[13px]">
+          {inr !== null ? (
+            <>
+              <span className="font-medium text-white tabular-nums">{inrLabel(inr)}</span>
+              <span className="text-slate-500 tabular-nums">{usdLabel(inr)}</span>
+              <button
+                type="button"
+                onClick={() => setPos(null)}
+                className="ml-1 text-[12px] text-slate-500 underline decoration-slate-700 underline-offset-2 hover:text-slate-300"
+              >
+                Clear
+              </button>
+            </>
+          ) : (
+            <span className="text-slate-500">Not set</span>
+          )}
+        </span>
+      </div>
+      <input type="hidden" name={name} value={value} />
+      <input
+        id={`${id}-range`}
+        type="range"
+        min={0}
+        max={SLIDER_STEPS}
+        step={1}
+        value={shown}
+        aria-valuetext={inr === null ? "Not set" : `${inrLabel(inr)}, ${usdLabel(inr)}`}
+        onChange={(e) => set(Number(e.target.value))}
+        // Clicking the very start while unset changes nothing, so no change
+        // event fires; count the click itself as setting it.
+        onPointerUp={(e) => set(Number((e.target as HTMLInputElement).value))}
+        onKeyDown={(e) => {
+          if (pos === null && /^Arrow|^Home$|^End$|^Page/.test(e.key)) {
+            e.preventDefault();
+            set(e.key === "End" ? SLIDER_STEPS : 0);
+          } else if (pos !== null && (e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "ArrowDown")) {
+            // Arrow keys move one ROUNDED step, not one slider unit (which
+            // would often round back to the same amount and feel stuck).
+            e.preventDefault();
+            const dir = e.key === "ArrowRight" || e.key === "ArrowUp" ? 1 : -1;
+            let p = shown;
+            while (p >= 0 && p <= SLIDER_STEPS && budgetAt(p) === inr) p += dir;
+            set(p);
+          }
+        }}
+        className={`intake-range w-full ${inr === null ? "is-unset" : ""}`}
+        style={{ ["--pct" as string]: `${(shown / SLIDER_STEPS) * 100}%` } as React.CSSProperties}
+      />
+      <div className="relative mt-1 h-4 text-[11px] text-slate-500" aria-hidden>
+        {[BUDGET_MIN, ...SNAPS, BUDGET_MAX].map((v) => {
+          const at = (inrToPos(v) / SLIDER_STEPS) * 100;
+          const edge = at < 5 ? "translate-x-0" : at > 95 ? "-translate-x-full" : "-translate-x-1/2";
+          return (
+            <button
+              key={v}
+              type="button"
+              tabIndex={-1}
+              onClick={() => set(inrToPos(v))}
+              style={{ left: `${at}%` }}
+              className={`absolute top-0 ${edge} whitespace-nowrap transition-colors hover:text-slate-300 ${inr === v ? "text-[#c4b5fd]" : ""}`}
+            >
+              {v === BUDGET_MIN ? "₹50k" : v >= BUDGET_MAX ? "₹30L+" : `₹${v / 100_000}L`}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** The form's two halves. The visible headings ("About you", "The project")
+ *  were dropped to keep the Send button on screen in an 860px window (the
+ *  client, 2026-10-08: the form must be short); they stay for screen readers. */
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-4">
-      <p className="flex items-center gap-3 text-[10.5px] font-mono uppercase tracking-[0.22em] text-[#20c4f4]/80">
-        {title}
-        <span aria-hidden className="h-px flex-1 bg-white/10" />
-      </p>
+    <div className="space-y-3">
+      <p className="sr-only">{title}</p>
       {children}
     </div>
   );
@@ -334,8 +574,8 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
     if (firstBad) {
       // Focus the first problem: the input itself, or a group's first pill.
       const el =
-        form.querySelector<HTMLElement>(`[name="${firstBad}"]:not([type="radio"])`) ??
-        form.querySelector<HTMLElement>(`[data-pills="${firstBad}"] input`);
+        form.querySelector<HTMLElement>(`[name="${firstBad}"]:not([type="radio"]):not([type="hidden"])`) ??
+        form.querySelector<HTMLElement>(`[data-choice="${firstBad}"] button`);
       el?.focus();
       setState("idle");
       return;
@@ -396,9 +636,12 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
   };
 
   /* Clear a field's error as soon as the visitor changes it. */
+  const clearError = (name: string) => {
+    if (errors[name]) setErrors(({ [name]: _gone, ...rest }) => rest);
+  };
   const onChange = (e: React.FormEvent<HTMLFormElement>) => {
     const name = (e.target as HTMLInputElement).name;
-    if (name && errors[name]) setErrors(({ [name]: _gone, ...rest }) => rest);
+    if (name) clearError(name);
   };
 
   return (
@@ -406,7 +649,7 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
     {done ? <Success sent={sent} onEdit={editDetails} /> : null}
     {/* Kept mounted (hidden) behind the thank-you, so "Wrong address?" can
         bring it back filled in. Cleared when the modal closes (round). */}
-    <form key={round} data-intake={prefix} hidden={done} onSubmit={onSubmit} onChange={onChange} noValidate className="space-y-6">
+    <form key={round} data-intake={prefix} hidden={done} onSubmit={onSubmit} onChange={onChange} noValidate className="space-y-5">
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label>
@@ -429,9 +672,16 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
       </Group>
 
       <Group title="The project">
-        <Pills legend="Service" name="service" options={SERVICES} required error={errors.service} />
-        <Pills legend="Timeline" name="timeline" options={TIMELINES} required error={errors.timeline} />
-        <Pills legend="Budget" name="budget" options={BUDGETS} />
+        {/* Service gets the full width so its longer options read whole;
+            timeline and source are short and share a row. */}
+        <Choice label="Service" name="service" options={SERVICES} required error={errors.service} onPick={clearError} />
+        {/* Timeline gets the wider share: "1 to 3 months" cut off at an even
+            split on a 390px phone (measured); the source options are short. */}
+        <div className="grid grid-cols-[1.2fr_1fr] gap-3">
+          <Choice label="Timeline" name="timeline" options={TIMELINES} required error={errors.timeline} onPick={clearError} />
+          <Choice label="Found us" name="source" options={SOURCES} onPick={clearError} />
+        </div>
+        <BudgetSlider name="budget" />
         <label className="block">
           <Label>Project details</Label>
           <textarea
@@ -445,7 +695,6 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
           />
           <ErrorText id={`${prefix}-details-error`} message={errors.details} />
         </label>
-        <Pills legend="How you found us" name="source" options={SOURCES} />
       </Group>
 
       {Object.keys(errors).length ? (
@@ -758,7 +1007,9 @@ export function IntakeModal() {
     modal.addEventListener("click", onBackdrop);
 
     const onKey = (e: KeyboardEvent) => {
-      if (!modal.classList.contains("active")) return;
+      // A dropdown inside the form already handled it (Escape closes the
+      // list, not the dialog).
+      if (!modal.classList.contains("active") || e.defaultPrevented) return;
       if (e.key === "Escape") {
         close();
         return;

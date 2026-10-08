@@ -104,6 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('keydown', (e) => {
+    // EDIT (Gravino, 2026-10-08): skip an Escape the form already handled
+    // (it closes an open dropdown, not the dialog).
+    if (e.defaultPrevented) return;
     if (e.key === 'Escape' && intakeModal && intakeModal.classList.contains('active')) {
       closeIntakeModal();
     }

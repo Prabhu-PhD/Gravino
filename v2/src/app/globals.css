@@ -137,12 +137,61 @@ dd {
    the rounded fields: the "too hard" highlight (the client, 2026-10-08;
    measured: outline 2px solid #7b3fe4, offset 3px, on a clicked input).
    revert-layer hands the radius back to the field's own utility class. */
-input:not([type="radio"]):not([type="checkbox"]):focus-visible,
+input:not([type="radio"]):not([type="checkbox"]):not([type="range"]):focus-visible,
 textarea:focus-visible,
-select:focus-visible {
+select:focus-visible,
+button[aria-haspopup="listbox"]:focus-visible,
+[role="listbox"]:focus-visible {
   outline: none;
   border-radius: revert-layer;
 }
+
+/* The intake form's budget slider (components/intake-form.tsx). Styled here
+   because range parts need vendor pseudo-elements. --pct is the filled share
+   of the track, set inline. Unset (no budget chosen yet): an empty track and
+   a dimmed thumb, so it reads as "not answered" rather than "the lowest". */
+.intake-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+.intake-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3867d6, #7b3fe4) 0 / var(--pct, 0%) 100% no-repeat, rgba(255, 255, 255, 0.12);
+}
+.intake-range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3867d6, #7b3fe4) 0 / var(--pct, 0%) 100% no-repeat, rgba(255, 255, 255, 0.12);
+}
+.intake-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #7b3fe4;
+  box-shadow: 0 2px 10px rgba(123, 63, 228, 0.55);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.intake-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #7b3fe4;
+  box-shadow: 0 2px 10px rgba(123, 63, 228, 0.55);
+}
+.intake-range:hover::-webkit-slider-thumb { transform: scale(1.1); }
+.intake-range.is-unset::-webkit-slider-thumb { opacity: 0.45; border-color: #8a8aa8; box-shadow: none; }
+.intake-range.is-unset::-moz-range-thumb { opacity: 0.45; border-color: #8a8aa8; box-shadow: none; }
+.intake-range:focus-visible { outline: none; }
+.intake-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35); }
+.intake-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.35); }
 
 a {
   text-underline-offset: 0.22em;

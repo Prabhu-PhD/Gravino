@@ -17,7 +17,8 @@
  * brand pitch), and the client is not named.
  * ======================================================================== */
 
-import { SITE, GROUPS, EMBEDDED, MARKETS } from "@/lib/site";
+import { SITE, EMBEDDED, MARKETS } from "@/lib/site";
+import { CAPABILITIES } from "@/content/capabilities";
 import { CASES } from "@/lib/work";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -52,11 +53,9 @@ export function GET() {
     "",
   );
 
-  for (const g of GROUPS) {
-    add(`### ${g.name}`, "", g.premise, "");
-    for (const d of g.disciplines) {
-      add(`- ${d.kind}: ${d.items.join(", ")}.`);
-    }
+  for (const c of CAPABILITIES) {
+    add(`### ${c.name}`, "", c.line, "");
+    for (const d of c.deliverables) add(`- ${d.name}: ${d.note}`);
     add("");
   }
 
@@ -65,7 +64,7 @@ export function GET() {
     "",
     `- [Home](${url("/")}): overview of Gravino and its capabilities.`,
     `- [Why Gravino](${url("/why-gravino/")}): what working with an embedded business communications partner is like, and where it fits alongside an existing team.`,
-    `- [What we cover](${url("/services/")}): the ten disciplines in four groups, with what each produces.`,
+    `- [What we cover](${url("/services/")}): the four capabilities and what each produces.`,
     `- [Portfolio](${url("/portfolio/")}): case studies, each told from the brief to the finished work.`,
     ...CASES.map((c) => `- [${c.title}](${url(`/portfolio/${c.slug}/`)}): ${c.kind}. ${c.summary}`),
     `- [Contact](${url("/contact/")}): start a project through the project intake form.`,

@@ -21,9 +21,9 @@ import "./arun.css";
    every other page inherited it: see src/lib/seo.ts. */
 export const metadata = pageMeta({
   path: "/",
-  title: "Gravino | Business communications partner, Chennai",
+  title: "Gravino | Your embedded communications partner, Chennai",
   description:
-    "One senior team for the full surface of how your business communicates: investor decks, reports, brand, motion and campaigns. Where Balance Meets Value.",
+    "A senior team that works as part of yours: investor decks, reports, brand, marketing and experiences. Where Balance Meets Value.",
 });
 
 export default function Home() {

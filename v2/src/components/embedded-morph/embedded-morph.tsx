@@ -145,10 +145,16 @@ export function EmbeddedMorph({
           </ol>
           {/* Phones and tablets: the chosen principle's description, in a band
               tall enough for the longest of the four, so the page below never
-              moves when a principle is chosen. */}
-          <p aria-live="polite" className="mt-4 min-h-[6.6rem] text-[0.95rem] font-light leading-relaxed text-slate-400 max-[359px]:min-h-[8rem] sm:min-h-[4.8rem] lg:hidden">
-            {principles[active].body}
-          </p>
+              moves when a principle is chosen. Labelled with the principle's
+              number and title (review, 2026-10-08): as bare text under the
+              whole list it read as detached from the item it belongs to. */}
+          <div aria-live="polite" className="mt-4 min-h-[9.5rem] rounded-2xl border border-white/10 bg-white/[0.03] p-4 max-[359px]:min-h-[11rem] sm:min-h-[7.5rem] lg:hidden">
+            <p className="flex items-baseline gap-2.5 text-[0.95rem] text-white">
+              <span className="font-mono text-xs text-[#a78bfa]">{String(active + 1).padStart(2, "0")}</span>
+              {principles[active].title}
+            </p>
+            <p className="mt-1.5 text-[0.95rem] font-light leading-relaxed text-slate-300">{principles[active].body}</p>
+          </div>
           </div>
 
           {/* ---- the visual ---------------------------------------------------

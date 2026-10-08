@@ -29,7 +29,8 @@
 
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site-url";
-import { SITE, GROUPS, MARKETS } from "@/lib/site";
+import { SITE, MARKETS } from "@/lib/site";
+import { CAPABILITIES } from "@/content/capabilities";
 
 /* The share image, stated explicitly. A page that sets its own openGraph
  * object stops inheriting the opengraph-image.jpg file convention from the
@@ -39,7 +40,7 @@ const SHARE_IMAGE = {
   url: "/opengraph-image.jpg",
   width: 1200,
   height: 630,
-  alt: "Gravino: one team for everything your business needs to say",
+  alt: "Gravino: your embedded communications partner",
 };
 
 export function pageMeta({
@@ -99,7 +100,7 @@ export function organizationLd() {
       addressCountry: "IN",
     },
     areaServed: MARKETS,
-    knowsAbout: GROUPS.flatMap((g) => g.disciplines.map((d) => d.kind)),
+    knowsAbout: CAPABILITIES.flatMap((c) => [c.name, ...c.deliverables.map((d) => d.name)]),
   };
 }
 
@@ -134,14 +135,14 @@ export function servicesLd() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "What Gravino covers",
-    itemListElement: GROUPS.flatMap((g) => g.disciplines).map((d, i) => ({
+    itemListElement: CAPABILITIES.map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
         "@type": "Service",
-        name: d.kind,
-        description: d.blurb,
-        serviceType: d.items.join(", "),
+        name: c.name,
+        description: c.line,
+        serviceType: c.deliverables.map((d) => d.name).join(", "),
         provider: { "@id": abs("/#organization") },
         areaServed: MARKETS,
       },

@@ -15,8 +15,6 @@ export const SITE = {
   domain: "gravino.in",
   /** The campaign line. */
   tagline: "Where Balance Meets Value",
-  /** The line locked up under the logo mark in the brand art. */
-  lockupLine: "Value Has Gravity.",
   email: "create@gravino.in", // Confirmed by the client.
   whatsapp: "", // TODO(confirm): real number
   location: "Chennai, India",
@@ -37,20 +35,6 @@ export const SOCIALS = [
   { label: "Behance", href: "#" }, // TODO(confirm)
   { label: "Instagram", href: "#" }, // TODO(confirm)
 ] as const;
-
-/* ---------------------------------------------------------------------------
- * Hero
- * ------------------------------------------------------------------------ */
-
-export const HERO = {
-  /** `accent` is set in the brand gradient — the device the brochure uses on
-   *  "say.", "Balance" and "Model". One word per headline, never more. */
-  headline: ["One team for everything", "your business needs to"],
-  accent: "say.",
-  body: "One senior team across every format, learning your business once, then handling everything it has to say.",
-  primary: { label: "Send us a deck", href: "/contact" },
-  secondary: { label: "See what we cover", href: "/services" },
-} as const;
 
 /* ---------------------------------------------------------------------------
  * The argument
@@ -75,137 +59,8 @@ export const BALANCE = {
     "The discipline we built the firm around. Clients say the same thing: we understood the business faster, and covered more of it, than anyone before us.",
 } as const;
 
-/* ---------------------------------------------------------------------------
- * What we cover — four groups, ten disciplines
- * ------------------------------------------------------------------------ */
-
-export type Discipline = {
-  n: string;
-  /** The outcome, which is how the brochure leads. */
-  title: string;
-  /** The category name, kept as the quieter half. */
-  kind: string;
-  blurb: string;
-  items: string[];
-};
-
-export type Group = {
-  n: string;
-  name: string;
-  premise: string;
-  disciplines: Discipline[];
-};
-
-export const GROUPS: Group[] = [
-  {
-    n: "01",
-    name: "Capital & corporate narrative",
-    premise: "Communication that secures funding and aligns the room.",
-    disciplines: [
-      {
-        n: "01",
-        title: "Win the room",
-        kind: "High-stakes corporate communications",
-        blurb:
-          "The deck, the board narrative, the keynote, where a “no” costs most. Built to survive the hardest question in the room, not just to open well.",
-        items: ["Pitch & investor decks", "Boardroom presentations", "Keynote design"],
-      },
-      {
-        n: "02",
-        title: "Report with authority",
-        kind: "ESG & impact reporting",
-        blurb:
-          "Annual reports, ESG disclosures, governance summaries. Obligation turned into a credibility asset: dense data made readable.",
-        items: ["Sustainability reports", "Governance", "Stakeholder reports"],
-      },
-      {
-        n: "03",
-        title: "Own the conversation",
-        kind: "Editorial design & thought leadership",
-        blurb:
-          "Whitepapers, briefs and case studies a busy executive actually finishes, and remembers you for.",
-        items: ["Whitepapers", "Newsletters", "Case studies"],
-      },
-    ],
-  },
-  {
-    n: "02",
-    name: "Brand & identity systems",
-    premise: "Foundational identity that lets a brand scale without losing itself.",
-    disciplines: [
-      {
-        n: "04",
-        title: "Build an asset, not a logo",
-        kind: "Strategic brand architecture",
-        blurb:
-          "Positioning, identity systems and rebrands built to compound, so the brand reads as category leader before a word is spoken.",
-        items: ["Positioning", "Visual identity systems", "Rebranding"],
-      },
-      {
-        n: "05",
-        title: "Stop the brand leaking",
-        kind: "Enterprise presentation infrastructure",
-        blurb:
-          "Templates, compliance tooling and asset libraries that keep every team on-brand without a designer policing files.",
-        items: ["Templates", "Brand-compliance tooling", "Asset libraries"],
-      },
-    ],
-  },
-  {
-    n: "03",
-    name: "Growth & digital marketing",
-    premise: "The work that carries your story to market.",
-    disciplines: [
-      {
-        n: "06",
-        title: "Move the story",
-        kind: "Motion design & corporate video",
-        blurb:
-          "Launch films, explainers, campaign motion. When the market needs to feel something, this is where it happens.",
-        items: ["Launch films", "Explainers", "Campaign motion"],
-      },
-      {
-        n: "07",
-        title: "Turn attention into pipeline",
-        kind: "Integrated digital marketing",
-        blurb:
-          "Go-to-market suites, ad creative and sales collateral built for conversion, not impressions. One coherent identity throughout.",
-        items: ["GTM collateral", "Ad creative", "Service menus"],
-      },
-      {
-        n: "08",
-        title: "Make complexity obvious",
-        kind: "Information design & data visualisation",
-        blurb:
-          "Research and analytics a decision-maker grasps in seconds. The insight was always there; we make it impossible to miss.",
-        items: ["Research synthesis", "Data storytelling", "Infographics"],
-      },
-    ],
-  },
-  {
-    n: "04",
-    name: "Public & physical experience",
-    premise: "Where the brand steps off the screen into public and physical space.",
-    disciplines: [
-      {
-        n: "09",
-        title: "Reach the public",
-        kind: "Awareness & social impact campaigns",
-        blurb:
-          "High-visibility work for institutions and public initiatives, built to move large audiences.",
-        items: ["PSA strategy", "Community outreach", "Campaign playbooks"],
-      },
-      {
-        n: "10",
-        title: "Command the space",
-        kind: "Spatial, event & experiential design",
-        blurb:
-          "Booths, environmental branding and print, as considered in the room as on screen.",
-        items: ["Booths", "Environmental branding", "Print & packaging"],
-      },
-    ],
-  },
-];
+/* What we cover: moved to content/capabilities.ts (2026-10-08), the one
+   source for the four capability names and their deliverables. */
 
 /* ---------------------------------------------------------------------------
  * The model

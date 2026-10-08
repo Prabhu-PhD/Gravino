@@ -117,7 +117,7 @@ export function CosmicNav({ home = false }: { home?: boolean }) {
         >
           <img
             src="/arun/logo.png"
-            alt="Gravino, Value Has Gravity"
+            alt="Gravino"
             className="h-9 sm:h-10 md:h-11 w-auto object-contain transition-opacity duration-200 group-hover:opacity-85"
           />
         </a>
@@ -239,7 +239,7 @@ export function CosmicFooter() {
             <a href="/" aria-label="Gravino, home" className="inline-block">
               <img
                 src="/assets/logo.png"
-                alt="Gravino, Value Has Gravity"
+                alt="Gravino"
                 className="h-8 w-auto object-contain transition-opacity hover:opacity-85"
               />
             </a>
@@ -247,8 +247,8 @@ export function CosmicFooter() {
               Where Balance Meets Value
             </p>
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-slate-400">
-              One senior team for the full surface of how your business
-              communicates: decks, reports, brand, motion and campaigns.
+              Your embedded partner for business communication, brand
+              identity, marketing and experience.
             </p>
           </div>
 

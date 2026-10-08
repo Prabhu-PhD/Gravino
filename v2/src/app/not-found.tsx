@@ -25,7 +25,7 @@ export const metadata = pageMeta({
 
 const DESTINATIONS = [
   { href: "/", title: "Home", body: "Where everything starts." },
-  { href: "/services/", title: "What we cover", body: "Ten disciplines, from the investor deck to the launch film." },
+  { href: "/services/", title: "What we cover", body: "Four capabilities, from the investor deck to the launch film." },
   { href: "/why-gravino/", title: "Why Gravino", body: "What working with an embedded partner is like." },
   { href: "/portfolio/", title: "Portfolio", body: "The work, and what changed because of it." },
 ] as const;

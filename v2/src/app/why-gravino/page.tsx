@@ -39,9 +39,9 @@ export default function WhyGravino() {
       <PageHead
         figure
         eyebrow="Why Gravino"
-        headline="An embedded business communications"
-        accent="partner."
-        lede={EMBEDDED.lede}
+        headline="We work as part of"
+        accent="your team."
+        lede="On the communication your business is judged by: the investor deck, the board paper, the annual report, the story you take to market."
       />
 
       {/* 01 -- what embedded means: the client's morphing particle panel

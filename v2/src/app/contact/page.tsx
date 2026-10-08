@@ -32,7 +32,8 @@ export default function Contact() {
         eyebrow="Start a project"
         headline="Tell us what you are"
         accent="working on."
-        lede="A few details about the project, and a senior member of our team comes back within a working day with questions, an approach and a clear next step."
+        lede="Tell us what it is and when it is due. A senior member of our team replies within a working day."
+        compact
       />
 
       <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#09090f] py-16 md:py-20">

@@ -49,6 +49,7 @@ export function PageHead({
   accent,
   lede,
   figure = false,
+  compact = false,
 }: {
   /** The one kicker on the page. */
   eyebrow: string;
@@ -64,10 +65,14 @@ export function PageHead({
    *  would compete with the form the visitor came to fill in. One word to
    *  change your mind on any of them. */
   figure?: boolean;
+  /** A shorter head, for pages whose job sits right under it (the contact
+   *  form). Review, 2026-10-08: the full head pushed the form to the bottom
+   *  of the first screen. */
+  compact?: boolean;
 }) {
   return (
     <section
-      className={`relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-20 ${
+      className={`relative overflow-hidden ${compact ? "pt-28 pb-8 md:pt-32 md:pb-10" : "pt-36 pb-16 md:pt-44 md:pb-20"} ${
         // Room for the figure, which is taller than this head would otherwise be.
         figure ? "lg:min-h-[44rem] xl:min-h-[52rem]" : ""
       }`}
@@ -83,7 +88,7 @@ export function PageHead({
           {eyebrow}
         </p>
         <h1
-          className={`mt-5 text-[clamp(2.4rem,5.8vw,4.5rem)] font-light leading-[1.08] tracking-[-0.03em] text-white ${
+          className={`mt-5 ${compact ? "text-[clamp(2rem,4.4vw,3.4rem)]" : "text-[clamp(2.4rem,5.8vw,4.5rem)]"} font-light leading-[1.08] tracking-[-0.03em] text-white ${
             /* Yield width to the figure rather than running under the sphere.
              * Only from lg, which is the only place the figure exists. */
             figure ? "max-w-4xl lg:max-w-[33rem] xl:max-w-[40rem]" : "max-w-4xl"
@@ -101,7 +106,7 @@ export function PageHead({
         </h1>
         {lede ? (
           <p
-            className={`mt-7 text-[1.0625rem] font-light leading-[1.65] text-slate-300 sm:text-lg ${
+            className={`${compact ? "mt-4" : "mt-7"} text-[1.0625rem] font-light leading-[1.65] text-slate-300 sm:text-lg ${
               figure ? "max-w-2xl lg:max-w-[31rem]" : "max-w-2xl"
             }`}
           >

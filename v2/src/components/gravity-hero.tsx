@@ -74,6 +74,14 @@ export function GravityHero() {
             {/* HERO 1 UI — Where Balance Meets Value                          */}
             {/* ============================================================= */}
             <div id="hero1-ui" className="absolute inset-0 flex flex-col justify-between px-6 sm:px-10 md:px-14 lg:px-20 pt-28 pb-8" style={{opacity: "1"}}>
+              {/* Phones: the copy sat straight on the particle field and was
+                  hard to read (review, 2026-10-08). A scrim behind the bottom
+                  third, inside #hero1-ui so it fades out with the copy. */}
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-gradient-to-t from-black/85 via-black/55 to-transparent lg:hidden" />
+              {/* Desktop: the same problem where the copy sits, bottom right,
+                  on the densest part of the swirl. A soft dark glow behind
+                  that corner only; the orb and the swirl stay untouched. */}
+              <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block bg-[radial-gradient(ellipse_42%_46%_at_74%_78%,rgba(0,0,0,0.78),rgba(0,0,0,0.45)_55%,transparent_100%)]" />
 
               {/* Center Interactive Hint */}
               <div className="flex-grow flex items-center justify-center py-8 hero-ui-layer">
@@ -84,19 +92,22 @@ export function GravityHero() {
                 </div>
               </div>
 
-              {/* Hero Content Bottom Area */}
-              <div className="w-full hero-ui-layer">
+              {/* Hero Content Bottom Area. relative z-[1]: above the phone scrim. */}
+              <div className="relative z-[1] w-full hero-ui-layer">
                 <div className="flex flex-col lg:flex-row items-end justify-between pb-6 gap-8">
                   <div className="hidden lg:block lg:w-5/12"></div>
-                  <div className="w-full lg:w-7/12 lg:max-w-lg lg:ml-auto ml-auto lg:translate-x-6 xl:translate-x-10 -translate-y-6 sm:-translate-y-8 md:-translate-y-10 hero-ui-interactive space-y-4 text-left">
+                  <div className="w-full lg:w-7/12 lg:max-w-xl lg:ml-auto ml-auto lg:translate-x-6 xl:translate-x-10 -translate-y-6 sm:-translate-y-8 md:-translate-y-10 hero-ui-interactive space-y-4 text-left">
+                    {/* The offer, on the first screen (the client, 2026-10-08).
+                        The tagline is the eyebrow; the headline is the
+                        positioning: an EMBEDDED partner. */}
                     <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] block font-semibold mb-2">
-                      Value Has Gravity
+                      Where Balance Meets Value
                     </span>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">
-                      What Has Value, <br /><span className="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]">Has Gravity.</span>
+                      The communications team <span className="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]">inside your business.</span>
                     </h1>
-                    <p className="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-sm sm:max-w-md">
-                      Gravity draws things together. Balance gives them form. And when the two meet, value becomes something people can feel, recognise and remember.
+                    <p className="text-sm md:text-[15px] font-light text-slate-200 leading-relaxed max-w-sm sm:max-w-md">
+                      Investor decks, reports, brand and campaigns, made by a senior team that works as part of yours.
                     </p>
 
                   </div>
@@ -113,16 +124,15 @@ export function GravityHero() {
               {/* Top/Middle Content Block: Title & Body (3 lines title, compact width) */}
               <div className="max-w-xl space-y-3 pt-10 sm:pt-14 md:pt-16">
                 <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] block font-semibold mb-2">
-                  Embedded Communications Partner
+                  What we cover
                 </span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">
-                  One Team for Every <br />
-                  Business Communication &amp; <br />
-                  <span className="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]">Marketing Need.</span>
+                  Four capabilities. <br />
+                  <span className="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]">One embedded partner.</span>
                 </h2>
 
-                <p className="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-sm sm:max-w-md">
-                  From business communication and brand identity to marketing and experiences, Gravino brings every discipline together under one connected team.
+                <p className="text-sm md:text-[15px] font-light text-slate-200 leading-relaxed max-w-sm sm:max-w-md">
+                  The same people across every format, so nothing is lost between the deck, the brand and the campaign.
                 </p>
                 {/* Mobile (< md): the four disciplines as a plain list under the
                     body (the client, 2026-10-01), not four boxes. Each keeps its
@@ -130,7 +140,7 @@ export function GravityHero() {
                 <ul className="md:hidden pt-2 max-w-lg space-y-2 pointer-events-auto">
                   {[
                     ["Business Communication", "bg-white"],
-                    ["Brand & Identity", "bg-[#24c1ff]"],
+                    ["Brand Identity", "bg-[#24c1ff]"],
                     ["Marketing & Growth", "bg-[#cc4ec7]"],
                     ["Experience & Engagement", "bg-[#7642cf]"],
                   ].map(([label, dot]) => (
@@ -150,10 +160,10 @@ export function GravityHero() {
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Business Communication</span>
                 </div>
 
-                {/* 2. Left of planet - Lower: Brand & Identity (moved right over planet) */}
+                {/* 2. Left of planet - Lower: Brand Identity (moved right over planet) */}
                 <div id="caption-box-2" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-cyan-400/35 hover:border-cyan-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "36%", top: "68%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#24c1ff] shadow-[0_0_8px_#24c1ff] flex-shrink-0"></span>
-                  <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Brand &amp; Identity</span>
+                  <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Brand Identity</span>
                 </div>
 
                 {/* 3. Right of planet - Upper: Marketing & Growth */}
@@ -172,7 +182,7 @@ export function GravityHero() {
               {/* Direct Explore Capabilities Pill Button */}
               <div className="flex justify-center pt-2 pb-1 hero-ui-interactive pointer-events-auto">
                 <a href="#what-we-cover" className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-purple-400/40 hover:border-purple-400 bg-purple-950/60 hover:bg-purple-900/80 backdrop-blur text-xs tracking-wider text-purple-200 hover:text-white transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)]">
-                  <span>Explore 4 Capabilities</span>
+                  <span>See what we cover</span>
                   <svg className="w-3.5 h-3.5 transform group-hover:translate-y-0.5 transition-transform text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                 </a>
               </div>

@@ -19,14 +19,40 @@
  * editing this file, not site.ts. That is the trade for using his build
  * unmodified, and it is the one real cost of the approach.
  *
- * The markup is checked at generation time for backticks, backslashes and
- * ${, none of which it contains, so it needs no escaping inside the template
- * literal below.
+ * The markup is checked at generation time for backticks and backslashes,
+ * none of which it contains. It does contain two ${...} insertions: the
+ * generated "What we cover" totem and panels.
  * ======================================================================== */
+
+import { CAPABILITIES, deliverableTileHtml } from "./capabilities";
+
+/* "What we cover" is generated from content/capabilities.ts, the one source
+   for the four capability names and their deliverables (the client,
+   2026-10-08). The ids and classes Arun's capabilities.js relies on
+   (num-selector, data-target, cap-N, cap-content-panel, is-active,
+   cap-title, cap-item-N) are kept exactly. */
+const esc = (t: string) => t.replace(/&/g, "&amp;");
+
+const TOTEM_HTML = CAPABILITIES.map(
+  (c, i) => `            <button class="num-selector${i === 0 ? " active" : ""}" data-target="cap-${i + 1}" aria-label="${c.n} ${esc(c.name)}">
+              <span class="num-text">${c.n}</span>
+              <span class="num-label">${esc(c.name)}</span>
+            </button>`,
+).join("\n");
+
+const PANELS_HTML = CAPABILITIES.map(
+  (c, i) => `            <div id="cap-${i + 1}" class="cap-content-panel${i === 0 ? " is-active" : ""}">
+              <span class="cap-mobile-label">${c.n}</span>
+              <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#c084fc] leading-snug">${esc(c.name)}</h3>
+              <p class="cap-item-1 mt-2 text-sm md:text-[15px] text-slate-200 font-light leading-relaxed">${esc(c.line)}</p>
+              <ul class="cap-item-2 dl-grid mt-6" aria-label="What we make">${c.deliverables.map(deliverableTileHtml).join("")}</ul>
+              <a class="cap-item-3 cap-more" href="/services/#${c.id}">See ${esc(c.name)} in detail <span aria-hidden="true">&rarr;</span></a>
+            </div>`,
+).join("\n");
 
 export const ARUN_SECTIONS_HTML = String.raw`
   <section id="what-we-cover" class="page-section relative overflow-visible bg-black text-white min-h-screen flex items-center justify-center py-20 sm:py-24 px-6 sm:px-10 md:px-14 lg:px-20 scroll-mt-0 border-b border-white/10" style="background: radial-gradient(circle at 50% 35%, #0f0c1d 0%, #06060a 65%, #000000 100%);">
-    
+
     <!-- Top feathering gradient to seamlessly blend from the hero space into section 2 -->
     <div class="absolute top-0 left-0 right-0 h-36 bg-gradient-to-b from-transparent via-[#06060a]/60 to-transparent pointer-events-none z-0"></div>
 
@@ -44,256 +70,30 @@ export const ARUN_SECTIONS_HTML = String.raw`
       <!-- LEFT COLUMN: Headline & Subtitle -->
       <div class="w-full lg:w-[32%] xl:w-[30%] space-y-6 flex flex-col justify-center text-left relative z-10">
         <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] block font-semibold mb-2">
-          Comprehensive Capability
+          What we cover
         </span>
-        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">
-          <span class="block whitespace-nowrap">Four Capabilities.</span>
-          <span class="block whitespace-nowrap font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8]">One Connected</span>
-          <span class="block whitespace-nowrap font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">Team.</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-light tracking-tight text-white leading-[1.15]">
+          From the board deck <span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1">to the launch film.</span>
         </h2>
-        <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed max-w-sm sm:max-w-md">
-          From business communication to brand, growth and experience, and we bring the disciplines together around what your business needs to achieve.
+        <p class="text-sm md:text-[15px] font-light text-slate-200 leading-relaxed max-w-sm sm:max-w-md [text-shadow:0_1px_14px_rgba(0,0,0,0.95)] lg:[text-shadow:none]">
+          One team across all four, so your story stays the same in every format.
         </p>
       </div>
 
       <!-- RIGHT STAGE: Numbers overlapping the Translucent Black Box -->
       <div class="w-full lg:w-[67%] xl:w-[69%] flex flex-col lg:flex-row items-center relative z-20">
-        
+
         <!-- MIDDLE: 01, 02, 03, 04 Totem (Overlapping the box by half) -->
         <div class="w-full lg:w-auto flex flex-col items-center justify-center select-none py-4 lg:py-0 overflow-visible relative z-30 pointer-events-auto lg:-mr-[75px] xl:-mr-[85px]">
           <div id="totem-numbers" class="flex flex-col items-center justify-center -space-y-1 sm:-space-y-2 overflow-visible w-full">
-            
-            <button class="num-selector active" data-target="cap-1" aria-label="01 Business Communication">
-              <span class="num-text">01</span>
-              <span class="num-label">Business Communication</span>
-            </button>
-            
-            <button class="num-selector" data-target="cap-2" aria-label="02 Brand & Identity">
-              <span class="num-text">02</span>
-              <span class="num-label">Brand &amp; Identity</span>
-            </button>
-            
-            <button class="num-selector" data-target="cap-3" aria-label="03 Marketing & Growth">
-              <span class="num-text">03</span>
-              <span class="num-label">Marketing &amp; Growth</span>
-            </button>
-            
-            <button class="num-selector" data-target="cap-4" aria-label="04 Experience & Engagement">
-              <span class="num-text">04</span>
-              <span class="num-label">Experience &amp; Engagement</span>
-            </button>
-
+${TOTEM_HTML}
           </div>
         </div>
 
-        <!-- RIGHT: Interactive Content Panels Stage (Translucent Glass Box with soft blur, No Outline, Overlapped by Numbers) -->
+        <!-- RIGHT: Interactive Content Panels Stage -->
         <div class="w-full flex-1 bg-black/10 backdrop-blur-sm rounded-3xl p-6 sm:p-8 lg:py-10 lg:pr-10 lg:pl-28 xl:pl-32 shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative z-20">
           <div class="cap-panel-stage relative w-full">
-
-            <!-- 01. BUSINESS COMMUNICATION -->
-            <div id="cap-1" class="cap-content-panel is-active space-y-6">
-              <span class="cap-mobile-label">01 / Business Communication</span>
-              <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
-                Make Every Business<br>Conversation Count.
-              </h3>
-              <div class="space-y-6 sm:space-y-7 pt-1">
-                <div class="cap-item-1 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Communicate with clarity: corporate &amp; business communication
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    From company presentations to executive communications, we turn complex business information into clear, compelling narratives.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Corporate presentations</div>
-                    <div>&bull; Annual reports &amp; business documents</div>
-                    <div>&bull; Executive &amp; internal communications</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-2 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Win the room: investor &amp; stakeholder communication
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Build the story, structure the message and design the materials that help leaders communicate with confidence.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Investor presentations</div>
-                    <div>&bull; Boardroom presentations</div>
-                    <div>&bull; Pitch decks &amp; proposals</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-3 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Lead with authority: thought leadership
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Turn expertise into communication that builds credibility, influence and trust.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Whitepapers</div>
-                    <div>&bull; Reports &amp; insights</div>
-                    <div>&bull; Case studies &amp; newsletters</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 02. BRAND & IDENTITY -->
-            <div id="cap-2" class="cap-content-panel space-y-6">
-              <span class="cap-mobile-label">02 / Brand &amp; Identity</span>
-              <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
-                Build a Brand<br>People Recognise.
-              </h3>
-              <div class="space-y-6 sm:space-y-7 pt-1">
-                <div class="cap-item-1 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Define your difference: brand strategy
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Find the position, purpose and promise that give your business a distinctive place in the market.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Brand strategy</div>
-                    <div>&bull; Positioning &amp; messaging</div>
-                    <div>&bull; Naming &amp; brand architecture</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-2 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Make it recognisable: visual identity
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Create a visual system that makes your value visible, consistent and unmistakably yours.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Logo &amp; identity systems</div>
-                    <div>&bull; Brand guidelines</div>
-                    <div>&bull; Visual communication</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-3 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Bring the brand to life: brand experience
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Extend your identity across every touchpoint so the brand feels consistent wherever people meet it.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Brand touchpoints &amp; collateral</div>
-                    <div>&bull; Environmental &amp; spatial design</div>
-                    <div>&bull; Brand launch &amp; rollout</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 03. MARKETING & GROWTH -->
-            <div id="cap-3" class="cap-content-panel space-y-6">
-              <span class="cap-mobile-label">03 / Marketing &amp; Growth</span>
-              <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
-                Turn Attention<br>into Pipeline.
-              </h3>
-              <div class="space-y-6 sm:space-y-7 pt-1">
-                <div class="cap-item-1 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Launch with momentum: go-to-market communication
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Plan and execute product launches and market entries that generate immediate traction and interest.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Product launch campaigns</div>
-                    <div>&bull; Go-to-market strategy</div>
-                    <div>&bull; Content marketing &amp; distribution</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-2 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Scale your presence: always-on marketing
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Maintain continuous marketing momentum through consistent communication across your most important channels.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Social &amp; digital content</div>
-                    <div>&bull; Campaign creative &amp; execution</div>
-                    <div>&bull; Website design &amp; development</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-3 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Convert at every touchpoint: sales enablement
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Equip sales teams with the communication assets they need to close conversations faster.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Sales decks &amp; collateral</div>
-                    <div>&bull; Product one-pagers</div>
-                    <div>&bull; Proposal design &amp; templates</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 04. EXPERIENCE & ENGAGEMENT -->
-            <div id="cap-4" class="cap-content-panel space-y-6">
-              <span class="cap-mobile-label">04 / Experience &amp; Engagement</span>
-              <h3 class="cap-title text-2xl sm:text-[28px] md:text-3xl font-medium tracking-tight text-[#a855f7] leading-snug">
-                Make Every Interaction<br>Memorable.
-              </h3>
-              <div class="space-y-6 sm:space-y-7 pt-1">
-                <div class="cap-item-1 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Deliver seamless interactions: digital product communication
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Design the interfaces, onboarding flows and product communication that make digital products feel effortless.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; UX/UI design</div>
-                    <div>&bull; Product onboarding &amp; microcopy</div>
-                    <div>&bull; Feature announcement communication</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-2 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Create an impression: spatial &amp; physical brand experience
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Extend brand communication into real-world spaces, creating environments that leave lasting impressions.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Environmental &amp; spatial branding</div>
-                    <div>&bull; Event &amp; exhibition design</div>
-                    <div>&bull; Print &amp; packaging design</div>
-                  </div>
-                </div>
-
-                <div class="cap-item-3 space-y-2">
-                  <h4 class="text-sm sm:text-[15px] font-medium text-[#38bdf8] leading-snug">
-                    Bring stories to life: film, motion &amp; multimedia
-                  </h4>
-                  <p class="text-xs sm:text-sm md:text-[15px] text-slate-300 font-light leading-relaxed">
-                    Use motion, sound and moving image to communicate complex ideas with emotional resonance.
-                  </p>
-                  <div class="text-xs text-slate-400 font-light space-y-1 pt-1">
-                    <div>&bull; Brand films &amp; video</div>
-                    <div>&bull; 2D &amp; 3D motion design</div>
-                    <div>&bull; Interactive presentations &amp; digital tools</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+${PANELS_HTML}
           </div>
         </div>
       </div>
@@ -398,39 +198,38 @@ export const ARUN_SECTIONS_HTML = String.raw`
 
 
   <!-- SECTION: START A PROJECT (CTA). Was the free one-page review offer
-       until 2026-10-01; now it asks for the project itself. -->
-  <section id="start-a-project" class="page-section py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10 bg-gradient-to-b from-[#09090f] via-[#13172e] to-[#050507] relative overflow-hidden scroll-mt-20">
+       until 2026-10-01; now it asks for the project itself. Rebuilt
+       2026-10-08 (review): it said "Start a Project" twice, ran two
+       paragraphs and a "Clarity / Strategy / Scale" line that said nothing.
+       Now: who has trusted us, one sentence, one button. -->
+  <section id="start-a-project" class="page-section py-20 sm:py-24 px-6 sm:px-10 md:px-14 lg:px-20 border-t border-white/10 bg-gradient-to-b from-[#09090f] via-[#13172e] to-[#050507] relative overflow-hidden scroll-mt-20">
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#7b3fe4]/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#20c4f4]/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="max-w-7xl mx-auto relative z-10">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-        <div class="lg:col-span-7 space-y-6">
-          <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">Start a Project</span>
-          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Tell us what you are <br><span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">working on.</span></h2>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">An investor deck, an annual or ESG report, a brand, a film or a campaign. Tell us what it is, when it is due and roughly what you have in mind, and a senior member of our team comes back within a working day.</p>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-400 leading-relaxed">How we start: a short conversation, then scope, approach and a clear quote, fixed before any work begins. Your files and full copyright transfer to you on completion. What you share stays confidential.</p>
-          <div class="pt-4 text-base sm:text-lg font-light text-white flex flex-wrap items-center gap-6 border-t border-white/15">
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#20c4f4]"></span>Clarity</span>
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#7b3fe4]"></span>Strategy</span>
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#ec4899]"></span>Scale</span>
-          </div>
+
+      <!-- Proof: who has trusted us with the work. -->
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-10 pb-10 mb-12 border-b border-white/10">
+        <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold shrink-0">Trusted by</span>
+        <ul class="flex flex-wrap items-center gap-x-10 gap-y-3 text-2xl sm:text-[28px] font-light tracking-tight text-white/85" aria-label="Clients">
+          <li>LiMRA</li>
+          <li>The Grid</li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+        <div class="lg:col-span-7 space-y-5">
+          <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">Start a project</span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Tell us what you are <span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1">working on.</span></h2>
+          <p class="text-sm md:text-[15px] font-light text-slate-200 leading-relaxed max-w-xl">Tell us what it is and when it is due. A senior member of our team replies within a working day.</p>
         </div>
-        <div class="lg:col-span-5 flex justify-center lg:justify-end">
-          <div class="w-full max-w-md space-y-5 bg-black/10 backdrop-blur-sm rounded-3xl p-6 sm:p-8 lg:p-9 shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative">
-            <span class="text-xs font-mono uppercase tracking-wider text-[#20c4f4] font-semibold block">Project Intake</span>
-            <h3 class="text-xl font-semibold text-white">Start a Project</h3>
-            <p class="text-xs text-slate-300 leading-relaxed font-light">Two minutes of details: the service, the timeline, a budget range and a few lines about the work. We reply within a working day.</p>
-            <button class="trigger-intake btn-gravino w-full text-center py-3.5"><span>Start a Project &rarr;</span></button>
-            <div class="text-[11px] font-mono text-slate-400 text-center pt-2 flex items-center justify-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              100% Confidential &middot; Full NDA Available
-            </div>
-          </div>
+        <div class="lg:col-span-5 lg:justify-self-end w-full max-w-md space-y-4">
+          <button class="trigger-intake btn-gravino w-full text-center py-3.5"><span>Start a project &rarr;</span></button>
+          <p class="text-[11px] font-mono text-slate-400 text-center flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+            <span>Confidential</span><span aria-hidden="true" class="text-slate-600">&middot;</span><span>NDA available</span><span aria-hidden="true" class="text-slate-600">&middot;</span><span>Copyright transfers to you</span>
+          </p>
         </div>
       </div>
     </div>
   </section>
-
-
 
 `;

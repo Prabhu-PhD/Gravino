@@ -7,6 +7,7 @@ import {
   isSuccess,
   errorFrom,
 } from "@/lib/form-transport";
+import { SERVICE_OPTIONS } from "@/content/capabilities";
 
 /* ===========================================================================
  * The project intake form. ONE implementation, rendered in two places: inside
@@ -55,14 +56,9 @@ import {
    scans. No dashes in ranges: "to". */
 type Option = { value: string; label?: string; hint?: string };
 
-const SERVICES: Option[] = [
-  { value: "Investor or board deck" },
-  { value: "Annual, ESG or impact report" },
-  { value: "Brand identity" },
-  { value: "Film or motion" },
-  { value: "Campaign or digital marketing" },
-  { value: "Something else" },
-];
+/* The four capability names, the same everywhere on the site
+   (content/capabilities.ts), and "Not sure yet". */
+const SERVICES: Option[] = SERVICE_OPTIONS.map((value) => ({ value }));
 /* Short labels: the timeline box is half width, and "Within a month" cut
    off to "Within a m..." on a 390px phone (measured). The full value still
    goes to the email. */

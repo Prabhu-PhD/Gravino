@@ -29,7 +29,6 @@ export default function Portfolio() {
     <Page>
       <JsonLd data={breadcrumbLd("Portfolio", "/portfolio/")} />
       <PageHead
-        figure
         eyebrow="Selected work"
         headline="The work, from brief to"
         accent="the finished piece."
@@ -48,6 +47,7 @@ export default function Portfolio() {
                   <img
                     src={c.cover}
                     alt=""
+                    style={c.coverPosition ? { objectPosition: c.coverPosition } : undefined}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     loading="lazy"
                     decoding="async"

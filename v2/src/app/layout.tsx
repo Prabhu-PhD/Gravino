@@ -19,9 +19,9 @@ const dm = DM_Sans({
   display: "swap",
 });
 
-const TITLE = "Gravino | One team for everything your business needs to say";
+const TITLE = "Gravino | Your embedded communications partner";
 const DESCRIPTION =
-  "One senior team for the full surface of how your business communicates: investor decks, reports, brand, motion and campaigns. Where Balance Meets Value.";
+  "A senior team that works as part of yours: investor decks, reports, brand, marketing and experiences. Where Balance Meets Value.";
 
 export const metadata: Metadata = {
   /* Without metadataBase, Next emits RELATIVE Open Graph image URLs, which no

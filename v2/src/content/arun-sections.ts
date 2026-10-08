@@ -407,7 +407,7 @@ export const ARUN_SECTIONS_HTML = String.raw`
         <div class="lg:col-span-7 space-y-6">
           <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#a78bfa] font-semibold block mb-2">Start a Project</span>
           <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-light tracking-tight text-white leading-[1.15]">Tell us what you are <br><span class="font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#60a5fa] to-[#38bdf8] pb-1 inline-block">working on.</span></h2>
-          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">An investor deck, an annual or ESG report, a brand, a film or a campaign. Tell us what it is, when it is due and roughly what you have in mind, and one of the four of us comes back within a working day.</p>
+          <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-300 leading-relaxed">An investor deck, an annual or ESG report, a brand, a film or a campaign. Tell us what it is, when it is due and roughly what you have in mind, and a senior member of our team comes back within a working day.</p>
           <p class="text-xs sm:text-sm md:text-[15px] font-light text-slate-400 leading-relaxed">How we start: a short conversation, then scope, approach and a clear quote, fixed before any work begins. Your files and full copyright transfer to you on completion. What you share stays confidential.</p>
           <div class="pt-4 text-base sm:text-lg font-light text-white flex flex-wrap items-center gap-6 border-t border-white/15">
             <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#20c4f4]"></span>Clarity</span>

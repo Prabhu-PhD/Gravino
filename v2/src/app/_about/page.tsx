@@ -47,8 +47,7 @@ export const metadata = {
  * ======================================================================== */
 
 const FACTS = [
-  { value: SITE.teamSize, suffix: "", label: "senior people, and every client works with all of them" },
-  { value: SITE.experienceYears, suffix: "+", label: "years of experience between them" },
+  { value: SITE.experienceYears, suffix: "+", label: "years of experience across our team" },
   { value: 10, suffix: "", label: "disciplines, from the investor deck to the launch film" },
   { value: MARKETS.length, suffix: "", label: `markets: ${MARKETS.join(", ")}` },
 ];
@@ -226,7 +225,7 @@ export default function About() {
       <CtaBand
         headline="See whether the standard"
         accent="holds up."
-        body="Tell us about the deck, report, brand, film or campaign in front of you. One of the four of us comes back within a working day with questions, an approach and a clear next step."
+        body="Tell us about the deck, report, brand, film or campaign in front of you. A senior member of our team comes back within a working day with questions, an approach and a clear next step."
       />
     </Page>
   );

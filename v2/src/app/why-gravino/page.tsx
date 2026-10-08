@@ -138,7 +138,7 @@ export default function WhyGravino() {
       <CtaBand
         headline="See how we would handle"
         accent="yours."
-        body="Tell us about the deck, report, brand, film or campaign in front of you. One of the four of us comes back within a working day with questions, an approach and a clear next step."
+        body="Tell us about the deck, report, brand, film or campaign in front of you. A senior member of our team comes back within a working day with questions, an approach and a clear next step."
       />
     </Page>
   );

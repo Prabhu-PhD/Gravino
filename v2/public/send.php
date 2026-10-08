@@ -87,13 +87,13 @@ function config(): array {
  * Fails open: if the folder cannot be written, the enquiry goes through and
  * the problem is logged. Losing a lead is worse than letting a spammer by.
  * ------------------------------------------------------------------------ */
-function rate_limited(string $ip): bool {
+function rate_limited(string $ip, string $bucket = 'gravino', int $burst = 3, int $daily = 10): bool {
     $dir = __DIR__ . '/../gravino-ratelimit';
     if (!is_dir($dir) && !@mkdir($dir, 0700) && !is_dir($dir)) {
         error_log('send.php: rate-limit folder not writable: ' . $dir);
         return false;
     }
-    $file = $dir . '/' . hash('sha256', 'gravino|' . $ip) . '.json';
+    $file = $dir . '/' . hash('sha256', $bucket . '|' . $ip) . '.json';
     $h = @fopen($file, 'c+');
     if ($h === false) {
         error_log('send.php: rate-limit file not writable');
@@ -104,7 +104,7 @@ function rate_limited(string $ip): bool {
     $seen = json_decode(stream_get_contents($h) ?: '[]', true);
     $seen = array_values(array_filter(is_array($seen) ? $seen : [], static fn($t) => is_int($t) && $t > $now - 86400));
     $recent = count(array_filter($seen, static fn($t) => $t > $now - 600));
-    $limited = $recent >= 3 || count($seen) >= 10;
+    $limited = $recent >= $burst || count($seen) >= $daily;
     if (!$limited) {
         $seen[] = $now;
     }
@@ -123,6 +123,66 @@ function rate_limited(string $ip): bool {
         }
     }
     return $limited;
+}
+
+/* ---------------------------------------------------------------------------
+ * ENQUIRY REFERENCES, for "add a link" after sending (the client, 2026-10-08:
+ * paste a link, no uploads). Each enquiry gets a random reference, returned
+ * to the visitor's browser only. A link is accepted only with a reference
+ * issued in the last 24 hours, at most 5 per enquiry, and the follow-up email
+ * takes the name, email and subject from what WE stored, never from the
+ * request, so this cannot be used to send arbitrary mail to the inbox.
+ * Stored hashed, in a folder above public_html; lapsed ones are swept.
+ * ------------------------------------------------------------------------ */
+function ref_dir(): string {
+    return __DIR__ . '/../gravino-ratelimit/refs';
+}
+
+function ref_store(array $meta): string {
+    $dir = ref_dir();
+    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) {
+        error_log('send.php: refs folder not writable');
+        return '';
+    }
+    $ref = bin2hex(random_bytes(16));
+    $meta['created'] = time();
+    $meta['links'] = 0;
+    if (@file_put_contents($dir . '/' . hash('sha256', $ref) . '.json', json_encode($meta), LOCK_EX) === false) {
+        error_log('send.php: ref not written');
+        return '';
+    }
+    if (random_int(1, 50) === 1) {
+        foreach (glob($dir . '/*.json') ?: [] as $f) {
+            if (@filemtime($f) < time() - 86400) {
+                @unlink($f);
+            }
+        }
+    }
+    return $ref;
+}
+
+/** The stored enquiry for a reference, with its link counter taken, or null. */
+function ref_take(string $ref): ?array {
+    if (!preg_match('/^[a-f0-9]{32}$/', $ref)) {
+        return null;
+    }
+    $file = ref_dir() . '/' . hash('sha256', $ref) . '.json';
+    $h = @fopen($file, 'r+');
+    if ($h === false) {
+        return null;
+    }
+    flock($h, LOCK_EX);
+    $meta = json_decode(stream_get_contents($h) ?: '', true);
+    $ok = is_array($meta) && ($meta['created'] ?? 0) > time() - 86400 && ($meta['links'] ?? 99) < 5;
+    if ($ok) {
+        $meta['links']++;
+        ftruncate($h, 0);
+        rewind($h);
+        fwrite($h, json_encode($meta));
+    }
+    flock($h, LOCK_UN);
+    fclose($h);
+    return $ok ? $meta : null;
 }
 
 function fail(string $message, int $code = 400): void {
@@ -216,6 +276,41 @@ $field = static function (string $key) use ($data): string {
 /* Honeypot: hidden from people, irresistible to bots. Answer 200 so the bot
    believes it worked and does not retry with variations. */
 if ($field('website') !== '') {
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+/* A link added after sending: see ENQUIRY REFERENCES above. */
+if ($field('followup') === '1') {
+    $link = $field('link');
+    if ($link === '' || mb_strlen($link) > 500 || !filter_var($link, FILTER_VALIDATE_URL)
+        || !preg_match('#^https?://#i', $link) || preg_match('/[\r\n<>"]/', $link)) {
+        fail('Please paste a full link, starting with https://');
+    }
+    if ($cfg['api_key'] === '') {
+        fail('That did not reach us. Please email it to create@gravino.in.', 500);
+    }
+    if (rate_limited((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 'link', 5, 20)) {
+        fail('That is a lot of links at once. Please email the rest to create@gravino.in.', 429);
+    }
+    $lead = ref_take($field('ref'));
+    if ($lead === null) {
+        fail('This enquiry can no longer take links here. Please email it to create@gravino.in.', 410);
+    }
+    [$fSubject, $fHtml, $fText] = link_email($lead, $link);
+    $leadName = str_replace(['"', '<', '>'], '', (string) $lead['name']);
+    [$status, $resBody, $err] = resend_post($cfg, [
+        'from'     => $cfg['from'],
+        'to'       => [$cfg['to']],
+        'reply_to' => $leadName !== '' ? sprintf('%s <%s>', $leadName, $lead['email']) : (string) $lead['email'],
+        'subject'  => $fSubject,
+        'html'     => $fHtml,
+        'text'     => $fText,
+    ]);
+    if ($err !== '' || $status < 200 || $status >= 300) {
+        error_log(sprintf('send.php link failure: http=%d curl=%s', $status, $err));
+        fail('That did not reach us. Please email it to create@gravino.in.', 502);
+    }
     echo json_encode(['ok' => true]);
     exit;
 }
@@ -397,13 +492,15 @@ function lead_email(array $f, int $ts, string $ip): array {
     $dueText = $due->format('D j M, g:i a') . ' IST';
     $gotText = $got->format('D j M, g:i a') . ' IST';
 
-    $subjectParts = array_filter([
-        $f['service'],
+    /* Short and clear (the client, 2026-10-08): what, then who. Budget,
+       timeline and the reply-by time ride in the preheader, the grey preview
+       line most inboxes show under the subject. */
+    $subject = 'New enquiry: ' . $f['service'] . ', ' . $who;
+    $preheader = implode(' · ', [
         $f['budget'] !== '' ? short_budget($f['budget']) : 'Budget not given',
         $f['timeline'],
-        $who,
-    ], static fn($s) => $s !== '');
-    $subject = 'New lead · ' . implode(' · ', $subjectParts);
+        'Reply by ' . $dueText,
+    ]);
 
     /* Reply: a first response already addressed, with gaps marked in [square
        brackets] to fill. One click and a quick edit, not a blank page. */
@@ -468,7 +565,7 @@ function lead_email(array $f, int $ts, string $ip): array {
     $footer = 'Sent from the project intake form on gravino.in. Replying to this email answers ' . h($f['name']) . ' directly.<br>'
         . 'IP ' . h($ip) . ' &middot; ' . gmdate('Y-m-d H:i:s', $ts) . ' UTC';
 
-    $html = email_frame('Reply by ' . $dueText . '. ' . $f['service'] . ', ' . $f['timeline'] . '.', 'New lead', $inner, $footer);
+    $html = email_frame($preheader, 'New enquiry', $inner, $footer);
 
     $text = implode("\n", [
         'NEW PROJECT ENQUIRY: ' . $who,
@@ -500,6 +597,30 @@ function lead_email(array $f, int $ts, string $ip): array {
     return [$subject, $html, $text];
 }
 
+/** A link added to an enquiry after sending. Returns [subject, html, text].
+ *  "Re: " + the lead's own subject, so most inboxes file it with the lead. */
+function link_email(array $lead, string $link): array {
+    $host = (string) (parse_url($link, PHP_URL_HOST) ?: 'link');
+    $subject = 'Re: ' . (string) $lead['subject'];
+    $inner =
+        '<p style="margin:0;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6b6790;">Added to an enquiry</p>'
+        . '<h1 style="margin:6px 0 4px 0;font-size:22px;line-height:28px;font-weight:bold;color:#1b1838;">' . h((string) $lead['name']) . ' sent a link</h1>'
+        . '<p style="margin:0 0 18px 0;font-size:15px;line-height:21px;color:#3d3a5c;">For the enquiry: ' . h((string) $lead['subject']) . '</p>'
+        . '<div>' . email_button($link, 'Open ' . $host, '#5b3fd6', '#ffffff') . '</div>'
+        . '<p style="margin:8px 0 0 0;font-size:13px;line-height:19px;color:#6b6790;word-break:break-all;">' . h($link) . '</p>';
+    $footer = 'Added from the success screen of the project intake form on gravino.in. Replying answers ' . h((string) $lead['name']) . ' directly.<br>'
+        . 'Links open third-party sites; check the address before signing in anywhere.';
+    $html = email_frame($lead['name'] . ' added a link: ' . $host, 'Link added', $inner, $footer);
+    $text = implode("\n", [
+        $lead['name'] . ' added a link to their enquiry:',
+        $link,
+        '',
+        'Enquiry: ' . $lead['subject'],
+        'Replying to this email answers ' . $lead['name'] . ' directly.',
+    ]);
+    return [$subject, $html, $text];
+}
+
 /** The confirmation to the visitor. Returns [subject, html, text]. */
 function confirmation_email(array $f): array {
     $first = first_name($f['name']);
@@ -516,7 +637,7 @@ function confirmation_email(array $f): array {
         . '<p style="margin:0 0 20px 0;font-size:15px;line-height:23px;color:#3d3a5c;">Your project details reached us. Here is what happens next.</p>'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
         // The same three steps as the site (src/lib/next-steps.ts). Keep in step.
-        . $step(1, 'We read it ourselves', 'Not a form queue. One of the four reads every project that comes in.')
+        . $step(1, 'We read it ourselves', 'Not a form queue. A senior member of our team reads every project that comes in.')
         . $step(2, 'A short conversation', 'Within a working day we come back with questions and a time to talk it through.')
         . $step(3, 'Then, a clear quote', 'Scope, approach and price, fixed before any work begins.')
         . '</table>'
@@ -544,8 +665,8 @@ function confirmation_email(array $f): array {
         '',
         'Thank you. Your project details reached us. What happens next:',
         '',
-        '  1. We read it ourselves. Not a form queue: one of the four reads',
-        '     every project that comes in.',
+        '  1. We read it ourselves. Not a form queue: a senior member of our',
+        '     team reads every project that comes in.',
         '  2. A short conversation. Within a working day we come back with',
         '     questions and a time to talk it through.',
         '  3. Then, a clear quote. Scope, approach and price, fixed before any',
@@ -598,6 +719,10 @@ if ($err !== '' || $status < 200 || $status >= 300) {
     fail('We could not send that just now. Please email create@gravino.in directly.', 502);
 }
 
+// A reference for "add a link". Empty if it could not be stored, in which
+// case the success screen falls back to the email address.
+$ref = ref_store(['name' => $name, 'email' => $email, 'subject' => $subject]);
+
 /* The enquiry has reached us. Now the visitor's confirmation, best effort:
    whatever happens to it, they have already succeeded, so a failure here is
    logged and never shown to them. Reply-To is our inbox, so a reply to the
@@ -628,4 +753,4 @@ if ($confirm === 'on' || ($confirm === 'auto' && !$sharedSender)) {
     }
 }
 
-echo json_encode(['ok' => true, 'confirmation' => $confirmed]);
+echo json_encode(['ok' => true, 'confirmation' => $confirmed, 'ref' => $ref]);

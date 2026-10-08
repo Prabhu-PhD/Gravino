@@ -1,13 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useId, useState } from "react";
+import { createContext, useContext, useEffect, useId, useRef, useState } from "react";
 import {
   FORM_ENDPOINT,
   buildPayload,
   isSuccess,
   errorFrom,
 } from "@/lib/form-transport";
-import { NEXT_STEPS } from "@/lib/next-steps";
 
 /* ===========================================================================
  * The project intake form. ONE implementation, rendered in two places: inside
@@ -288,8 +287,11 @@ function validate(f: Record<string, string>): Errors {
   return e;
 }
 
-/** What the success screen echoes back. */
-type Sent = { first: string; email: string; service: string; timeline: string; budget: string; who: string; confirmation: boolean };
+/** What the success screen needs. `ref` lets a link be added afterwards. */
+type Sent = { first: string; email: string; summary: string[]; who: string; confirmation: boolean; ref: string };
+
+/** "Under ₹2 lakh (under $2,500)" -> "Under ₹2 lakh" for the one-line summary. */
+const shortBudget = (b: string) => b.replace(/\s*\(.*\)\s*$/, "");
 
 export function IntakeForm({ compact = false }: { compact?: boolean }) {
   const [state, setState] = useState<State>("idle");
@@ -351,17 +353,17 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
       if (!res.ok || !isSuccess(body)) {
         throw new Error(errorFrom(body) || "That did not send. Please email create@gravino.in directly.");
       }
+      const b = body as Record<string, unknown>;
       setSent({
         first: fields.name.split(/\s+/)[0] ?? "",
         email: fields.email,
-        service: fields.service,
-        timeline: fields.timeline,
-        budget: fields.budget,
+        summary: [fields.service, fields.timeline, fields.budget && shortBudget(fields.budget)].filter(Boolean),
         who: fields.company || fields.name,
-        confirmation: (body as Record<string, unknown>)?.confirmation === true,
+        confirmation: b?.confirmation === true,
+        ref: typeof b?.ref === "string" ? b.ref : "",
       });
       setState("sent");
-      form.reset();
+      // Not reset: "Wrong address?" brings the filled form back to correct.
     } catch (err) {
       setState("error");
       setError(
@@ -370,9 +372,28 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
     }
   }
 
-  if (state === "sent" && sent) {
-    return <Success sent={sent} inModal={compact} />;
-  }
+  const done = state === "sent" && sent !== null;
+
+  /* In the modal, the form's own header ("Tell us what you are working
+     on...") must not sit above the thank-you, and the dialog takes its name
+     from the thank-you instead. */
+  useEffect(() => {
+    if (!compact) return;
+    const intro = document.getElementById("intakeModalIntro");
+    const dialog = document.querySelector('#intakeModal [role="dialog"]');
+    if (intro) intro.hidden = done;
+    dialog?.setAttribute("aria-labelledby", done ? "intakeSuccessTitle" : "intakeModalTitle");
+    if (done) document.getElementById("intakeModal")?.scrollTo({ top: 0 });
+  }, [compact, done]);
+
+  const editDetails = () => {
+    setState("idle");
+    window.setTimeout(() => {
+      const email = document.querySelector<HTMLInputElement>(`form[data-intake="${prefix}"] input[name="email"]`);
+      email?.focus();
+      email?.select();
+    }, 50);
+  };
 
   /* Clear a field's error as soon as the visitor changes it. */
   const onChange = (e: React.FormEvent<HTMLFormElement>) => {
@@ -382,7 +403,10 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
 
   return (
     <IdPrefix.Provider value={prefix}>
-    <form key={round} onSubmit={onSubmit} onChange={onChange} noValidate className="space-y-6">
+    {done ? <Success sent={sent} onEdit={editDetails} /> : null}
+    {/* Kept mounted (hidden) behind the thank-you, so "Wrong address?" can
+        bring it back filled in. Cleared when the modal closes (round). */}
+    <form key={round} data-intake={prefix} hidden={done} onSubmit={onSubmit} onChange={onChange} noValidate className="space-y-6">
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label>
@@ -464,98 +488,199 @@ export function IntakeForm({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/* After sending. It used to be a tick and one line, a dead end (the client,
-   2026-10-08). Now it confirms WHAT was received, says what happens next and
-   when, and offers the two useful things to do meanwhile: send the deck or
-   brief, and look at the work. */
-function Success({ sent, inModal }: { sent: Sent; inModal: boolean }) {
-  const filesHref =
-    "mailto:create@gravino.in?subject=" +
-    encodeURIComponent(`Files for: ${sent.who}`) +
-    "&body=" +
-    encodeURIComponent("Attached: the deck, brief or links for the project I just described on gravino.in.\n\n");
-  const close = () => document.getElementById("closeIntakeBtn")?.click();
+/* After sending: SECOND VERSION (the client, 2026-10-08, on the first one:
+   "I can see a lot of problems here"). The first stacked the form's own header
+   above it, repeated "within a working day" three times, echoed the choices
+   as pills that looked selectable, ran three numbered steps, offered three
+   actions with the loudest one leading away, and relied on a mailto: link,
+   which does nothing for anyone using webmail without a mail app set up.
+
+   Now: one heading, one sentence saying who replies to which address (with a
+   way back if the address is wrong), the choices as a plain line, and two
+   actions: a link to a deck or brief (it reaches us as a follow-up to the
+   same enquiry) beside "See our work", the two at equal weight. The modal's
+   own header is hidden while this shows (see IntakeForm). */
+/** The two success actions share one style, so neither outranks the other. */
+const ACTION =
+  "inline-flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-white/15 bg-white/[0.06] px-5 " +
+  "text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/[0.1] sm:w-auto";
+
+function Success({ sent, onEdit }: { sent: Sent; onEdit: () => void }) {
+  const heading = useRef<HTMLHeadingElement>(null);
+  const [link, setLink] = useState("");
+  const [added, setAdded] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState("");
+  const [open, setOpen] = useState(false);
+  const inputId = useId();
+  const panelId = `${inputId}-panel`;
+
+  // Land focus on the confirmation, so a screen reader announces it and a
+  // keyboard user is not left on a button that no longer exists.
+  useEffect(() => {
+    heading.current?.focus();
+  }, []);
+
+  async function addLink(e: React.FormEvent) {
+    e.preventDefault();
+    const value = link.trim();
+    if (!/^https?:\/\/\S+\.\S+/i.test(value)) {
+      setProblem("Paste the full link, starting with https://");
+      return;
+    }
+    setBusy(true);
+    setProblem("");
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ followup: "1", ref: sent.ref, link: value, website: "" }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok || !isSuccess(body)) throw new Error(errorFrom(body) || "That did not reach us.");
+      setAdded((a) => [...a, value]);
+      setLink("");
+    } catch (err) {
+      setProblem(err instanceof Error && err.message ? err.message : "That did not reach us.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const host = (u: string) => {
+    try {
+      return new URL(u).hostname.replace(/^www\./, "");
+    } catch {
+      return u;
+    }
+  };
 
   return (
-    <div className="py-2" role="status">
-      <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#20c4f4]/70 bg-[#20c4f4]/12 text-[#20c4f4]">
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-light text-white">
-          {sent.first ? `Thank you, ${sent.first}.` : "Thank you."} It reached us.
-        </h3>
+    <div role="status" aria-live="polite" className="pt-1">
+      <div className="grid h-9 w-9 place-items-center rounded-full border border-[#20c4f4]/60 bg-[#20c4f4]/10 text-[#20c4f4]">
+        <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
       </div>
-
-      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="What you sent">
-        {[sent.service, sent.timeline, sent.budget].filter(Boolean).map((t) => (
-          <li key={t} className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1 text-[12px] text-slate-300">
-            {t}
-          </li>
-        ))}
-      </ul>
-
-      {/* The same three steps the /contact page promises (lib/next-steps). */}
-      <ol className="mt-6 space-y-3.5">
-        {NEXT_STEPS.map(([title, body], i) => (
-          <Step key={title} n={i + 1} title={title}>
-            {body}
-          </Step>
-        ))}
-      </ol>
-      <p className="mt-3 text-[12.5px] text-slate-400">
-        Replies go to <span className="text-slate-200">{sent.email}</span>.
+      <h3
+        id="intakeSuccessTitle"
+        ref={heading}
+        tabIndex={-1}
+        className="mt-4 text-2xl font-light tracking-tight text-white outline-none"
+      >
+        {sent.first ? `Thanks, ${sent.first}. We have it.` : "Thanks. We have it."}
+      </h3>
+      {/* text-wrap: wrap, not the site's "pretty", which pulled four words
+          down to avoid a short last line and left a ragged block in a 436px
+          paragraph (measured). Inline, because the global `p` rule is
+          unlayered and beats a utility class. */}
+      <p className="mt-2 text-[15px] leading-relaxed text-slate-300" style={{ textWrap: "wrap" } as React.CSSProperties}>
+        A senior member of our team will reply to <span className="font-medium text-white">{sent.email}</span> within a
+        working day.{" "}
+        <button type="button" onClick={onEdit} className="text-slate-400 underline decoration-slate-600 underline-offset-4 hover:text-white hover:decoration-slate-400">
+          Wrong address?
+        </button>
       </p>
-
-      <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-        <p className="text-[13.5px] font-medium text-white">Have a deck, brief or reference?</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-slate-300">
-          {sent.confirmation
-            ? `We have emailed a confirmation to ${sent.email}. Reply to it with any files or links and they join this enquiry.`
-            : "Send it to us now and it joins this enquiry, so the first reply can already speak to it."}
+      {sent.summary.length ? (
+        <p className="mt-3 flex flex-wrap gap-x-2 text-[13px] text-slate-400">
+          {sent.summary.map((t, k) => (
+            <span key={t} className="whitespace-nowrap">
+              {k ? <span aria-hidden className="mr-2 text-slate-600">&middot;</span> : null}
+              {t}
+            </span>
+          ))}
         </p>
-        {sent.confirmation ? null : (
-          <a
-            href={filesHref}
-            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#20c4f4]/40 bg-[#20c4f4]/10 px-4 text-[13px] font-medium text-cyan-100 transition-colors hover:border-[#20c4f4]/80 hover:bg-[#20c4f4]/15"
-          >
-            Email a deck or brief
-            <span aria-hidden>&rarr;</span>
-          </a>
-        )}
-      </div>
+      ) : null}
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <a
-          href="/portfolio/"
-          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-5 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgba(123,63,228,0.8)]"
-        >
-          See our work
-          <span aria-hidden>&rarr;</span>
+      {/* Two actions of EQUAL weight, side by side (the client, 2026-10-08:
+          the link box had outranked "See our work", which is the visitor's
+          natural next step). The link field opens in place, on demand. */}
+      {/* Stacked full-width on phones: side by side, the longer label
+          wrapped to two lines and the pair no longer read as equal. */}
+      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
+        <a href="/portfolio/" className={ACTION}>
+          See our work <span aria-hidden>&rarr;</span>
         </a>
-        {inModal ? (
-          <button type="button" onClick={close} className="min-h-11 rounded-lg px-4 text-sm text-slate-300 transition-colors hover:bg-white/5 hover:text-white">
-            Done
-          </button>
-        ) : null}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => {
+            setOpen((o) => !o);
+            window.setTimeout(() => document.getElementById(inputId)?.focus(), 30);
+          }}
+          className={`${ACTION} ${open ? "border-[#a78bfa]/50 bg-white/[0.09]" : ""}`}
+        >
+          Add a deck or brief <span aria-hidden>{open ? "\u2193" : "\u2192"}</span>
+        </button>
       </div>
-    </div>
-  );
-}
 
-function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
-  return (
-    <li className="flex gap-3">
-      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/15 font-mono text-[11px] text-slate-300">
-        {n}
-      </span>
-      <div>
-        <p className="text-[11px] font-mono uppercase tracking-[0.14em] text-[#a78bfa]">{title}</p>
-        <p className="mt-0.5 text-[13.5px] leading-relaxed text-slate-300">{children}</p>
-      </div>
-    </li>
+      {open ? (
+        <div id={panelId} className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          {sent.ref ? (
+            <form onSubmit={addLink} noValidate>
+              <label htmlFor={inputId} className="block text-[13px] leading-relaxed text-slate-300">
+                Paste a link (Google Drive, Dropbox, OneDrive, WeTransfer) and it joins this enquiry, so our first reply
+                can already speak to it.
+              </label>
+              <div className="mt-3 flex gap-2">
+                <input
+                  id={inputId}
+                  type="url"
+                  inputMode="url"
+                  autoComplete="off"
+                  placeholder="Paste a link"
+                  value={link}
+                  onChange={(e) => {
+                    setLink(e.target.value);
+                    if (problem) setProblem("");
+                  }}
+                  aria-invalid={problem ? true : undefined}
+                  aria-describedby={problem ? `${inputId}-problem` : undefined}
+                  className={`${FIELD_CLASS} min-w-0 flex-1`}
+                />
+                <button
+                  type="submit"
+                  disabled={busy || !link.trim()}
+                  className="shrink-0 rounded-lg bg-gradient-to-r from-[#3867d6] to-[#7b3fe4] px-4 text-sm font-semibold text-white transition-opacity disabled:opacity-40"
+                >
+                  {busy ? "Adding" : "Add"}
+                </button>
+              </div>
+              {problem ? (
+                <p id={`${inputId}-problem`} role="alert" className="mt-2 text-[12.5px] text-red-300">
+                  {problem}
+                </p>
+              ) : null}
+              {added.length ? (
+                <ul className="mt-3 space-y-1.5" aria-label="Links added">
+                  {added.map((u) => (
+                    <li key={u} className="flex items-center gap-2 text-[13px] text-slate-300">
+                      <svg className="h-3.5 w-3.5 shrink-0 text-[#20c4f4]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 16 16" aria-hidden>
+                        <path d="M3.5 8.5l3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="truncate">Added: {host(u)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </form>
+          ) : (
+            // No reference (the server could not store one): the address instead.
+            <p className="text-[13px] leading-relaxed text-slate-300">
+              Send a link to{" "}
+              <a href="mailto:create@gravino.in" className="text-white underline underline-offset-4">
+                create@gravino.in
+              </a>{" "}
+              and mention {sent.who}.
+            </p>
+          )}
+          {sent.confirmation ? (
+            <p className="mt-3 text-[12.5px] text-slate-500">Or reply to the confirmation we just emailed you, with files attached.</p>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -690,16 +815,18 @@ export function IntakeModal() {
           </svg>
         </button>
 
-        <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#20c4f4]">
-          Start a project
-        </p>
-        <h3 id="intakeModalTitle" className="mt-1.5 text-xl font-light text-white">
-          Tell us what you are working on
-        </h3>
-        <p className="mt-1.5 mb-5 text-sm leading-relaxed text-slate-300">
-          A few details and we come back within a working day with questions,
-          an approach and a clear next step.
-        </p>
+        <div id="intakeModalIntro">
+          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#20c4f4]">
+            Start a project
+          </p>
+          <h3 id="intakeModalTitle" className="mt-1.5 text-xl font-light text-white">
+            Tell us what you are working on
+          </h3>
+          <p className="mt-1.5 mb-5 text-sm leading-relaxed text-slate-300">
+            A few details and we come back within a working day with questions,
+            an approach and a clear next step.
+          </p>
+        </div>
 
         <IntakeForm compact />
       </div>

@@ -22,7 +22,6 @@ export const SITE = {
   location: "Chennai, India",
   markets: "US · Europe · Gulf · India",
   experienceYears: 75,
-  teamSize: 4,
 } as const;
 
 /* Work is deliberately absent until there is work to show: all three case
@@ -283,14 +282,14 @@ export type TeamMember = {
 
 export const ABOUT = {
   eyebrow: "About Gravino",
-  headline: "Small on purpose,",
-  accent: "senior by default.",
-  lede: "Four senior people who do the work themselves. Based in Chennai, working with businesses in India, the Gulf, Europe and the US.",
+  headline: "Senior by default,",
+  accent: "hands-on by design.",
+  lede: "A senior team that does the work itself. Based in Chennai, working with businesses in India, the Gulf, Europe and the US.",
   who: {
     label: "Who we are",
-    headline: "Four people.",
+    headline: "Our team.",
     accent: "One standard.",
-    lede: "Being small is the mechanism, not a limitation. Four people who have each spent a career in high-stakes rooms can hold one standard across every format, and every client works with all four.",
+    lede: "Everyone on our team has spent a career in high-stakes rooms. That is how one standard holds across every format, and why every client works with the people who make the work.",
   },
   believe: {
     label: "What we believe",
@@ -301,7 +300,7 @@ export const ABOUT = {
     label: "The team",
     headline: "The people",
     accent: "who do the work.",
-    lede: "The four people you talk to are the four people who make the work, from the first call to the final file.",
+    lede: "The people you talk to are the people who make the work, from the first call to the final file.",
     /* EMPTY ON PURPOSE. The GitHub repo is public and the client does not
      * want the team shown yet (2026-09-27), so names and bios are not kept
      * here. They live in the PRIVATE repo Prabhu-PhD/gravino-site, in

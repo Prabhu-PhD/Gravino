@@ -2,6 +2,7 @@ import { pageMeta, breadcrumbLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, Section, SHELL } from "@/components/page-shell";
 import { IntakeForm } from "@/components/intake-form";
+import { NEXT_STEPS } from "@/lib/next-steps";
 import { SITE, INTAKE } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -54,11 +55,7 @@ export default function Contact() {
               </h2>
 
               <ol className="mt-7 space-y-6">
-                {[
-                  ["We read it ourselves", "Not a form queue. One of the four reads every project that comes in."],
-                  ["A short conversation", "Within a working day we come back with questions and a time to talk it through."],
-                  ["Then, a clear quote", "Scope, approach and price, fixed before any work begins."],
-                ].map(([title, body], i) => (
+                {NEXT_STEPS.map(([title, body], i) => (
                   <li key={title} className="flex gap-5">
                     <span className="mt-0.5 text-sm font-mono text-[#a78bfa]">
                       {String(i + 1).padStart(2, "0")}

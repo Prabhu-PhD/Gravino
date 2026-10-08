@@ -131,6 +131,19 @@ dd {
   border-radius: 2px;
 }
 
+/* Text fields draw their own focus state (the intake form's border warms to
+   violet). Text fields also match :focus-visible on a mouse click, so this
+   ring stacked on top of it on every click and the 2px radius squared off
+   the rounded fields: the "too hard" highlight (the client, 2026-10-08;
+   measured: outline 2px solid #7b3fe4, offset 3px, on a clicked input).
+   revert-layer hands the radius back to the field's own utility class. */
+input:not([type="radio"]):not([type="checkbox"]):focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-radius: revert-layer;
+}
+
 a {
   text-underline-offset: 0.22em;
   text-decoration-thickness: from-font;

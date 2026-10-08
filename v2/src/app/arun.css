@@ -866,13 +866,36 @@ body {
   }
 }
 
+/* --- Capabilities from lg: one grid cell for all four panels -----------------
+   His panels are absolutely positioned inside a stage given a fixed
+   min-height (630px, then set again from script), so the stage never knew
+   how tall its content was: the panel sat at the top of a 630px box with
+   the empty space below it, while the numerals and the headline beside it
+   were centred on that box (review, 2026-10-08). Stacked in one grid cell
+   instead, the stage is exactly as tall as the tallest panel, so all three
+   columns centre on the same line. The id outranks his !important rules. */
+@media (min-width: 1024px) {
+  #what-we-cover .cap-panel-stage {
+    display: grid !important;
+    min-height: 0 !important;
+  }
+  #what-we-cover .cap-content-panel {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    grid-area: 1 / 1 !important;
+  }
+}
+
 /* "See <capability> in detail" under each panel (generated in
    content/arun-sections.ts). */
 .cap-more {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  margin-top: 1.25rem;
+  /* 44px tall: it was a 20px tap target on phones. */
+  min-height: 44px;
+  margin-top: 0.5rem;
   font-size: 13px;
   color: #a5b4fc;
   transition: color 0.2s ease;

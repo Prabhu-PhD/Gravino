@@ -2,26 +2,70 @@ import { pageMeta, breadcrumbLd, servicesLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, CtaBand, SHELL } from "@/components/page-shell";
 import { CAPABILITIES, GLYPHS } from "@/content/capabilities";
+import { getCase, type CaseStudy } from "@/lib/work";
 
 export const metadata = pageMeta({
   path: "/services/",
   title: "What we cover | Business communication, brand, marketing, experience | Gravino",
   description:
-    "Business Communication, Brand Identity, Marketing & Growth, and Experience & Engagement: four capabilities from one embedded partner.",
+    "Business Communication, Brand Identity, Marketing & Growth, and Experience & Engagement: four capabilities from one embedded partner, and the work each one covers.",
 });
 
-/* WHAT WE COVER, IN FULL (rebuilt 2026-10-08, review).
+/* WHAT WE COVER, IN DETAIL (rebuilt again 2026-10-08, the client: "there is
+ * nothing 'in detail' about the service, it is the same box again").
  * ---------------------------------------------------------------------------
- * The client: one set of capability names across the site, fewer words, and
- * the deliverables shown visually rather than as bullets. So this page reads
- * from content/capabilities.ts, the same source as the home page section,
- * and each deliverable is a small drawing of its format with its name and
- * one short line. The double titles ("Win the room: High-stakes corporate
- * communications"), the paragraphs and the bullets are gone.
+ * The home page is the summary: each capability's drawings and names. This
+ * page is what its "See ... in detail" links promise, so per capability it
+ * adds what the summary leaves out:
  *
- * The header no longer carries the planet (it was the same 44-52rem block
- * on four pages); jump links to the four capabilities sit under it instead.
+ *   - what the capability is for, in two sentences (content/capabilities.ts
+ *     `detail`, drawn from the site's earlier copy);
+ *   - all twelve deliverables, each with the line saying what it is;
+ *   - the case studies that show it (`work`), with their covers.
+ *
+ * Layout: the intro column holds still (sticky) while the twelve scroll
+ * past it on desktop; stacked on phones. The deliverables sit on the same
+ * hairline grid as the home page, not in boxes. Sections clip with
+ * overflow:clip, not hidden, because hidden makes a scroll container and
+ * sticky stops working inside one.
  */
+
+const GRID_LINE = "rgba(255,255,255,0.075)";
+
+function Related({ cases }: { cases: CaseStudy[] }) {
+  if (!cases.length) return null;
+  return (
+    <div className="mt-8 md:mt-10">
+      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">Seen in</p>
+      <ul className="mt-3 grid gap-1">
+        {cases.map((w) => (
+          <li key={w.slug}>
+            <a
+              href={`/portfolio/${w.slug}/`}
+              className="group -mx-2 flex items-center gap-3.5 rounded-xl p-2 transition-colors hover:bg-white/[0.045]"
+            >
+              {/* Decorative: the title beside it names the project. */}
+              <img
+                src={w.cover}
+                alt=""
+                loading="lazy"
+                className="h-12 w-[4.75rem] shrink-0 rounded-lg object-cover ring-1 ring-white/10"
+                style={{ objectPosition: w.coverPosition ?? "center" }}
+              />
+              <span className="min-w-0">
+                <span className="block text-[15px] leading-tight text-white">{w.title}</span>
+                <span className="mt-0.5 block text-[12.5px] text-slate-400">{w.kind}</span>
+              </span>
+              <span aria-hidden className="ml-auto pr-1 text-slate-500 transition-colors group-hover:text-white">
+                &rarr;
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Services() {
   return (
@@ -33,85 +77,101 @@ export default function Services() {
         headline="Four capabilities,"
         accent="one embedded partner."
         lede="The same people across every format, from the board deck to the launch film."
-      />
+      >
+        <nav aria-label="Capabilities">
+          {/* One swipeable row on phones; stacked, the four took four lines. */}
+          <ul className="-mx-6 flex gap-2.5 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+            {CAPABILITIES.map((c) => (
+              <li key={c.id}>
+                <a
+                  href={`#${c.id}`}
+                  className="inline-flex min-h-11 items-center gap-2.5 whitespace-nowrap rounded-full border border-white/12 bg-white/[0.04] px-4 text-sm text-slate-200 transition-colors hover:border-[#a78bfa]/50 hover:text-white"
+                >
+                  <span className="font-mono text-[11px] text-[#a78bfa]">{c.n}</span>
+                  {c.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </PageHead>
 
-      <nav aria-label="Capabilities" className={`${SHELL} -mt-4 pb-12 md:pb-16`}>
-        {/* One swipeable row on phones; stacked, the four took four lines. */}
-        <ul className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
-          {CAPABILITIES.map((c) => (
-            <li key={c.id}>
-              <a
-                href={`#${c.id}`}
-                className="inline-flex min-h-11 items-center gap-2.5 whitespace-nowrap rounded-full border border-white/12 bg-white/[0.04] px-4 text-sm text-slate-200 transition-colors hover:border-[#a78bfa]/50 hover:text-white"
-              >
-                <span className="font-mono text-[11px] text-[#a78bfa]">{c.n}</span>
-                {c.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {CAPABILITIES.map((c, i) => (
-        <section
-          key={c.id}
-          id={c.id}
-          aria-labelledby={`${c.id}-title`}
-          className="relative scroll-mt-24 overflow-hidden border-t border-white/[0.07] py-14 md:py-20"
-          style={{
-            background:
-              i % 2
-                ? "radial-gradient(circle at 70% 30%, #120d26 0%, #09090f 70%)"
-                : "radial-gradient(circle at 25% 35%, #0f0c1d 0%, #06060a 75%)",
-          }}
-        >
-          <div
-            aria-hidden
-            className={`pointer-events-none absolute h-[420px] w-[420px] rounded-full blur-[150px] ${
-              i % 2 ? "right-[8%] bottom-0 bg-[#20c4f4]/10" : "left-[8%] top-0 bg-[#7b3fe4]/14"
-            }`}
-          />
-          <div className={`${SHELL} relative`}>
-            <div className="flex items-end gap-5 md:gap-7">
-              <span
-                aria-hidden
-                className="bg-gradient-to-b from-[#f0abfc] via-[#a855f7] to-[#38bdf8] bg-clip-text text-[clamp(3rem,8vw,5.5rem)] font-extralight leading-[0.85] tracking-tight text-transparent"
-              >
-                {c.n}
-              </span>
-              <div className="pb-1">
-                <h2 id={`${c.id}-title`} className="text-2xl font-medium leading-tight tracking-tight text-[#c084fc] sm:text-[28px] md:text-[32px]">
+      {CAPABILITIES.map((c, i) => {
+        const cases = c.work.map(getCase).filter((w): w is CaseStudy => Boolean(w));
+        return (
+          <section
+            key={c.id}
+            id={c.id}
+            aria-labelledby={`${c.id}-title`}
+            className="relative scroll-mt-20 overflow-clip border-t border-white/[0.07] py-16 md:py-24"
+            style={{
+              background:
+                i % 2
+                  ? "radial-gradient(circle at 75% 30%, #110d22 0%, #09090f 70%)"
+                  : "radial-gradient(circle at 20% 30%, #0f0c1d 0%, #07070c 75%)",
+            }}
+          >
+            <div
+              aria-hidden
+              className={`pointer-events-none absolute h-[420px] w-[420px] rounded-full blur-[150px] ${
+                i % 2 ? "right-[6%] top-[20%] bg-[#20c4f4]/[0.08]" : "left-[4%] top-[12%] bg-[#7b3fe4]/[0.13]"
+              }`}
+            />
+            <div className={`${SHELL} relative grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16`}>
+              {/* The intro: holds still beside the twelve on desktop. */}
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <span
+                  aria-hidden
+                  className="block bg-gradient-to-b from-[#f0abfc] via-[#a855f7] to-[#38bdf8] bg-clip-text pb-1 text-[clamp(3.25rem,7vw,5rem)] font-extralight leading-none tracking-tight text-transparent"
+                >
+                  {c.n}
+                </span>
+                <h2
+                  id={`${c.id}-title`}
+                  className="mt-3 text-[1.75rem] font-medium leading-tight tracking-tight text-[#c084fc] md:text-[2.125rem]"
+                >
                   {c.name}
                 </h2>
-                <p className="mt-1.5 text-sm font-light leading-relaxed text-slate-200 md:text-[15px]">{c.line}</p>
+                <p className="mt-3 text-[17px] font-light leading-snug text-white md:text-lg">{c.line}</p>
+                <p className="mt-4 max-w-md text-[15px] font-light leading-relaxed text-slate-300">{c.detail}</p>
+                <Related cases={cases} />
               </div>
-            </div>
 
-            {/* Phones: three compact tiles across, drawing and name (the note
-                made each deliverable a full-width row: 7 screens, measured).
-                From sm: wide tiles, drawing beside name and note. */}
-            <ul className="mt-8 grid grid-cols-3 gap-2 sm:mt-9 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3" aria-label={`${c.name}: what we make`}>
-              {c.deliverables.map((d) => (
-                <li
-                  key={d.name}
-                  className="group flex flex-col items-center gap-2 rounded-xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.015] px-1.5 py-3 text-center text-slate-300 transition-colors hover:border-[#a78bfa]/40 hover:text-white sm:flex-row sm:gap-4 sm:rounded-2xl sm:p-4 sm:text-left"
-                >
-                  <span
-                    aria-hidden
-                    className="grid h-10 w-full shrink-0 place-items-center rounded-xl bg-[radial-gradient(closest-side,rgba(123,63,228,0.24),transparent)] sm:h-16 sm:w-20"
-                  >
-                    <svg viewBox="0 0 64 48" focusable="false" className="h-[37px] w-[50px] sm:h-12 sm:w-16" dangerouslySetInnerHTML={{ __html: GLYPHS[d.glyph] }} />
-                  </span>
-                  <span>
-                    <span className="block text-[11.5px] leading-tight text-slate-100 sm:text-[15px] sm:font-medium sm:leading-snug sm:text-white">{d.name}</span>
-                    <span className="mt-0.5 hidden text-[13px] leading-snug text-slate-400 sm:block">{d.note}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      ))}
+              {/* The twelve, each with what it is. Two across from sm, on the
+                  hairline grid: a rule between the columns, and under every
+                  row but the last. */}
+              <ul className="grid sm:grid-cols-2" aria-label={`${c.name}: what we make`}>
+                {c.deliverables.map((d, k) => {
+                  const last = k === c.deliverables.length - 1;
+                  const lastRowSm = k >= c.deliverables.length - 2;
+                  const left = k % 2 === 0;
+                  return (
+                    <li
+                      key={d.name}
+                      className={`group flex items-start gap-4 py-4 sm:py-5 ${left ? "sm:pr-5 sm:border-r" : "sm:pl-5"} ${
+                        last ? "" : "border-b"
+                      } ${lastRowSm ? "sm:border-b-0" : ""}`}
+                      style={{ borderColor: GRID_LINE }}
+                    >
+                      <svg
+                        aria-hidden
+                        viewBox="0 0 64 48"
+                        focusable="false"
+                        className="mt-0.5 h-[39px] w-[52px] shrink-0 overflow-visible text-slate-300 transition-colors group-hover:text-white"
+                        dangerouslySetInnerHTML={{ __html: GLYPHS[d.glyph] }}
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-[15px] font-medium leading-snug text-white">{d.name}</span>
+                        <span className="mt-1 block text-[13.5px] leading-snug text-slate-400">{d.note}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </section>
+        );
+      })}
 
       <CtaBand
         headline="Not sure which of these you"

@@ -106,7 +106,9 @@ export default function WhyGravino() {
 
           <Reveal as="ol" className="relative grid gap-5 lg:grid-cols-3 lg:gap-6">
             {MODEL.map((m, i) => (
-              <li key={m.n} className="flex gap-4 lg:block">
+              /* A column from lg, so the card (flex-1) fills the row and all
+                 three end on one line whatever their text length. */
+              <li key={m.n} className="flex gap-4 lg:flex-col lg:gap-0">
                 <span
                   aria-hidden
                   className="st-pop relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#a78bfa]/50 bg-[#120d26] font-mono text-xs text-[#c4b5fd] shadow-[0_0_0_6px_#09090f] lg:h-14 lg:w-14 lg:text-sm"
@@ -115,11 +117,14 @@ export default function WhyGravino() {
                   {m.n}
                 </span>
                 <div
-                  className="st-fade group relative flex-1 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.055] to-white/[0.015] p-5 sm:p-6 transition-colors duration-300 hover:border-[#a78bfa]/40 lg:mt-6 lg:min-h-[15rem] lg:p-8"
+                  className="st-fade group relative flex-1 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.055] to-white/[0.015] p-5 sm:p-6 transition-colors duration-300 hover:border-[#a78bfa]/40 pb-24 sm:pb-24 lg:mt-6 lg:min-h-[15rem] lg:p-8 lg:pb-28"
                   style={d(i + 1, 0.15)}
                 >
                   <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                  {/* The step's numeral, large and faint, as a watermark. */}
+                  {/* The step's numeral, large and faint, as a watermark. Its
+                      ink fills the card's bottom ~86px (104px at lg), so the
+                      card's bottom padding reserves that much: the longer
+                      bodies ran under it (review, 2026-10-08). */}
                   <span
                     aria-hidden
                     className="pointer-events-none absolute -bottom-6 -right-2 select-none text-[7.5rem] font-light leading-none text-white/[0.035] transition-colors duration-300 group-hover:text-[#a78bfa]/[0.08] lg:text-[9rem]"

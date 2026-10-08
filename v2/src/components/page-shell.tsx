@@ -27,10 +27,18 @@ import { CelestialFigure } from "./celestial-figure";
 import { SHELL } from "@/lib/shell";
 export { SHELL };
 
-/** The brand-hue glow discs the cosmic sections sit on. */
+/** The brand-hue glow discs the cosmic sections sit on.
+ *
+ *  Faded out towards the section's top and bottom edges. The discs sit
+ *  partly outside the section (-top-24, -bottom-32) and the section clips
+ *  them, so without the fade each one ended in a hard straight line across
+ *  the page (review, 2026-10-08). */
 function Orbs() {
   return (
-    <>
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_65%,transparent)]"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 left-[12%] h-[420px] w-[420px] rounded-full bg-[#7b3fe4]/18 blur-[140px]"
@@ -39,7 +47,7 @@ function Orbs() {
         aria-hidden
         className="pointer-events-none absolute -bottom-32 right-[10%] h-[380px] w-[380px] rounded-full bg-[#20c4f4]/10 blur-[130px]"
       />
-    </>
+    </div>
   );
 }
 
@@ -50,6 +58,7 @@ export function PageHead({
   lede,
   figure = false,
   compact = false,
+  children,
 }: {
   /** The one kicker on the page. */
   eyebrow: string;
@@ -69,6 +78,9 @@ export function PageHead({
    *  form). Review, 2026-10-08: the full head pushed the form to the bottom
    *  of the first screen. */
   compact?: boolean;
+  /** Anything that belongs to the head, under the lede (the Services jump
+   *  links). Inside the section, so it can never be painted over by it. */
+  children?: React.ReactNode;
 }) {
   return (
     <section
@@ -113,6 +125,7 @@ export function PageHead({
             {lede}
           </p>
         ) : null}
+        {children ? <div className={compact ? "mt-6" : "mt-9"}>{children}</div> : null}
       </div>
     </section>
   );

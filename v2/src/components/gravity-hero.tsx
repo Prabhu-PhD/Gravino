@@ -153,27 +153,32 @@ export function GravityHero() {
               </div>
 
               {/* 4 Caption Boxes OVER THE PLANET: 2 on the left, 2 on the right (Black fill with transparency, generous padding) */}
-              <div className="hidden md:block pointer-events-none">
+              {/* No pointer-events of their own: they follow #hero2-ui, which
+                  app4.js switches off while hero 2 is hidden. Each box used to
+                  set pointer-events-auto, so the invisible boxes sat over the
+                  first hero's headline and took its clicks (measured at
+                  1280x800, 2026-10-08). */}
+              <div className="hidden md:block">
                 {/* 1. Left of planet - Upper: Business Communication (moved right over planet) */}
-                <div id="caption-box-1" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-white/25 hover:border-white/70 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "39%", top: "48%", padding: "10px 20px"}}>
+                <div id="caption-box-1" className="absolute flex items-center gap-3 bg-black/85 backdrop-blur-md border border-white/25 hover:border-white/70 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "39%", top: "48%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#ffffff] flex-shrink-0"></span>
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Business Communication</span>
                 </div>
 
                 {/* 2. Left of planet - Lower: Brand Identity (moved right over planet) */}
-                <div id="caption-box-2" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-cyan-400/35 hover:border-cyan-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "36%", top: "68%", padding: "10px 20px"}}>
+                <div id="caption-box-2" className="absolute flex items-center gap-3 bg-black/85 backdrop-blur-md border border-cyan-400/35 hover:border-cyan-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "36%", top: "68%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#24c1ff] shadow-[0_0_8px_#24c1ff] flex-shrink-0"></span>
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Brand Identity</span>
                 </div>
 
                 {/* 3. Right of planet - Upper: Marketing & Growth */}
-                <div id="caption-box-3" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-pink-400/35 hover:border-pink-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "74%", top: "46%", padding: "10px 20px"}}>
+                <div id="caption-box-3" className="absolute flex items-center gap-3 bg-black/85 backdrop-blur-md border border-pink-400/35 hover:border-pink-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "74%", top: "46%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#cc4ec7] shadow-[0_0_8px_#cc4ec7] flex-shrink-0"></span>
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Marketing &amp; Growth</span>
                 </div>
 
                 {/* 4. Right of planet - Lower: Experience & Engagement */}
-                <div id="caption-box-4" className="absolute pointer-events-auto flex items-center gap-3 bg-black/85 backdrop-blur-md border border-purple-400/35 hover:border-purple-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "72%", top: "68%", padding: "10px 20px"}}>
+                <div id="caption-box-4" className="absolute flex items-center gap-3 bg-black/85 backdrop-blur-md border border-purple-400/35 hover:border-purple-400/80 rounded-xl shadow-2xl transition-all duration-200 cursor-default select-none" style={{left: "72%", top: "68%", padding: "10px 20px"}}>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#7642cf] shadow-[0_0_8px_#7642cf] flex-shrink-0"></span>
                   <span className="text-sm sm:text-[15px] font-medium text-white tracking-tight whitespace-nowrap">Experience &amp; Engagement</span>
                 </div>

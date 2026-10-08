@@ -273,8 +273,9 @@ export function CosmicFooter() {
             </p>
             <a
               href="mailto:create@gravino.in"
-              className="text-sm text-slate-300 hover:text-white transition-colors break-all"
+              className="-my-3 w-fit py-3 text-sm text-slate-300 hover:text-white transition-colors break-all"
             >
+              {/* -my-3 py-3: a 44px tap target without moving anything. */}
               create@gravino.in
             </a>
             <p className="text-sm text-slate-400">Chennai, India</p>

@@ -595,10 +595,13 @@ export const CASES: CaseStudy[] = [
     // The robot arm over the chip (review, 2026-10-08: the CNC needle shot was
     // near-black behind the slider's overlays). Its Zylo mark sits top right.
     stage: { src: `${ZYLO}/stage-arm.webp`, position: "40% center" },
-    cover: `${ZYLO}/cover.webp`,
-    // The cover is a 16:9 slide with "THINK NEXT" at its left edge; the
-    // index card crops it narrower, which cut it to "HINK EXT" (review).
-    coverPosition: "left center",
+    // The robot arm, as on the home slider. The presentation cover was used
+    // first, but it is a 16:9 slide with words at BOTH edges ("THINK NEXT"
+    // left, "Intelligent manufacturing. Powered by AI." right), so any crop
+    // narrower than 16:9 cut one of them (review, 2026-10-08). The photo
+    // crops cleanly; 62% keeps the Zylo mark at its right in frame.
+    cover: `${ZYLO}/stage-arm.webp`,
+    coverPosition: "62% center",
     theme: {
       // Inter, as packaged with the artwork (OFL): subset to Latin, weights
       // 300 to 700, 36 KB.

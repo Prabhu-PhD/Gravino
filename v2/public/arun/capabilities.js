@@ -49,27 +49,15 @@
         });
       }
 
-      function updateStageHeight(targetId) {
+      /* OURS (2026-10-08): the stage no longer needs a height from here.
+         The panels share one grid cell (arun.css), so the stage is always
+         as tall as the tallest panel, at every width, with no jump between
+         them. This used to set an inline min-height with a 630px floor on
+         desktop, which left a well of empty space under every panel and
+         sat the panel's top above the numerals beside it. */
+      function updateStageHeight() {
         const stage = document.querySelector('.cap-panel-stage');
-        const targetPanel = document.getElementById(targetId);
-        if (stage && targetPanel) {
-          const h = targetPanel.scrollHeight || targetPanel.offsetHeight;
-          if (h > 0) {
-            /* OURS: the 630px floor is a desktop measurement. Below the lg
-               breakpoint the totem is a row of tabs rather than a column of
-               numerals beside the panel, so nothing needs reserving and the
-               floor only leaves a large empty well under the shorter
-               panels. Above lg it is unchanged. */
-            var floor = window.matchMedia('(min-width: 1024px)').matches ? 630 : 0;
-            /* setProperty with 'important', not stage.style.minHeight.
-               His stylesheet sets .cap-panel-stage a min-height of 520px
-               !important below the lg breakpoint, and a plain inline style
-               loses to it - the panels are absolutely positioned, so the
-               stage would keep a fixed height and the taller panels would
-               overflow into the section beneath. */
-            stage.style.setProperty('min-height', Math.max(h + 24, floor) + 'px', 'important');
-          }
-        }
+        if (stage) stage.style.removeProperty('min-height');
       }
 
       numSelectors.forEach(btn => {

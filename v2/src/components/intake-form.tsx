@@ -482,7 +482,9 @@ function BudgetSlider({ name }: { name: string }) {
               tabIndex={-1}
               onClick={() => set(inrToPos(v))}
               style={{ left: `${at}%` }}
-              className={`absolute top-0 ${edge} whitespace-nowrap transition-colors hover:text-slate-300 ${inr === v ? "text-[#c4b5fd]" : ""}`}
+              /* The ::before widens the tap area (17px tall before), downwards
+                 only, so it never covers the slider track above it. */
+              className={`absolute top-0 ${edge} whitespace-nowrap transition-colors before:absolute before:-inset-x-2 before:-top-1 before:-bottom-3 before:content-[''] hover:text-slate-300 ${inr === v ? "text-[#c4b5fd]" : ""}`}
             >
               {v === BUDGET_MIN ? "₹50k" : v >= BUDGET_MAX ? "₹30L+" : `₹${v / 100_000}L`}
             </button>

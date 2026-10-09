@@ -65,6 +65,8 @@ const IDLE_FRAME_MS = 41;
 
 export function DotIcons({ motion = false }: { motion?: boolean }) {
   useEffect(() => {
+    // ?icons=lines: the previous line icons, for comparison (see layout.tsx)
+    if (document.documentElement.classList.contains("icons-lines")) return;
     const boxes = [...document.querySelectorAll<HTMLElement>("[data-glyph]")].filter((b) => b.dataset.glyph! in GLYPH_DOTS);
     if (!boxes.length) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

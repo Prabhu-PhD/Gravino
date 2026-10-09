@@ -53,8 +53,17 @@ export default function RootLayout({
         {/* Before first paint: says JavaScript is running, so CSS can hide
             what scripts replace (the line icons under the particle icons,
             components/dot-icons.tsx) without a flash, and without hiding
-            them from a visitor who has no JavaScript. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+            them from a visitor who has no JavaScript.
+            ?icons=lines shows the previous line icons instead of the dots:
+            the client is deciding between them on the live site
+            (2026-10-09). Remove it, and .icons-lines in globals.css and
+            dot-icons.tsx, once decided. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "var d=document.documentElement;d.classList.add('js');if(/[?&]icons=lines(&|$)/.test(location.search))d.classList.add('icons-lines')",
+          }}
+        />
       </head>
       <body>
         {/* First thing a keyboard user reaches; hidden until focused. Every

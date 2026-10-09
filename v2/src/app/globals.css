@@ -730,7 +730,7 @@ html body .num-selector:focus-visible {
  * icon so the dots have room to fly in from; it never takes the pointer.
  * ======================================================================== */
 [data-glyph] { position: relative; }
-.js [data-glyph] > svg { visibility: hidden; }
+.js:not(.icons-lines) [data-glyph] > svg { visibility: hidden; }
 .dot-canvas {
   position: absolute;
   left: 50%;

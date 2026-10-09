@@ -2,6 +2,7 @@ import { pageMeta, breadcrumbLd, servicesLd } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { Page, PageHead, CtaBand, SHELL } from "@/components/page-shell";
 import { CAPABILITIES, GLYPHS } from "@/content/capabilities";
+import { DotIcons } from "@/components/dot-icons";
 import { getCase, type CaseStudy } from "@/lib/work";
 
 export const metadata = pageMeta({
@@ -153,13 +154,16 @@ export default function Services() {
                       } ${lastRowSm ? "sm:border-b-0" : ""}`}
                       style={{ borderColor: GRID_LINE }}
                     >
-                      <svg
-                        aria-hidden
-                        viewBox="0 0 64 48"
-                        focusable="false"
-                        className="mt-0.5 h-[39px] w-[52px] shrink-0 overflow-visible text-slate-300 transition-colors group-hover:text-white"
-                        dangerouslySetInnerHTML={{ __html: GLYPHS[d.glyph] }}
-                      />
+                      {/* The icon as dots, drawn still here (this page is for
+                          reading); the line drawing is the no-JS fallback. */}
+                      <span aria-hidden data-glyph={d.glyph} className="mt-0.5 shrink-0">
+                        <svg
+                          viewBox="0 0 64 48"
+                          focusable="false"
+                          className="block h-[44px] w-[58px] overflow-visible text-slate-300"
+                          dangerouslySetInnerHTML={{ __html: GLYPHS[d.glyph] }}
+                        />
+                      </span>
                       <span className="min-w-0">
                         <span className="block text-[15px] font-medium leading-snug text-white">{d.name}</span>
                         <span className="mt-1 block text-[13.5px] leading-snug text-slate-400">{d.note}</span>
@@ -173,6 +177,7 @@ export default function Services() {
         );
       })}
 
+      <DotIcons />
       <CtaBand
         headline="Not sure which of these you"
         accent="need?"

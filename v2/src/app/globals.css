@@ -722,3 +722,19 @@ html body .num-selector:focus-visible {
   .dl-glyph svg { width: 50px; height: 37px; }
   .dl-name { font-size: 11.5px; }
 }
+
+/* ===========================================================================
+ * Particle icons (components/dot-icons.tsx). With JavaScript, a canvas of
+ * dots is laid over each [data-glyph] icon and the line drawing under it is
+ * hidden; without, the line drawing shows. The canvas is larger than the
+ * icon so the dots have room to fly in from; it never takes the pointer.
+ * ======================================================================== */
+[data-glyph] { position: relative; }
+.js [data-glyph] > svg { visibility: hidden; }
+.dot-canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}

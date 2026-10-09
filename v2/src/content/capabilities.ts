@@ -252,10 +252,12 @@ export const GLYPHS: Record<GlyphKey, string> = {
   print: `<rect x="16" y="9" width="32" height="32" rx="1" ${line}/><circle cx="22" cy="16" r="2.6" fill="${S}"/><circle cx="28.5" cy="16" r="2.6" fill="${V}"/><circle cx="35" cy="16" r="2.6" fill="currentColor" opacity=".55"/><line x1="21" y1="25" x2="43" y2="25" ${line}/><line x1="21" y1="30" x2="40" y2="30" ${line}/><line x1="21" y1="35" x2="34" y2="35" ${line}/><path d="M8 9 H12 M16 2 V5 M52 9 H56 M48 2 V5 M8 41 H12 M16 45 V48 M52 41 H56 M48 45 V48" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>`,
 };
 
-/** One deliverable tile as HTML: for the home page, which is HTML. */
+/** One deliverable tile as HTML: for the home page, which is HTML. The
+ *  data-glyph names it for components/dot-icons.tsx, which draws it as
+ *  particles; the line drawing inside is the no-JavaScript fallback. */
 export function deliverableTileHtml(d: Deliverable) {
   return (
-    `<li class="dl-tile"><span class="dl-glyph" aria-hidden="true">` +
+    `<li class="dl-tile"><span class="dl-glyph" aria-hidden="true" data-glyph="${d.glyph}">` +
     `<svg viewBox="0 0 64 48" width="64" height="48" focusable="false">${GLYPHS[d.glyph]}</svg>` +
     `</span><span class="dl-name">${d.name.replace(/&/g, "&amp;")}</span></li>`
   );

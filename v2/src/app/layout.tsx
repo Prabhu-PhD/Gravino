@@ -46,7 +46,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={dm.variable}>
+    /* suppressHydrationWarning: the script below adds "js" to this element's
+       class before React hydrates it, which React would otherwise report. */
+    <html lang="en" className={dm.variable} suppressHydrationWarning>
+      <head>
+        {/* Before first paint: says JavaScript is running, so CSS can hide
+            what scripts replace (the line icons under the particle icons,
+            components/dot-icons.tsx) without a flash, and without hiding
+            them from a visitor who has no JavaScript. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>
         {/* First thing a keyboard user reaches; hidden until focused. Every
             page provides #main: interior pages on <main>, the home page on a

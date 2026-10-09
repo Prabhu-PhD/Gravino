@@ -5,6 +5,7 @@ import { ArunSections } from "@/components/arun-sections";
 import { ArunRuntime } from "@/components/arun-runtime";
 import { CosmicFooter } from "@/components/cosmic-chrome";
 import { IntakeModal } from "@/components/intake-form";
+import { DotIcons } from "@/components/dot-icons";
 import "./arun.css";
 
 /* The home page: Arun's cosmic build, running his own engine and markup.
@@ -35,6 +36,8 @@ export default function Home() {
       <IntakeModal />
       <CosmicFooter />
       <ArunRuntime />
+      {/* The deliverable icons in "What we cover", as particles. */}
+      <DotIcons motion />
     </div>
   );
 }

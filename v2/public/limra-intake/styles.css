@@ -98,3 +98,6 @@ textarea{min-height:112px;resize:vertical;line-height:1.55;border-radius:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 .qs{margin-top:28px}
+
+.bail{display:block;margin:30px auto 0;padding:10px 4px;border:0;background:none;font:inherit;font-family:var(--display);font-size:.84rem;font-weight:600;color:var(--muted);text-decoration:underline;text-decoration-color:var(--hair-2);text-underline-offset:4px;cursor:pointer}
+.bail:hover{color:var(--navy);text-decoration-color:var(--sky-line)}

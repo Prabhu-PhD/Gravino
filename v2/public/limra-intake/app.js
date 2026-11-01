@@ -152,6 +152,14 @@ function renderPart(s) {
   box.className = "qs";
   s.qs.forEach(q => box.appendChild(renderQ(q)));
   main.appendChild(box);
+
+  // Let him send a part-finished form without walking to the end.
+  const bail = document.createElement("button");
+  bail.type = "button";
+  bail.className = "bail";
+  bail.textContent = "Send what I have so far";
+  bail.addEventListener("click", () => { step = SCHEMA.length - 1; persist(); render(); });
+  main.appendChild(bail);
 }
 
 function renderQ(q) {

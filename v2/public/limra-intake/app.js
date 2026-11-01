@@ -85,8 +85,20 @@ const SCHEMA = [
 ];
 
 const KEY = "limra-intake-v1";
-let data = {}, step = 0;
+const STEP_KEY = KEY + "-step";
+let data = {}, step = 0, resumed = false;
 try { const r = localStorage.getItem(KEY); if (r) data = JSON.parse(r) || {}; } catch (e) {}
+try {
+  const n = parseInt(localStorage.getItem(STEP_KEY), 10);
+  if (n > 0 && n < SCHEMA.length) { step = n; resumed = true; }
+} catch (e) {}
+// Answers saved before step-tracking existed: resume at the last part that has one.
+if (!resumed) {
+  for (let i = SCHEMA.length - 1; i > 0; i--) {
+    const qs = SCHEMA[i].qs;
+    if (qs && qs.some(q => asText(q))) { step = i; resumed = true; break; }
+  }
+}
 
 const $ = id => document.getElementById(id);
 const main = $("main");
@@ -94,7 +106,7 @@ const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp
 
 let hintTimer = null;
 function persist() {
-  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { return; }
+  try { localStorage.setItem(KEY, JSON.stringify(data)); localStorage.setItem(STEP_KEY, String(step)); } catch (e) { return; }
   $("hint").textContent = "Saved";
   clearTimeout(hintTimer);
   hintTimer = setTimeout(() => { $("hint").textContent = ""; }, 2000);
@@ -334,12 +346,13 @@ function plain() {
   return lines.join("\n");
 }
 
-$("back").addEventListener("click", () => { if (step > 0) { step--; render(); } });
+$("back").addEventListener("click", () => { if (step > 0) { step--; persist(); render(); } });
 $("next").addEventListener("click", () => {
-  if (!SCHEMA[step].review) { step++; render(); return; }
+  if (!SCHEMA[step].review) { step++; persist(); render(); return; }
   const enc = encodeURIComponent(plain());
   if (enc.length > 6000) { toast("Too long for WhatsApp — copying instead"); copyOut(); return; }
   window.open("https://wa.me/?text=" + enc, "_blank", "noopener");
 });
 
 render();
+if (resumed) toast("Picking up where you left off");
